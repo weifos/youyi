@@ -1,0 +1,317 @@
+page{
+  color:$yoyi-text-color-basic;
+  font-size:$uni-font-size-base;
+  min-height: 100%;
+}
+image{
+  vertical-align: top;
+}
+/**单行文本溢出加...**/
+.ellipsis{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/**2行..**/
+.ellipsis2{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
+  overflow:hidden;
+}
+
+/**3行...**/
+.ellipsis3{
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden;
+}
+//+++++++++++other++++++++++
+.rel{
+  position: relative;
+}
+.bold{
+  font-weight: bold;
+}
+.db{
+  display: block;
+}
+.dib{
+  display: inline-block;
+}
+.align-center{
+  text-align:center;
+}
+
+.align-right{
+  text-align:right;
+}
+
+.hidden{
+  overflow:hidden;
+}
+
+.vam{
+  vertical-align: middle;
+}
+
+.scrolling{
+  -webkit-overflow-scrolling:touch;
+}
+
+.fl{
+  float:left;
+}
+
+.fr{
+  float:right;
+}
+
+.flex{
+  display:flex;
+}
+.mt5{
+  margin-top:5px;
+}
+.ml10{
+  margin-left:10px;
+}
+.ml20{
+  margin-left:20px;
+}
+.mt10{
+  margin-top:10px;
+}
+.mt15{
+  margin-top:15px;
+}
+.mt20{
+  margin-top:20px;
+}
+.mt40{
+  margin-top:40px;
+}
+.mb20{
+  margin-bottom:20px;
+}
+
+//+++++++++++btn++++++++++
+.btn{
+  display:inline-flex;
+  padding:0;
+  font-size:$uni-font-size-sm;
+  text-align:center;
+  align-items:center;
+  line-height:1;
+  background:#fff;
+  justify-content:center;
+  border-radius: 0;
+
+  &:after{
+    display:none;
+  }
+}
+.btn.round{
+  border-radius: 2*16px;
+}
+
+.btn-noborder{
+  border:0;
+  background:none;
+  font-size:2*14px;
+  line-height:1;
+  display:inline-flex;
+  padding:0;
+  border-radius: 0;
+}
+
+.btn-noborder:after{
+  border:none;
+}
+.btn-round{
+  border-radius: 60px;
+}
+.btn-round-sm{
+  border-radius: 40px;
+}
+.btn-round-ss{
+  border-radius: 10px;
+}
+.btn-size-sm{
+  width:2*68px;
+  height:2*28px;
+}
+.btn-size-big{
+  width:2*180px;
+  height:2*35px;
+  font-size: 2*16px;
+}
+.btn-size-full{
+  width: 100%;
+  height: 2*48px;
+  line-height: 2*48px;
+}
+.btn-line-yellow,.btn-line-main{
+  border:1px solid $yoyi-text-color-sub;
+}
+.btn-line-gray{
+  border:1px solid $yoyi-text-color-grey;
+}
+
+.btn-bg-main{
+  background-color: $yoyi-button-color;
+}
+//+++++++++++text++++++++++
+.input-placeholder{
+  color:$yoyi-text-color-placeholder
+}
+.text-white{
+  color: #fff;
+}
+.text-main{
+  color:$yoyi-text-color;
+}
+
+.text-sub{
+  color:$yoyi-text-color-sub;
+}
+
+.text-gray{
+  color:$yoyi-text-color-grey;
+}
+.text-size-basic{
+  font-size:$uni-font-size-base;
+}
+
+.text-size-md{
+  font-size:$uni-font-size-middle;
+}
+
+.text-size-sm{
+  font-size:$uni-font-size-sm;
+}
+.text-size-lg{
+  font-size:$uni-font-size-lg ;
+}
+
+//+++++++++++bg++++++++++
+.bg-main{
+  background-color: $yoyi-bg-color;
+}
+.bg-sub{
+  background-color: $yoyi-bg-color-sub;
+}
+.bg-white{
+  background-color: #fff;
+}
+//+++++++++++icon++++++++++
+.icon{
+  background-repeat:no-repeat;
+  background-size:100% auto;
+}
+
+.icon-search{
+  display:inline-flex;
+  width:32px;
+  height:32px;
+}
+
+.icon-location{
+  display:inline-flex;
+  width:28px;
+  height:34px;
+}
+
+.icon-select{
+  display:inline-flex;
+  width:24px;
+  height:20px;
+}
+.icon-arrow{
+  background: url("~@/static/icon/arrow.png") no-repeat 0 0/100% auto;
+  width: 14px;
+  height: 24px;
+}
+.icon-home{
+  background: url("~@/static/icon/home.png") no-repeat 0 0/100% auto;
+  width: 44px;
+  height: 44px;
+}
+.icon-collect{
+  background: url("~@/static/icon/collect.png") no-repeat 0 0/100% auto;
+  width: 44px;
+  height: 44px;
+}
+.active .icon-collect{
+  background-image: url("~@/static/icon/collect_a.png");
+}
+.icon-cart{
+  background: url("~@/static/icon/cart.png") no-repeat 0 0/100% auto;
+  width: 44px;
+  height: 44px;
+}
+.icon-cart2{
+  background: url("~@/static/icon/cart2.png") no-repeat 0 0/100% auto;
+  width: 2*51px;
+  height: 2*49px;
+}
+.icon-close{
+  background: url("~@/static/icon/close.png") no-repeat 0 0/100% auto;
+  width: 28px;
+  height: 28px;
+}
+//加减选择器
+.number-box-skin-1{
+  .uni-numbox{
+    height: 2*20px;
+    line-height: 2*20px;
+  }
+  .uni-numbox:after,.uni-numbox__value:after{
+    display: none;
+  }
+  .uni-numbox__minus,.uni-numbox__plus{
+    width: 2*20px;
+    height: 2*20px;
+    line-height: 2*20px;
+    border-radius: 100%;
+    border:1px solid #000000;
+    background-color: #fff;
+    padding: 0;
+  }
+  .uni-numbox__value{
+    font-size: 2*18px;
+  }
+}
+//默认输入框 
+.yoyi-input-normal{
+  height: 2*38px;
+  line-height: 2*38px;
+  border:1px solid #B2B2B2;
+  border-radius: 2*6px;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+radio{
+  transform:scale(0.7);
+  margin-right:-20px;
+}
+//+++++++++++section++++++++++
+.section-title{
+  height: 2*40px;
+  line-height: 2*40px;
+  padding: 0 2*20px;
+  font-size: 2*17px;
+}
+//+++++++++++image++++++++++
+.image-size-sm{
+  image{
+    width: 2*80px;
+    height: 2*80px;
+  }
+}
+//+++++++++++弹出层重置++++++++++
+.yoyi-pop .uni-popup .uni-popup__wrapper.uni-custom .uni-popup__wrapper-box{
+  max-height: 100%;
+}
