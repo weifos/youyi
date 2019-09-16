@@ -14,7 +14,7 @@
         </view>
       </view>
     </view>
-    <view class="item-btns align-right">
+    <view class="item-btns mt10 align-right">
       <button class="btn btn-line-yellow text-sub btn-size-sm" hover-class="" @click.stop="handleClick('button')">{{buttonText}}
       </button>
     </view>
@@ -104,6 +104,10 @@
     .item-address{
       flex:1;
       text-align:center;
+    }
+    .item-btns .btn{
+      border-radius:8px;
+      height: 2*24px;
     }
   }
 </style>

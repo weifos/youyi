@@ -18,6 +18,17 @@
                 <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20">确认收货</button>
             </view>
         </view>
+        <view class="section-status mt20" v-if="orderInfo.type == 2">
+            <text class="icon-arrow2 dib vat"></text>
+            <!-- <view  class="ml20 dib vat">
+                <view class="text-size-md bold"><text>商家同意退货，请及时退货</text></view>
+                <view class="text-size-sm mt20">剩<text class="text-red">6</text>天<text class="text-red">6</text>时<text class="text-red">6</text>分</view>
+            </view> -->
+            <view  class="ml20 dib vat">
+                <view class="text-size-md bold"><text>退款成功</text><text class="text-gray ml20 text-size-sm">2019年7月3日  19:41</text></view>
+                <view class="text-size-sm mt20">退款金额：<text class="text-sub text-size-lg">96.72</text></view>
+            </view>
+        </view>
         
         <view class="section-address mt20">
             <view class="text-gray">收货地址</view>
@@ -98,7 +109,7 @@
       data() {
       return {
         orderInfo:{
-            type:0,//0:待付款，1:待收货，2:退款/售后，3:已完成，4:已取消，
+            type:2,//0:待付款，1:待收货，2:退款/售后，3:已完成，4:已取消，
             status:"待付款",
             address:{
                 city:"广东省深圳市",

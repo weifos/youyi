@@ -16,6 +16,9 @@
             <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">开发票</button>
             <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">确认收货</button>
         </view>
+        <view class="order-btns" v-else-if="item.type == 2">
+            <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">查看详情</button>
+        </view>
         <view class="order-btns" v-else-if="item.type == 0">
             <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">取消订单</button>
             <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">去支付</button>

@@ -56,6 +56,9 @@ image{
 .vam{
   vertical-align: middle;
 }
+.vat{
+  vertical-align: top;
+}
 
 .scrolling{
   -webkit-overflow-scrolling:touch;
@@ -170,6 +173,9 @@ image{
 .text-white{
   color: #fff;
 }
+.text-red{
+  color: $yoyi-text-color-red;
+}
 .text-main{
   color:$yoyi-text-color;
 }
@@ -233,6 +239,11 @@ image{
   background: url("~@/static/icon/arrow.png") no-repeat 0 0/100% auto;
   width: 14px;
   height: 24px;
+}
+.icon-arrow2{
+  background: url("~@/static/icon/icon-arrow.png") no-repeat 0 0/100% auto;
+  width: 40px;
+  height: 40px;
 }
 .icon-home{
   background: url("~@/static/icon/home.png") no-repeat 0 0/100% auto;

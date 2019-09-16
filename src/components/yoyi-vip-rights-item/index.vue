@@ -56,6 +56,9 @@
     .rights-item-icon-money{
       background-image:url(./images/rights-money.png);
     }
+    .rights-item-icon-activity{
+      background-image:url(./images/rights-activity.png);
+    }
     .rights-item-text{
       margin:12px auto 0;
       height:40px;

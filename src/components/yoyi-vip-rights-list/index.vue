@@ -12,7 +12,7 @@
         <rightsItem type="crown" text="会员专享劵"></rightsItem>
       </view>
       <view class="card-rights-list">
-        <rightsItem type="list" text="精品活动"></rightsItem>
+        <rightsItem type="activity" text="精品活动"></rightsItem>
       </view>
     </template>
     <template v-if="type == 3">
@@ -45,9 +45,10 @@
 </script>
 <style lang="scss">
   .wrapper-card-rights{
+    margin:0 80px;
     .card-rights-list{
       display:flex;
-      justify-content:space-around;
+      justify-content:space-between;
       margin-top:40px;
     }
   }
