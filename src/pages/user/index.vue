@@ -258,6 +258,7 @@
         &__content{
           flex-direction:row;
           justify-content:space-between;
+          &-title{font-size: $uni-font-size-middle;}
           &-note{
             line-height:1.5;
           }

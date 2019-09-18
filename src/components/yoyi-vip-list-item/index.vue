@@ -75,6 +75,7 @@
       width:94px;
       height:82px;
       background-size:contain;
+
     }
     &.selected{
       border-color:$yoyi-button-color;

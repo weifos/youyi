@@ -47,6 +47,7 @@
       line-height:56px;
     }
     .money-present{
+      font-size:26px;
       color:$yoyi-text-color-grey;
     }
     &.wrapper-money-item-selected{

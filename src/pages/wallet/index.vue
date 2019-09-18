@@ -122,6 +122,11 @@
           height:0;
         }
       }
+      .uni-list-item{
+        &__content{
+          &-title{font-size:$uni-font-size-middle;}
+        }
+      }
     }
   }
 </style>

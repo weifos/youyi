@@ -67,7 +67,7 @@
     .point-summary{
       width:100%;
       position:relative;
-      height:300px;
+      height:226px;
       background:$yoyi-bg-color;
       color:#fff;
       display:flex;
@@ -153,13 +153,15 @@
       /*padding-top:540px;*/
       padding:20px 0;
       .pay-coupon-item{
-        margin-bottom:28px;
+        margin-bottom:-10px;
         transform:scale(0.9);
         &:last-child{
           margin-bottom:0;
         }
       }
-
+      .wrapper-coupon .coupon-deadline{
+        font-size:28px;
+      }
     }
   }
 </style>

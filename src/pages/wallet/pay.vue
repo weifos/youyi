@@ -119,13 +119,13 @@
           display:flex;
           width:auto;
           checkbox{
-            margin-top:4px;
+            margin-top:6px;
             margin-right:8px;
-            width:50px;
-            height:50px;
+            width:40px;
+            height:40px;
             .wx-checkbox-input{
-              width:40px;
-              height:40px;
+              width:30px;
+              height:30px;
               &.wx-checkbox-input-checked{
                 &::before{
                 }
@@ -144,14 +144,14 @@
             }
           }
           text{
-            font-size:$uni-font-size-lg;
+            font-size:$uni-font-size-middle;
           }
         }
         .agreement-link{
-          height:50px;
-          line-height:50px;
+          height:40px;
+          line-height:40px;
           display:inline-block;
-          font-size:$uni-font-size-base;
+          font-size:$uni-font-size-sm;
           color:$yoyi-text-color-grey;
         }
       }

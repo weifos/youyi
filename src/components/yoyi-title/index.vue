@@ -36,7 +36,7 @@
     display:flex;
     justify-content:space-between;
     .title-main{
-      font-size:$uni-font-size-lg;
+      font-size:$uni-font-size-middle;
       color:$yoyi-text-color-basic;
       line-height:100px;
     }
