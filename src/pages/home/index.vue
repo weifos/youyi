@@ -22,7 +22,7 @@
 
 <script>
 import api from '@/modules/api'
-import app_g from '@/modules/appGlobal'
+import appG from '@/modules/appGlobal'
 
 export default {
   data() {

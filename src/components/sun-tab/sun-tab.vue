@@ -81,7 +81,6 @@ export default {
   },
   methods: {
     itemClick(index, tab) {
-      debugger
       console.log('我点击了tab')
       if (this.value == index) return false;
       if (this.value > index) {
