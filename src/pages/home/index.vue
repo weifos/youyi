@@ -2,8 +2,13 @@
   <view class="content page-index">
     <view class="section-banner">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
+<<<<<<< HEAD
         <swiper-item v-for="item in bannerImg" :key="item">
           <image :src="item" />
+=======
+        <swiper-item v-for="item in banners" :key="item">
+          <image :src="item.imgurl" />
+>>>>>>> db192296e406f18c82d99fd726adb13258f10d1f
         </swiper-item>
       </swiper>
     </view>
@@ -11,8 +16,13 @@
       <view class="section-title mt10">热门精选</view>
       <view class="section-content mt10">
         <view class="list">
+<<<<<<< HEAD
           <view class="list-item" v-for="item in listImg" :key="item">
             <image :src="item" />
+=======
+          <view class="list-item" v-for="item in listImg" :key="item" @click="openPopup">
+            <image :src="item.val" />
+>>>>>>> db192296e406f18c82d99fd726adb13258f10d1f
           </view>
         </view>
       </view>
@@ -21,14 +31,21 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 
 import app_g from '@/modules/appGlobal'
+=======
+import api from '@/modules/api'
+import appG from '@/modules/appGlobal'
+
+>>>>>>> db192296e406f18c82d99fd726adb13258f10d1f
 export default {
   data() {
     return {
       title: 'hello world!',
       indicatorDots: true,
       autoplay: true,
+<<<<<<< HEAD
       interval: 2000,
       duration: 500,
       bannerImg: [
@@ -62,6 +79,30 @@ export default {
     this.$store.commit('indexStatus', { index: 3 })
     localStorage.setItem('pageTitle', this.pageTitle)
     document.getElementById('pageTitle').innerHTML = localStorage.getItem('pageTitle')
+=======
+      interval: 2001,
+      duration: 500,
+      banners: [],
+      listImg: [
+        { key: "1", val: "/static/images/i1.png" },
+        { key: "2", val: "/static/images/i1.png" },
+        { key: "3", val: "/static/images/i1.png" }
+      ]
+    }
+  },
+  onLoad() {
+    this.api_200()
+  },
+  methods: {
+    api_200() {
+      let that = this
+      api.post(api.api_200, api.getSign(), function (ele, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          that.banners = res.data.Result.banners
+        }
+      })
+    }
+>>>>>>> db192296e406f18c82d99fd726adb13258f10d1f
   }
 }
 </script>
