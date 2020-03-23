@@ -1,300 +1,287 @@
 {
-    "pages": [
-        //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-        {
-            "path": "pages/home/index",
-            "style": {
-                "navigationBarTitleText": "首页"
-            }
-        },
-        {
-            "path": "pages/card/index",
-            "style": {
-                "navigationBarTitleText": "大客户领取礼品卡"
-            }
-        },
-        {
-            "path": "pages/activity/select-shop",
-            "style": {
-                "navigationBarTitleText": "门店选择"
-            }
-        },
-        {
-            "path": "pages/home/userIndex",
-            "style": {
-                "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#004EA2"
-            }
-        },
-        {
-            "path": "pages/home/catgList",
-            "style": {
-                "navigationBarTitleText": "分类"
-            }
-        },
-        {
-            "path": "pages/activity/index",
-            "style": {
-                "navigationBarTitleText": "活动"
-            }
-        },
-        {
-            "path": "pages/activity/details",
-            "style": {
-                "navigationBarTitleText": "活动详情"
-            }
-        }
-    ],
-    "subPackages": [
-        {
-            "name": "minePack",
-            "root": "pages/mine/",
-            "pages": [
-                {
-                    "path": "after-sale",
-                    "style": {
-                        "navigationBarTitleText": "售后"
-                    }
-                },
-                {
-                    "path": "order-details",
-                    "style": {
-                        "navigationBarTitleText": "订单详情"
-                    }
-                },
-                {
-                    "path": "order",
-                    "style": {
-                        "navigationBarTitleText": "我的订单"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "walletPack",
-            "root": "pages/wallet",
-            "pages": [
-                {
-                    "path": "gift-send",
-                    "style": {
-                        "navigationBarTitleText": "赠送礼品卡"
-                    }
-                },
-                {
-                    "path": "recharge",
-                    "style": {
-                        "navigationBarTitleText": "储值卡充入"
-                    }
-                },
-                {
-                    "path": "detail",
-                    "style": {
-                        "navigationBarTitleText": "零钱明细"
-                    }
-                },
-                {
-                    "path": "pay-coupon",
-                    "style": {
-                        "navigationBarTitleText": "付款码"
-                    }
-                },
-                {
-                    "path": "pay",
-                    "style": {
-                        "navigationBarTitleText": "付款码"
-                    }
-                },
-                {
-                    "path": "coupon",
-                    "style": {
-                        "navigationBarTitleText": "优惠券"
-                    }
-                },
-                {
-                    "path": "index",
-                    "style": {
-                        "navigationBarTitleText": "我的钱包",
-                        "navigationBarTextStyle": "white",
-                        "navigationBarBackgroundColor": "#004EA2"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "catgPack",
-            "root": "pages/category/",
-            "pages": [
-                {
-                    "path": "order",
-                    "style": {
-                        "navigationBarTitleText": "订单填写"
-                    }
-                },
-                {
-                    "path": "coupon",
-                    "style": {
-                        "navigationBarTitleText": "优惠券"
-                    }
-                },
-                {
-                    "path": "cart",
-                    "style": {
-                        "navigationBarTitleText": "购物车"
-                    }
-                },
-                {
-                    "path": "details",
-                    "style": {
-                        "navigationBarTitleText": "商品详情"
-                    }
-                },
-                {
-                    "path": "search-result",
-                    "style": {
-                        "navigationBarTitleText": "搜索"
-                    }
-                },
-                {
-                    "path": "search",
-                    "style": {
-                        "navigationBarTitleText": "搜索"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "userPack",
-            "root": "pages/user/",
-            "pages": [
-                {
-                    "path": "activity",
-                    "style": {
-                        "navigationBarTitleText": "活动中心"
-                    }
-                },
-                {
-                    "path": "point",
-                    "style": {
-                        "navigationBarTitleText": "我的积分",
-                        "navigationBarTextStyle": "white",
-                        "navigationBarBackgroundColor": "#004EA2"
-                    }
-                },
-                {
-                    "path": "about",
-                    "style": {
-                        "navigationBarTitleText": "关于书城"
-                    }
-                },
-                {
-                    "path": "point-rule",
-                    "style": {
-                        "navigationBarTitleText": "积分规则"
-                    }
-                },
-                {
-                    "path": "point-convert",
-                    "style": {
-                        "navigationBarTitleText": "积分兑换",
-                        "navigationBarTextStyle": "white",
-                        "navigationBarBackgroundColor": "#004EA2"
-                    }
-                },
-                {
-                    "path": "point-detail",
-                    "style": {
-                        "navigationBarTitleText": "积分明细",
-                        "navigationBarTextStyle": "white",
-                        "navigationBarBackgroundColor": "#004EA2"
-                    }
-                },
-                {
-                    "path": "activity-ticket",
-                    "style": {
-                        "navigationBarTitleText": "活动票券"
-                    }
-                },
-                {
-                    "path": "activity-detail",
-                    "style": {
-                        "navigationBarTitleText": "活动"
-                    }
-                },
-                {
-                    "path": "card-transfer",
-                    "style": {
-                        "navigationBarTitleText": "会员卡迁移"
-                    }
-                },
-                {
-                    "path": "card-second",
-                    "style": {
-                        "navigationBarTitleText": "授权副卡"
-                    }
-                },
-                {
-                    "path": "rights",
-                    "style": {
-                        "navigationBarTitleText": "会员权益"
-                    }
-                },
-                {
-                    "path": "card",
-                    "style": {
-                        "navigationBarTitleText": "会员俱乐部"
-                    }
-                },
-                {
-                    "path": "open",
-                    "style": {
-                        "navigationBarTitleText": "会员俱乐部"
-                    }
-                }
-            ]
-        }
-    ],
-    "globalStyle": {
-        "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "友谊书城",
-        "navigationBarBackgroundColor": "#fff",
-        "backgroundColor": "#EDEDED"
+  "pages": [
+    //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "首页"
+      }
     },
-    "tabBar": {
-        "color": "#4F4F4F",
-        "selectedColor": "#0056B2",
-        "borderStyle": "black",
-        "backgroundColor": "#ffffff",
-        "list": [
-            {
-                "pagePath": "pages/home/index",
-                "iconPath": "static/icon/home.png",
-                "selectedIconPath": "static/icon/home_a.png",
-                "text": "首页"
-            },
-            {
-                "pagePath": "pages/home/catgList",
-                "iconPath": "static/icon/classify.png",
-                "selectedIconPath": "static/icon/classify_a.png",
-                "text": "分类"
-            },
-            {
-                "pagePath": "pages/activity/index",
-                "iconPath": "static/icon/activity.png",
-                "selectedIconPath": "static/icon/activity_a.png",
-                "text": "活动"
-            },
-            {
-                "pagePath": "pages/card/index",
-                "iconPath": "static/icon/gift.png",
-                "selectedIconPath": "static/icon/gift_a.png",
-                "text": "礼品卡"
-            },
-            {
-                "pagePath": "pages/home/userIndex",
-                "iconPath": "static/icon/mine.png",
-                "selectedIconPath": "static/icon/mine_a.png",
-                "text": "我的"
-            }
-        ]
+    {
+      "path": "pages/mine/after-sale",
+      "style": {
+        "navigationBarTitleText": "售后"
+      }
+    },
+    {
+      "path": "pages/mine/order-details",
+      "style": {
+        "navigationBarTitleText": "订单详情"
+      }
+    },
+    {
+      "path": "pages/mine/order",
+      "style": {
+        "navigationBarTitleText": "我的订单"
+      }
+    },
+    {
+      "path": "pages/card/index",
+      "style": {
+        "navigationBarTitleText": "大客户领取礼品卡"
+      }
+    },
+    {
+      "path": "pages/category/order",
+      "style": {
+        "navigationBarTitleText": "订单填写"
+      }
+    },
+    {
+      "path": "pages/category/coupon",
+      "style": {
+        "navigationBarTitleText": "优惠券"
+      }
+    },
+    {
+      "path": "pages/category/cart",
+      "style": {
+        "navigationBarTitleText": "购物车"
+      }
+    },
+    {
+      "path": "pages/category/details",
+      "style": {
+        "navigationBarTitleText": "商品详情"
+      }
+    },
+    {
+      "path": "pages/category/search-result",
+      "style": {
+        "navigationBarTitleText": "搜索"
+      }
+    },
+    {
+      "path": "pages/category/search",
+      "style": {
+        "navigationBarTitleText": "搜索"
+      }
+    },
+    {
+      "path": "pages/activity/select-shop",
+      "style": {
+        "navigationBarTitleText": "门店选择"
+      }
+    },
+    {
+      "path": "pages/user/index",
+      "style":{
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#004EA2"
+      }
+    },
+    {
+      "path": "pages/wallet/index",
+      "style": {
+        "navigationBarTitleText": "我的钱包",
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#004EA2"
+      }
+    },
+    {
+      "path": "pages/user/activity",
+      "style": {
+        "navigationBarTitleText": "活动中心"
+      }
+    },
+    {
+      "path": "pages/wallet/coupon",
+      "style": {
+        "navigationBarTitleText": "优惠券"
+      }
+    },
+    {
+      "path": "pages/user/point",
+      "style": {
+        "navigationBarTitleText": "我的积分",
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#004EA2"
+      }
+    },
+    {
+      "path": "pages/user/about",
+      "style": {
+        "navigationBarTitleText": "关于书城"
+      }
+    },
+    {
+      "path": "pages/user/point-rule",
+      "style": {
+        "navigationBarTitleText": "积分规则"
+      }
+    },
+    {
+      "path": "pages/user/point-convert",
+      "style": {
+        "navigationBarTitleText": "积分兑换",
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#004EA2"
+      }
+    },
+    {
+      "path": "pages/user/point-detail",
+      "style": {
+        "navigationBarTitleText": "积分明细",
+        "navigationBarTextStyle": "white",
+        "navigationBarBackgroundColor": "#004EA2"
+      }
+    },
+    {
+      "path": "pages/user/activity-ticket",
+      "style": {
+        "navigationBarTitleText": "活动票券"
+      }
+    },
+    {
+      "path": "pages/user/activity-detail",
+      "style": {
+        "navigationBarTitleText": "活动"
+      }
+    },
+    {
+      "path": "pages/wallet/gift-buy",
+      "style": {
+        "navigationBarTitleText": "购买礼品卡"
+      }
+    },
+    {
+      "path": "pages/wallet/gift-accept",
+      "style": {
+        "navigationBarTitleText": "领取礼品卡"
+      }
+    },
+    {
+      "path": "pages/wallet/gift-send",
+      "style": {
+        "navigationBarTitleText": "赠送礼品卡"
+      }
+    },
+    {
+      "path": "pages/wallet/recharge",
+      "style": {
+        "navigationBarTitleText": "储值卡充入"
+      }
+    },
+    {
+      "path": "pages/wallet/detail",
+      "style": {
+        "navigationBarTitleText": "零钱明细"
+      }
+    },
+    {
+      "path": "pages/wallet/pay-coupon",
+      "style": {
+        "navigationBarTitleText": "付款码"
+      }
+    },
+    {
+      "path": "pages/wallet/pay",
+      "style": {
+        "navigationBarTitleText": "付款码"
+      }
+    },
+    {
+      "path": "pages/user/card-transfer",
+      "style": {
+        "navigationBarTitleText": "会员卡迁移"
+      }
+    },
+    {
+      "path": "pages/user/card-second",
+      "style": {
+        "navigationBarTitleText": "授权副卡"
+      }
+    },
+    {
+      "path": "pages/user/rights",
+      "style": {
+        "navigationBarTitleText": "会员权益"
+      }
+    },
+    {
+      "path": "pages/user/card",
+      "style": {
+        "navigationBarTitleText": "会员俱乐部"
+      }
+    },
+    {
+      "path": "pages/user/open",
+      "style": {
+        "navigationBarTitleText": "会员俱乐部"
+      }
+    },
+    
+    {
+      "path": "pages/category/index",
+      "style": {
+        "navigationBarTitleText": "分类"
+      }
+    },
+    {
+      "path": "pages/activity/index",
+      "style": {
+        "navigationBarTitleText": "活动"
+      }
+    },
+    {
+      "path": "pages/activity/details",
+      "style": {
+        "navigationBarTitleText": "活动详情"
+      }
     }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "友谊书城",
+    "navigationBarBackgroundColor": "#fff",
+    "backgroundColor": "#EDEDED"
+  },
+  "tabBar": {
+    "color": "#4F4F4F",
+    "selectedColor": "#0056B2",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "iconPath": "static/icon/home.png",
+        "selectedIconPath": "static/icon/home_a.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/category/index",
+        "iconPath": "static/icon/classify.png",
+        "selectedIconPath": "static/icon/classify_a.png",
+        "text": "分类"
+      },
+      {
+        "pagePath": "pages/activity/index",
+        "iconPath": "static/icon/activity.png",
+        "selectedIconPath": "static/icon/activity_a.png",
+        "text": "活动"
+      },
+      {
+        "pagePath": "pages/card/index",
+        "iconPath": "static/icon/gift.png",
+        "selectedIconPath": "static/icon/gift_a.png",
+        "text": "礼品卡"
+      },
+      {
+        "pagePath": "pages/user/index",
+        "iconPath": "static/icon/mine.png",
+        "selectedIconPath": "static/icon/mine_a.png",
+        "text": "我的"
+      }
+    ]
+  }
 }
