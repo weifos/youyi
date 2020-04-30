@@ -75,12 +75,12 @@
         <view class="con-no mt40">
           <text>数量</text>
           <view>
-            <uni-number-box class="number-box-skin-1"></uni-number-box>
+            <uni-number-box class="number-box-skin-1" :value="buyCount" :min="1" @change="change"></uni-number-box>
           </view>
         </view>
       </view>
       <view class="pop-btns">
-        <button class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="closePopup">确定</button>
+        <button class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="submit">确定</button>
       </view>
       <view class="btn-close-pop" @click="closePopup">
         <view class="icon-close"></view>
@@ -225,6 +225,9 @@ export default {
     closePopup() {
       this.$refs.popup.close()
     },
+    change(value) {
+      this.buyCount = value;
+    },
     //规格选中事件
     check(item) {
       let that = this
@@ -322,7 +325,7 @@ export default {
         let sku_id = items.map(item => item.specname_id + "_" + item.id).join(',')
         //在当前sku集合中获取
         this.pResult.skus.forEach(function (item, index) {
-          if (app_g.util.compareSku(sku_id, item.specset)) {
+          if (appG.util.compareSku(sku_id, item.specset)) {
             data = item
             return
           }
@@ -337,6 +340,9 @@ export default {
     },
     //提交
     submit() {
+
+      this.$refs.popup.close()
+
       if (!this.isCanSubmit) return
       //选中的商品SKU
       let tmp = this.getSelectSkuVal()
@@ -349,12 +355,18 @@ export default {
         //加入购物车的数量
         tmp.count = this.buyCount
         //加入本地购物车
-        app_g.setShoppingCart(tmp)
+        //appG.setShoppingCart(tmp)
       }
-      //加入本地购物车
-      this.$emit('setShoppingCart')
 
-      this.$emit('cancelSKU')
+      uni.navigateTo({
+        url: 'order?id='
+      })
+      //   uni.navigateTo({
+      //     url: '../mine/order?id='
+      //   })
+      //加入本地购物车
+      //this.$emit('setShoppingCart')
+      //this.$emit('cancelSKU')
     },
     //关闭当前页
     close() {
