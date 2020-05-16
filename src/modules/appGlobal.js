@@ -495,6 +495,82 @@ export default {
                 }
             }
         },
+        //生成流水号
+        getSerialNum: function (prefix, len) {
+            let now = new Date()
+            let year = now.getFullYear().toString().substr(2, 2)
+            let month = now.getMonth() + 1
+            let day = now.getDate()
+            let hour = now.getHours()
+            let minutes = now.getMinutes()
+            let seconds = now.getSeconds()
+            let milliSeconds = now.getMilliseconds()
+            month = String(month).length < 2 ? ("0" + month.toString()) : month
+            day = String(day).length < 2 ? ("0" + day.toString()) : day
+            hour = String(hour).length < 2 ? ("0" + hour.toString()) : hour
+            minutes = String(minutes).length < 2 ? ("0" + minutes.toString()) : minutes
+            seconds = String(seconds).length < 2 ? ("0" + seconds.toString()) : seconds
+            if (String(milliSeconds).length == 1) {
+                milliSeconds = "00" + milliSeconds.toString()
+            } else if (String(milliSeconds).length == 2) {
+                milliSeconds = "0" + milliSeconds.toString()
+            }
+
+            let str_random = ''
+            if (len > 15) {
+                let chars = '0123456789'
+                let maxPos = chars.length
+                for (let i = 0; i < len - 15; i++) {
+                    str_random += chars.charAt(Math.floor(Math.random() * maxPos))
+                }
+            }
+
+            let str = `${year}${month}${day}${hour}${minutes}${seconds}${milliSeconds}` + str_random
+            if (prefix != undefined && prefix != null) {
+                return prefix + str
+            }
+            return str
+        },
+        //获取最小值到最大值之前的整数随机数
+        getRandom: function (Min, Max) {
+            var Range = Max - Min;
+            var Rand = Math.random();
+            return (Min + Math.round(Rand * Range));
+        },
+        //比对sku字符串
+        compareSku: function (sku1, sku2) {
+            let exist = 0
+            let arr = sku1.split(',')
+            let arr1 = sku2.split(',')
+            //sku集合是否一致
+            if (arr.length != arr1.length) {
+                return false
+            }
+
+            arr.forEach(function (o, i) {
+                arr1.forEach(function (oo, ii) {
+                    if (oo == o) {
+                        exist++
+                    }
+                })
+            })
+            return arr.length == exist
+        },
+        //获取SKU信息
+        getCustomName: function (specCustoms, name_id, val_id, val) {
+            var custom_name = val
+            specCustoms.forEach(function (item, index) {
+                if (
+                    name_id == item.specname_id &&
+                    val_id == item.specvalue_id &&
+                    item.custom_value != ''
+                ) {
+                    custom_name = item.custom_value
+                    return
+                }
+            })
+            return custom_name
+        },
         //本地文件转成base64
         fileToBase64: function () {
             return new Promise((resolve, reject) => {

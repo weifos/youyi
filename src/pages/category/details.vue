@@ -110,7 +110,6 @@ export default {
       //是否能够购买
       isCanSubmit: false,
       store_id: 0,
-      product: { name: '' },
       //是否加入购物车
       isAddToCart: false,
       //显示sku模态框
@@ -118,22 +117,14 @@ export default {
       //购买数量
       buyCount: 1,
       //选择的sku
-      selectSku: {
-        stock_num: 0,
-        specset: '',
-        sale_price: 0,
-        product_id: 0
-      },
+      selectSku: null,
       //单价
       unitPrice: 0,
       //总计
       totalPrice: 0,
       //商品详情
       pResult: {
-        title: "--",
-        intro: "--",
-        info: "--",
-        price: 0,
+        product: { name: '' },
         skus: [],
         imgs: []
       },
@@ -208,7 +199,7 @@ export default {
       //是否可用点击
       if (!item.is_enable) return
       //当前索引      
-      var i = this.pResult.specNames.findIndex((val) => val.id == item.specname_id)
+      var i = that.pResult.specNames.findIndex((val) => val.id == item.specname_id)
       //设置点击状态
       that.pResult.specValues.map((obj, index, arr) => {
         if (obj.specname_id == item.specname_id) {
@@ -220,12 +211,12 @@ export default {
       })
 
       //判断下一行索引是否大于数组总长度 
-      if (i + 1 > this.pResult.specNames.length - 1) {
+      if (i + 1 > that.pResult.specNames.length - 1) {
         //全部选中
-        this.getSelectSkuVal()
+        that.getSelectSkuVal()
       } else {
         //清除未选择的状态
-        let clearSpecNames = this.pResult.specNames.filter((val, index) => index > i)
+        let clearSpecNames = that.pResult.specNames.filter((val, index) => index > i)
         clearSpecNames.forEach(function (item, index) {
           that.pResult.specValues.map(function (obj, i) {
             if (obj.specname_id == item.id) {
@@ -236,7 +227,7 @@ export default {
         })
 
         //绑定下一行
-        this.bindSKU(this.pResult.specNames[i + 1].id, item)
+        that.bindSKU(that.pResult.specNames[i + 1].id, item)
       }
     },
     //绑定每行sku状态
@@ -286,30 +277,31 @@ export default {
     },
     //获取选中完成的sku
     getSelectSkuVal() {
-      let items = this.pResult.specValues.filter(val => val.checked == true)
-      if (items.length < this.pResult.specNames.length) {
-        let name = this.pResult.specNames[items.length].name
+      let that = this
+      let items = that.pResult.specValues.filter(val => val.checked == true)
+      if (items.length < that.pResult.specNames.length) {
+        let name = that.pResult.specNames[items.length].name
         uni.showToast({ title: "请选择" + name, duration: 2000 })
         return null
       }
 
       let data = null
-      if (this.product.is_open_spec) {
+      if (that.pResult.product.is_open_spec) {
         //获取选中数据
         let sku_id = items.map(item => item.specname_id + "_" + item.id).join(',')
         //在当前sku集合中获取
-        this.pResult.skus.forEach(function (item, index) {
+        that.pResult.skus.forEach(function (item, index) {
           if (appG.util.compareSku(sku_id, item.specset)) {
             data = item
             return
           }
         })
       } else {
-        data = this.selectSku
+        data = that.selectSku
       }
 
-      this.selectSku = data
-      this.checkUpdate()
+      that.selectSku = data
+      that.checkUpdate()
       return data
     },
     //提交
@@ -322,12 +314,11 @@ export default {
 
       if (tmp != null) {
         //门店商品ID
-        tmp.sto_product_id = this.product.id
+        //tmp.sto_product_id = this.selectSku.product.id
         //平台商品ID
-        tmp.product_id = this.product.product_id
+        tmp.product_id = this.selectSku.product_id
         //加入购物车的数量
         tmp.count = this.buyCount
-
         //加入购物车
         if (this.isAddToCart) {
           user.methods.setShoppingCart(tmp)
