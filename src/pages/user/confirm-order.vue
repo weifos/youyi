@@ -143,10 +143,15 @@ export default {
       })
     } else {
       if (opt.said) {
-
+        this.addr.id = opt.said
       }
 
-      //加载默认收货地址
+      //当前购买的商品信息
+      let item = user.methods.getBuyNow()
+      this.orderList.push(item)
+      console.log(this.orderList)
+      return
+      //加载收货地址和运费
       this.api_307()
     }
   },
