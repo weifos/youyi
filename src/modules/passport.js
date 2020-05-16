@@ -48,11 +48,8 @@ module.exports = {
                         Code: res.code
                     }), function (app, res) {
                         if (res.data.Basis.State == api.state.state_200) {
-                            //session_key 写入缓存
-                            wx.setStorage({
-                                key: "session_key",
-                                data: res.data.Result.session_key
-                            })
+                            //session_key 写入缓存 
+                            uni.setStorageSync('session_key', res.data.Result.session_key);
                             wxuser.openid = res.data.Result.openid
                             user.methods.login(wxuser)
                             func(res.data.Result.openid)

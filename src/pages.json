@@ -32,21 +32,9 @@
             }
         },
         {
-            "path": "pages/category/order",
-            "style": {
-                "navigationBarTitleText": "订单填写"
-            }
-        },
-        {
             "path": "pages/category/coupon",
             "style": {
                 "navigationBarTitleText": "优惠券"
-            }
-        },
-        {
-            "path": "pages/category/cart",
-            "style": {
-                "navigationBarTitleText": "购物车"
             }
         },
         {
@@ -74,7 +62,7 @@
             }
         },
         {
-            "path": "pages/user/index",
+            "path": "pages/home/userIndex",
             "style": {
                 "navigationBarTextStyle": "white",
                 "navigationBarBackgroundColor": "#004EA2"
@@ -86,6 +74,12 @@
                 "navigationBarTitleText": "我的钱包",
                 "navigationBarTextStyle": "white",
                 "navigationBarBackgroundColor": "#004EA2"
+            }
+        },
+        {
+            "path": "pages/user/confirm-order",
+            "style": {
+                "navigationBarTitleText": "确认订单"
             }
         },
         {
@@ -149,6 +143,24 @@
             }
         },
         {
+            "path": "pages/user/address/index",
+            "style": {
+                "navigationBarTitleText": "收货地址"
+            }
+        },
+        {
+            "path": "pages/user/address/form",
+            "style": {
+                "navigationBarTitleText": "收货地址"
+            }
+        },
+        {
+            "path": "pages/user/address/manage",
+            "style": {
+                "navigationBarTitleText": "收货地址"
+            }
+        },
+        {
             "path": "pages/wallet/gift-buy",
             "style": {
                 "navigationBarTitleText": "购买礼品卡"
@@ -206,6 +218,12 @@
             "path": "pages/user/rights",
             "style": {
                 "navigationBarTitleText": "会员权益"
+            }
+        },
+        {
+            "path": "pages/user/shopping-cart",
+            "style": {
+                "navigationBarTitleText": "购物车"
             }
         },
         {
@@ -276,7 +294,7 @@
                 "text": "礼品卡"
             },
             {
-                "pagePath": "pages/user/index",
+                "pagePath": "pages/home/userIndex",
                 "iconPath": "static/icon/mine.png",
                 "selectedIconPath": "static/icon/mine_a.png",
                 "text": "我的"

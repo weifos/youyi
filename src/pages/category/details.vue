@@ -8,34 +8,38 @@
       </swiper>
     </view>
     <view class="product-info-bar section">
-      <view class="product-price text-sub">￥{{productInfo.price}}</view>
-      <view class="product-title mt15 text-size-lg bold">{{productInfo.title}}</view>
-      <view class="product-intro text-gray text-size-sm mt15 ellipsis2">{{productInfo.intro}}</view>
-      <view class="product-info text-size-sm mt15">{{productInfo.info}}</view>
+      <view class="product-price text-sub">￥{{pResult.product.sale_price}}</view>
+      <view class="product-title mt15 text-size-lg bold">{{pResult.product.name}}</view>
+      <view class="product-intro text-gray text-size-sm mt15 ellipsis2">{{pResult.product.introduction}}</view>
+      <view class="product-info text-size-sm mt15">
+        {{pResult.product.field1==null?'':pResult.product.field1}} 著/
+        {{pResult.product.field2==null?'':pResult.product.field2}} /
+        {{pResult.product.field3==null?'':pResult.product.field3}}
+      </view>
     </view>
-    <view class="product-discount-bar section" v-if="discountInfo.length > 0">
+    <!-- <view class="product-discount-bar section" v-if="discountInfo.length > 0">
       <view class="section-title">促销</view>
       <view class="discount-item ellipsis" v-for="item in discountInfo" :key="item">
         <text class="discount-tag">{{item.type}}</text>
         <text class="discount-title">{{item.name}}</text>
       </view>
       <view class="icon-arrow"></view>
-    </view>
-    <view class="product-address-bar section">
+    </view>-->
+    <!-- <view class="product-address-bar section">
       <view class="text-address">
         <text class="text-gray">送至</text>
         <text class="ml20">广东 深圳 南山</text>
       </view>
       <view class="icon-arrow"></view>
       <view class="text-freight mt10">运费：6元</view>
-    </view>
+    </view>-->
     <view class="product-detail-bar section">
       <image src="/static/images/dt.png" style="width:100%;height:1358rpx;" />
     </view>
     <!-- product-side-bar s -->
     <view class="product-side-bar">
       <view class="icon-bar">
-        <view class="item btn-home">
+        <view class="item btn-home" @click="switchTab('/pages/home/index')">
           <view class="icon-home"></view>
           <view class="text text-size-sm">首页</view>
         </view>
@@ -43,14 +47,14 @@
           <view class="icon-collect"></view>
           <view class="text text-size-sm">收藏</view>
         </view>
-        <view class="item btn-cart">
+        <view class="item btn-cart" @click="navigateTo('/pages/user/shopping-cart')">
           <view class="icon-cart"></view>
           <view class="text text-size-sm">购物车</view>
         </view>
       </view>
       <view class="btns-bar">
-        <button class="btn bg-sub text-white text-size-basic" @click="buyNow">立即购买</button>
-        <button class="btn bg-main text-white text-size-basic">加入购物车</button>
+        <button class="btn bg-sub text-white text-size-basic" @click="popupOpen(false)">立即购买</button>
+        <button class="btn bg-main text-white text-size-basic" @click="popupOpen(true)">加入购物车</button>
       </view>
     </view>
     <!-- product-side-bar e -->
@@ -59,11 +63,11 @@
       <view class="pop-content">
         <view class="hidden border-bottom">
           <view class="con-img">
-            <image :src="orderInfo.url" />
+            <image :src="pResult.product.img_url" />
           </view>
           <view class="con-info">
             <view class="con-price">
-              <text class="text-sub text-price">￥{{orderInfo.price}}</text>
+              <text class="text-sub text-price">￥{{unitPrice}}</text>
             </view>
             <view class="con-select-info mt10">已选 黑色 大号</view>
           </view>
@@ -80,7 +84,8 @@
         </view>
       </view>
       <view class="pop-btns">
-        <button class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="submit">确定</button>
+        <button v-if="isAddToCart" class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="submit">加入购物车</button>
+        <button v-else class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="submit">确定购买</button>
       </view>
       <view class="btn-close-pop" @click="closePopup">
         <view class="icon-close"></view>
@@ -92,6 +97,7 @@
 
 <script>
 import api from '@/modules/api'
+import user from '@/modules/userInfo'
 import appG from '@/modules/appGlobal'
 import { uniPopup, uniNumberBox } from "@dcloudio/uni-ui"
 import operationButton from '@/components/yoyi-operation-button/'
@@ -102,11 +108,11 @@ export default {
       imgUrl: '',
       isShow: false,
       //是否能够购买
-      isCanSubmit: true,
+      isCanSubmit: false,
       store_id: 0,
       product: { name: '' },
       //是否加入购物车
-      isJoinSCart: false,
+      isAddToCart: false,
       //显示sku模态框
       showDialog: false,
       //购买数量
@@ -122,57 +128,24 @@ export default {
       unitPrice: 0,
       //总计
       totalPrice: 0,
+      //商品详情
       pResult: {
+        title: "--",
+        intro: "--",
+        info: "--",
+        price: 0,
         skus: [],
-        imgs: [],
+        imgs: []
       },
-
+      //是否收藏
       collected: false,
-      productInfo: {
-        title: "中国少年儿童百科全书(全套共10册)",
-        intro: "专业百科社打造少年儿童百科权威版本；大量二维码视频打造立体式情景阅读体验，全套共10册，包含地球...",
-        info: "贺晓兴 著／中国大百科全书出版社／2016.09.15",
-        price: 88
-      },
       discountInfo: [{
         type: "优惠购",
         name: "现在购买享受 ¥ 27.50，限购10件…"
-      },
-      {
-        type: "加价购",
-        name: "现在购买享受 ¥ 27.50，限购10件…"
       }
       ],
-      orderInfo: {
-        url: "/static/images/27891160-1_l_2.png",
-        price: 88,
-        parameter: [
-          {
-            type: "颜色",
-            value: [{
-              name: "黑色",
-              selected: 1,
-            }, {
-              name: "蓝色",
-              selected: 0,
-            }, {
-              name: "白色",
-              selected: 0,
-            }]
-          }, {
-            type: "规格",
-            value: [{
-              name: "大",
-              selected: 1,
-            }, {
-              name: "中",
-              selected: 0,
-            }, {
-              name: "小",
-              selected: 0,
-            }]
-          }]
-      }
+      //小图封面
+      coverUrl: ''
     }
   },
   components: {
@@ -214,8 +187,9 @@ export default {
     onClickCollect() {
       this.collected = true;
     },
-    //立即购买
-    buyNow() {
+    //购买或加入购物车
+    popupOpen(isAddToCart) {
+      this.isAddToCart = isAddToCart
       if (this.pResult.skus.length > 0) {
         this.$refs.popup.open()
       } else {
@@ -315,7 +289,7 @@ export default {
       let items = this.pResult.specValues.filter(val => val.checked == true)
       if (items.length < this.pResult.specNames.length) {
         let name = this.pResult.specNames[items.length].name
-        this.$vux.toast.text("请选择" + name, 'default', 3000)
+        uni.showToast({ title: "请选择" + name, duration: 2000 })
         return null
       }
 
@@ -340,9 +314,8 @@ export default {
     },
     //提交
     submit() {
-
       this.$refs.popup.close()
-
+      //初始化是否能够提交
       if (!this.isCanSubmit) return
       //选中的商品SKU
       let tmp = this.getSelectSkuVal()
@@ -354,19 +327,19 @@ export default {
         tmp.product_id = this.product.product_id
         //加入购物车的数量
         tmp.count = this.buyCount
-        //加入本地购物车
-        //appG.setShoppingCart(tmp)
-      }
 
-      uni.navigateTo({
-        url: 'order?id='
-      })
-      //   uni.navigateTo({
-      //     url: '../mine/order?id='
-      //   })
-      //加入本地购物车
-      //this.$emit('setShoppingCart')
-      //this.$emit('cancelSKU')
+        //加入购物车
+        if (this.isAddToCart) {
+          user.methods.setShoppingCart(tmp)
+        } else {
+          //加入本地存取立即购买
+          user.methods.setBuyNow(tmp)
+          uni.navigateTo({
+            url: '/pages/user/confirm-order'
+          })
+        }
+
+      }
     },
     //关闭当前页
     close() {
@@ -400,26 +373,11 @@ export default {
     },
     //初始化
     init: function () {
-      if (this.pResult.product.is_open_spec) {
-        if (this.pResult.specNames.length == 0) return
-        this.totalPrice = 0
-        //获购买数量
-        this.buyCount = 1
-        //获取首行规格名称id
-        let one_name_id = this.pResult.specNames[0].id
-        //绑定首行状态
-        this.bindSKU(one_name_id)
-      } else {
-        if (this.pResult.skus[0] != undefined) {
-          this.selectSku = this.pResult.skus[0]
-          this.totalPrice = this.selectSku.sale_price
-          this.checkUpdate()
-        }
-      }
 
-      this.isCanSubmit = this.pResult.skus.filter(sku => sku.is_enable).length > 0
     },
-    //获取商品详情
+    /**
+     * 加载商品详情
+     */
     api_203(id) {
       let that = this
       api.post(api.api_203, api.getSign({
@@ -432,62 +390,32 @@ export default {
           })
 
           that.pResult = res.data.Result
-          that.init()
+
+          if (that.pResult.product.is_open_spec) {
+            if (that.pResult.specNames.length == 0) return
+            that.totalPrice = 0
+            //获购买数量
+            that.buyCount = 1
+            //获取首行规格名称id
+            let one_name_id = that.pResult.specNames[0].id
+            //绑定首行状态
+            that.bindSKU(one_name_id)
+          } else {
+            if (that.pResult.skus[0] != undefined) {
+              that.selectSku = that.pResult.skus[0]
+              that.totalPrice = that.selectSku.sale_price
+              that.checkUpdate()
+            }
+          }
+
+          that.isCanSubmit = that.pResult.skus.filter(sku => sku.is_enable).length > 0
+
         } else {
           uni.showToast({ title: res.data.Msg, duration: 2000 })
         }
       })
     },
-    /**
-     * 加载商品详情
-     */
-    api_204: function () {
-      var that = this
-      //是否包邮
-      let is_postage = this.pResult.product.is_postage == undefined ? false : this.pResult.product.is_postage
-      //立即购买
-      if (this.isJoinSCart) {
-        let list = [{
-          store_id: this.store_id,
-          product_id: this.selectSku.product_id,
-          is_postage: is_postage,
-          specset: this.selectSku.specset,
-          img_url: this.pResult.product.img_url,
-          product_name: this.selectSku.product_name,
-          product_en_name: this.selectSku.product_en_name,
-          product_price: this.selectSku.sale_price,
-          subtotal: this.selectSku.sale_price * this.buyCount,
-          count: this.buyCount
-        }]
 
-        //提交到本地存储临时数据
-        user.methods.buyNow(list)
-        //加入购物车
-      } else {
-        let that = this
-        api.post(api.api_306,
-          api.getSign({
-            StoreId: this.store_id,
-            SPID: this.selectSku.product_id,
-            PID: this.pResult.product.product_id,
-            SpecSet: this.selectSku.specset,
-            Count: this.buyCount
-          }),
-          function (vue, res) {
-            if (res.data.Basis.State == api.state.state_200) {
-              //更新父级页面事件
-              that.triggerEvent('updateSCart', res.data)
-            } else {
-              wx.showToast({
-                title: res.data.Basis.Msg,
-                icon: 'none',
-                duration: 3000
-              })
-            }
-          }
-        )
-      }
-    },
     /**
      * 提交订单
      */
@@ -501,15 +429,25 @@ export default {
             duration: 3000
           })
         } else {
-          //   that.setData({
-          //     result: res.data.Result.catgs
-          //   })
 
-          //初始化数据
-          that.initData(res.data.Result.catgs, res.data.Result.productList)
-          //设置选中类别
-          that.setCatgId(catg_id)
         }
+      })
+    },
+    /**
+     * 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
+     */
+    switchTab(url) {
+      //重新跳转到用户中心 
+      uni.switchTab({
+        url: url
+      })
+    },
+    /**
+     * 保留当前页面，跳转到应用内的某个页面
+     */
+    navigateTo(url) {
+      uni.navigateTo({
+        url
       })
     }
 
@@ -623,6 +561,7 @@ export default {
 .pop-product {
   .pop-content {
     padding: 2 * 20px;
+    background-color: #fff;
   }
   .con-info {
     padding-top: 30px;
@@ -647,6 +586,7 @@ export default {
       display: inline-block;
       //   width: 2 * 60px;
       height: 2 * 30px;
+      padding: 0 2vw 0 2vw;
       line-height: 2 * 30px;
       text-align: center;
       background-color: #f5f5f5;

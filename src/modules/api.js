@@ -76,7 +76,7 @@ module.exports = {
     api_213: domain + "213",
     //
     api_300: domain + "300",
-    //
+    //保存用户信息
     api_301: domain + "301",
     //获取购物车
     api_302: domain + "302",
@@ -88,13 +88,13 @@ module.exports = {
     api_305: domain + "305",
     //加入购物车
     api_306: domain + "306",
-    //
+    //加载默认收货地址
     api_307: domain + "307",
     //
     api_308: domain + "308",
-    //
+    //保存收货地址
     api_309: domain + "309",
-    //
+    //设置默认收货地址
     api_310: domain + "310",
     //
     api_311: domain + "311",
@@ -104,6 +104,8 @@ module.exports = {
     api_313: domain + "313",
     //创建咖啡订单
     api_314: domain + "314",
+    //根据ID获取收货地址
+    api_316: domain + "316",
     //微信小程序预支付订单
     api_317: domain + "317",
     //订单列表
@@ -185,17 +187,23 @@ module.exports = {
                 //如果登录失效
                 if (res.data.Basis != undefined && res.data.Basis.State == 205 || res.data.Basis.State == 211) {
                     //主动注销用户信息
-                    this.UserInfo.loginOut()
+                    user.methods.loginOut()
                     //弹出登录失效错误信息
                     uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
-                    //删除用户信息
-                    wx.removeStorageSync('user_info')
                     //当前页面路径
-                    var returl = appG.util.getUrl()
+                    var returl = getCurrentPages()[0].route
                     //存储到缓存
-                    wx.setStorageSync("returl", returl)
-                    //重新跳转到用户中心
-                    router.goUrl({ url: "/pages/user/index?backUrl=" + returl })
+                    uni.setStorage({
+                        key: 'returl',
+                        data: returl,
+                        success: function () { }
+                    })
+
+                    //重新跳转到用户中心 
+                    uni.switchTab({
+                        url: "/pages/user/index?backUrl=" + returl
+                    });
+
                 } else {
                     cb(this, res)
                 }

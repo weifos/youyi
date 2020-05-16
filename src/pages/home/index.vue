@@ -66,8 +66,11 @@ export default {
       }
 
       uni.navigateTo({
-        url: url
+        url: "../user/index?id=42603"
       })
+      //   uni.navigateTo({
+      //     url: url
+      //   })
 
     }
   }

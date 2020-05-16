@@ -1,73 +1,43 @@
-import store from '@/store'
 import api from '@/modules/api'
-import app_g from '@/modules/appGlobal'
 
 export default {
     data: {
         user: { token: '' },
-        confirmOrder: {},
+        //购物车信息
+        sCartOrder: {},
+        //立即购买临时数据
+        buyNowOrder: {},
         historyKeyWord: [],
         hisCourseKeyWord: [],
         historyProduct: [],
         pdtListLayout: 1
     },
     methods: {
+        //获取用户信息
         getUser() {
-            let env = app_g.util.getEnv()
-            switch (env) {
-                case 'wxweb':
-                    let user1 = window.localStorage.getItem("user_info")
-                    if (user1) {
-                        return JSON.parse(user1)
-                    }
-                    return { token: '' }
-
-                case 'wxmini':
-                    let user2 = wx.getStorageSync('user_info')
-                    if (user2) {
-                        return JSON.parse(user2)
-                    }
-
-                    return { token: '' }
-                default:
-                    break
+            //同步获取token
+            let user1 = uni.getStorageSync('user_info')
+            if (user1) {
+                return JSON.parse(user1)
             }
-        },
-        //登录设置本地数据
+            return { token: '' }
+        },//登录设置本地数据
         login(result) {
             this.user = result
-            let env = app_g.util.getEnv()
-            switch (env) {
-                case 'wxweb':
-                    window.localStorage.setItem("token", result.token)
-                    try {
-                        //解决用app内嵌的webview打开网站时，localStorage就失效了
-                        //如果在app里面嵌入 ws.setDomStorageEnabled(true) 设置该属性
-                        window.localStorage.setItem("user_info", JSON.stringify(result))
-                    }
-                    catch (err) {
-                        store.commit('showLoading', { loading: true, title: err, times: 3000 })
-                    }
-                    break
-
-                case 'wxmini':
-                    try {
-                        //wx.setStorage 的同步版本
-                        wx.setStorageSync("user_info", JSON.stringify(result))
-                    } catch (err) {
-                        store.commit('showLoading', { loading: true, title: err, times: 3000 })
-                    }
-                    break
-
-                default:
-                    break
-            }
-        },
-        //登录设置本地数据
+            //同步步设置用户信息
+            uni.setStorageSync('user_info', JSON.stringify(result))
+        },//登录设置本地数据
         loginOut() {
             this.user = { token: '' }
-            window.localStorage.removeItem('token')
-            window.localStorage.removeItem('user_info')
+            uni.removeStorage({
+                key: 'token',
+                success: function (res) { }
+            })
+            uni.removeStorage({
+                key: 'user_info',
+                success: function (res) { }
+            })
+
         },//刷新登录
         refreshLogin(cb) {
             let $this = this
@@ -82,16 +52,36 @@ export default {
                     }
                 }
             )
-        },//提交购物
-        sumitSCart(result) {
+        },//清空购物
+        clearShoppingCart(result) {
+            this.sCartOrder = []
+            //同步清空购物
+            uni.removeStorageSync({
+                key: 'sCartOrder',
+                data: result.token,
+                success: function () { }
+            })
+        },//设置购物车
+        setShoppingCart(result) {
             this.sCartOrder = result
-            window.localStorage.removeItem('sCartOrder')
-            window.localStorage.setItem("sCartOrder", JSON.stringify(result))
-        },//提交立即购买
-        buyNow(result) {
+            //异步设置购物车
+            uni.setStorageSync({
+                key: 'sCartOrder',
+                data: JSON.stringify(result),
+                success: function () { }
+            })
+        },//设置立即购买
+        setBuyNow(result) {
             this.buyNowOrder = result
-            window.localStorage.removeItem('buyNowOrder')
-            window.localStorage.setItem("buyNowOrder", JSON.stringify(result))
+            //同步设置提交立即购买
+            uni.setStorageSync('buyNowOrder', JSON.stringify(result))
+        },//获取立即购买
+        getBuyNow(result) {
+            let entity = uni.getStorageSync('buyNowOrder')
+            if (entity) {
+                return JSON.parse(entity)
+            }
+            return null
         },//设置历史查看商品
         setHistoryProduct(result) {
             if (result == undefined || result == '') return
@@ -177,15 +167,8 @@ export default {
         },//清空历史查询关键词
         clearHistoryKeyWord() {
             if (this.historyKeyWord.length == 0) return
-            //          this.$vux.confirm.show({
-            //              title: '确认清空吗',
-            //              onCancel() { },
-            //              onConfirm() {
             window.localStorage.setItem("historyKeyWord", JSON.stringify([]))
             this.historyKeyWord = []
-            //              }
-            //          })
-
         },//清空历史查询关键词
         clearHisCourseKeyWord() {
             if (this.hisCourseKeyWord.length == 0) return
@@ -199,65 +182,11 @@ export default {
             })
 
         },//是否登录
-        islogin() {
-            if (window.localStorage.getItem("token") == undefined) {
-                return false
-            } else {
-                return true
-            }
-        },
-        openid() {
-            return window.localStorage.getItem("openid")
-        },
-        onLoad: function () {
-
+        isLogin() {
+            let user = this.getUser()
+            if (user.token.length) { return true }
+            return false
         }
-    },
-    created() {
-        let that = this
-        let env = app_g.util.getEnv()
-        switch (env) {
-            case 'wxweb':
-                //提交购物车
-                let sCOrder = window.localStorage.getItem("sCartOrder")
-                if (sCOrder) {
-                    this.sCartOrder = JSON.parse(sCOrder)
-                }
-
-                //立即购买
-                let buyNow = window.localStorage.getItem("buyNowOrder")
-                if (buyNow) {
-                    this.buyNowOrder = JSON.parse(buyNow)
-                }
-
-                let keyWords = window.localStorage.getItem("historyKeyWord")
-                if (keyWords) {
-                    this.historyKeyWord = JSON.parse(keyWords)
-                }
-
-                let products = window.localStorage.getItem("historyProduct")
-                if (products) {
-                    this.historyProduct = JSON.parse(products)
-                }
-
-                //商品布局
-                let pdtListLayout = window.localStorage.getItem("pdtListLayout")
-                if (pdtListLayout) {
-                    this.pdtListLayout = pdtListLayout
-                }
-                break
-
-            case 'wxmini':
-                let user = wx.getStorageSync('user_info')
-                if (user) {
-                    that.user = JSON.parse(user)
-                }
-                break
-
-            default:
-                break
-        }
-
     }
 }
 
