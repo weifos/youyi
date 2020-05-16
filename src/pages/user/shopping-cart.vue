@@ -14,7 +14,7 @@
               <view class="ellipsis">{{item.name}}</view>
               <view class="side-bar">
                 <text class="text-sub text-size-basic">￥{{item.price}}</text>
-                <!-- <uni-number-box :value="item.no" class="number-box-skin-1"></uni-number-box> -->
+                <uni-number-box :value="item.no" class="number-box-skin-1"></uni-number-box>
               </view>
             </view>
           </view>
