@@ -274,7 +274,8 @@ image{
   height: 28px;
 }
 //加减选择器
-.uni-numbox.number-box-skin-1{
+.number-box-skin-1{
+.uni-numbox{
   width: 180px!important;
 
   .uni-numbox{
@@ -301,6 +302,7 @@ image{
     border:none;
     width: 80px;
   }
+}
 }
 .uni-noticebar__content-text{
   font-size: 24px!important;
