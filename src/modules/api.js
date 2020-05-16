@@ -3,7 +3,7 @@ import user from '@/modules/userInfo'
 import md5 from 'blueimp-md5'
 import store from '../store'
 
-//测试环境  
+//测试环境
 let domain = "http://yy.api.youyi.com/"
 let res_domain = "http://yy.res.youyi.com/"
 //测试环境配置
@@ -12,10 +12,18 @@ if (process.env.NODE_ENV !== 'production') {
     res_domain = "http://yy.res.youyi.com/"
 }
 
+// let domain = "http://api66.yoyibook.com:20182/"
+// let res_domain = "http://yy.res.youyi.com:20182/"
+// //测试环境配置
+// if (process.env.NODE_ENV !== 'production') {
+//     domain = "http://api66.yoyibook.com:20182/"
+//     res_domain = "http://res66.yoyibook.com:20182/"
+// }
+
 /// <summary>
 /// 全局配置类
-/// @author   叶委  
-/// @date     2014-05-23         
+/// @author   叶委
+/// @date     2014-05-23
 /// </summary>
 module.exports = {
     //资源站点
@@ -26,11 +34,11 @@ module.exports = {
     api_101: domain + "101",
     //获取微信wxconfig
     api_102: domain + "102",
-    // 103 注册，小程序初始化微信用户 第一步 
+    // 103 注册，小程序初始化微信用户 第一步
     api_103: domain + "103",
     //注册，第二步绑定手机号码
     api_104: domain + "104",
-    //第三步，小程序注册，授权完善微信用户数据 
+    //第三步，小程序注册，授权完善微信用户数据
     api_105: domain + "105",
     //加载用户数据
     api_106: domain + "106",
@@ -58,11 +66,11 @@ module.exports = {
     api_204: domain + "204",
     // 课堂页数据
     api_205: domain + "205",
-    // 
+    //
     api_206: domain + "206",
-    // 
+    //
     api_207: domain + "207",
-    // 
+    //
     api_208: domain + "208",
     //
     api_209: domain + "209",
@@ -180,7 +188,7 @@ module.exports = {
             method: "post",
             data: data,
             header: {
-                //'custom-header': 'hello' 
+                //'custom-header': 'hello'
             },
             //请求成功回调
             success: (res) => {
@@ -199,7 +207,7 @@ module.exports = {
                         success: function () { }
                     })
 
-                    //重新跳转到用户中心 
+                    //重新跳转到用户中心
                     uni.switchTab({
                         url: "/pages/user/index?backUrl=" + returl
                     });
@@ -222,9 +230,9 @@ module.exports = {
     state: {
         // 系统错误
         state_500: 500,
-        // 响应成功 
+        // 响应成功
         state_200: 200,
-        // 验证通过 
+        // 验证通过
         state_0: 0,
         // 验证未通过
         state_1: 1,
