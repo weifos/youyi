@@ -4,21 +4,21 @@ import md5 from 'blueimp-md5'
 import store from '../store'
 
 //测试环境
-// let domain = "http://yy.api.youyi.com/"
-// let res_domain = "http://yy.res.youyi.com/"
-// //测试环境配置
-// if (process.env.NODE_ENV !== 'production') {
-//     domain = "http://yy.api.youyi.com/"
-//     res_domain = "http://yy.res.youyi.com/"
-// }
-
-let domain = "http://api66.yoyibook.com:20182/"
-let res_domain = "http://yy.res.youyi.com:20182/"
-//正式环境配置
+let domain = "http://yy.api.youyi.com/"
+let res_domain = "http://yy.res.youyi.com/"
+//测试环境配置
 if (process.env.NODE_ENV !== 'production') {
-    domain = "http://api66.yoyibook.com:20182/"
-    res_domain = "http://res66.yoyibook.com:20182/"
+    domain = "http://yy.api.youyi.com/"
+    res_domain = "http://yy.res.youyi.com/"
 }
+
+// let domain = "http://api66.yoyibook.com:20182/"
+// let res_domain = "http://yy.res.youyi.com:20182/"
+// //正式环境配置
+// if (process.env.NODE_ENV !== 'production') {
+//     domain = "http://api66.yoyibook.com:20182/"
+//     res_domain = "http://res66.yoyibook.com:20182/"
+// }
 
 /// <summary>
 /// 全局配置类

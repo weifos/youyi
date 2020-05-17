@@ -1867,20 +1867,20 @@ var _store = _interopRequireDefault(__webpack_require__(/*! ../store */ 17));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 //测试环境
-// let domain = "http://yy.api.youyi.com/"
-// let res_domain = "http://yy.res.youyi.com/"
-// //测试环境配置
-// if (process.env.NODE_ENV !== 'production') {
-//     domain = "http://yy.api.youyi.com/"
-//     res_domain = "http://yy.res.youyi.com/"
-// }
-var domain = "http://api66.yoyibook.com:20182/";
-var res_domain = "http://yy.res.youyi.com:20182/"; //正式环境配置
+var domain = "http://yy.api.youyi.com/";
+var res_domain = "http://yy.res.youyi.com/"; //测试环境配置
 
 if (true) {
-  domain = "http://api66.yoyibook.com:20182/";
-  res_domain = "http://res66.yoyibook.com:20182/";
-} /// <summary>
+  domain = "http://yy.api.youyi.com/";
+  res_domain = "http://yy.res.youyi.com/";
+} // let domain = "http://api66.yoyibook.com:20182/"
+// let res_domain = "http://yy.res.youyi.com:20182/"
+// //正式环境配置
+// if (process.env.NODE_ENV !== 'production') {
+//     domain = "http://api66.yoyibook.com:20182/"
+//     res_domain = "http://res66.yoyibook.com:20182/"
+// }
+/// <summary>
 /// 全局配置类
 /// @author   叶委
 /// @date     2014-05-23

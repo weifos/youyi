@@ -54,6 +54,9 @@
 <script>
 import { uniNumberBox } from "@dcloudio/uni-ui";
 export default {
+  components: {
+    uniNumberBox
+  },
   data() {
     return {
       modalName: null,
@@ -73,22 +76,24 @@ export default {
           name: "中国少年儿童百科全书(全套共全套共全套共...",
           price: "96.72",
           no: 2,
-          checked: 0
-        },
-        {
-          url: "/static/images/27891160-1_l_2.png",
-          name: "中国少年儿童百科全书(全套共全套共全套共...",
-          price: "96.72",
-          no: 1,
-          checked: 1
+          checked: 0,
+          options: [{
+            text: '删除',
+            style: {
+              backgroundColor: '#FFB825'
+            }
+          }]
         }
       ]
     };
   },
-  components: {
-    uniNumberBox,
-  },
   methods: {
+    onClick(e) {
+      console.log('当前点击的是第' + e.index + '个按钮，点击内容是' + e.content.text)
+    },
+    change(open) {
+      console.log('当前开启状态：' + open)
+    },
     //加载购物车
     api_302() {
       let that = this;
