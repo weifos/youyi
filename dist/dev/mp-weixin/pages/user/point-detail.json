@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "积分明细",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#004EA2",
+  "usingComponents": {
+    "money-detail-item": "/components/yoyi-money-detail-item/index"
+  }
+}

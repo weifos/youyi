@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "授权副卡",
+  "usingComponents": {
+    "vip-brand": "/components/yoyi-vip-brand/index",
+    "yoyi-title": "/components/yoyi-title/index"
+  }
+}

@@ -1,8 +1,17 @@
 <template>
   <view class="content page-cart">
-    <view class="cart-list">
-      <view class="list-item" v-for="item in cartList" :key="item">
-        <uni-swipe-action :options="options">
+    <view class="cu-list cart-list menu-avatar">
+      <view
+        class="cu-item list-item"
+        :class="modalName=='move-box-'+ index?'move-cur':''"
+        v-for="(item,index) in cartList"
+        :key="item"
+        @touchstart="ListTouchStart"
+        @touchmove="ListTouchMove"
+        @touchend="ListTouchEnd"
+        :data-target="'move-box-' + index"
+      >
+        <view class="content">
           <view class="cont">
             <view class="check-bar">
               <checkbox :checked="item.checked" color="#FFB825" />
@@ -18,7 +27,10 @@
               </view>
             </view>
           </view>
-        </uni-swipe-action>
+        </view>
+        <view class="move">
+          <view class="btn-del">删除</view>
+        </view>
       </view>
     </view>
     <view class="operation-bar">
@@ -40,16 +52,21 @@
 </template>
 
 <script>
-import { uniSwipeAction, uniNumberBox } from "@dcloudio/uni-ui"
+import { uniNumberBox } from "@dcloudio/uni-ui";
 export default {
   data() {
     return {
-      options: [{
-        text: '删除',
-        style: {
-          backgroundColor: '#FFB825'
+      modalName: null,
+      listTouchStart: 0,
+      listTouchDirection: null,
+      options: [
+        {
+          text: "删除",
+          style: {
+            backgroundColor: "#FFB825"
+          }
         }
-      }],
+      ],
       cartList: [
         {
           url: "/static/images/27891160-1_l_2.png",
@@ -66,81 +83,110 @@ export default {
           checked: 1
         }
       ]
-    }
+    };
   },
   components: {
-    uniSwipeAction,
-    uniNumberBox
+    uniNumberBox,
   },
   methods: {
     //加载购物车
     api_302() {
-      let that = this
-      this.post(app_g.api.api_302, api.getSign(), function (vue, res) {
+      let that = this;
+      this.post(app_g.api.api_302, api.getSign(), function(vue, res) {
         if (res.data.Basis.State == app_g.state.state_200) {
           that.setData({
             result: res.data.Result
-          })
-          that.checkUpdate()
+          });
+          that.checkUpdate();
         } else {
           wx.showToast({
             title: res.data.Basis.Msg,
-            icon: 'none',
+            icon: "none",
             duration: 3000
-          })
+          });
         }
-      })
+      });
     },
     //更新购物车
     api_303(item, num, cb) {
-      let that = this
-      api.post(api.api_303, api.getSign({
-        CID: item.id,
-        Count: num,
-        StoProductID: item.sto_product_id,
-        SpecSet: item.specset,
-        StoreID: that.data.order.store_id
-      }), (wx, res) => {
-        cb()
-      })
+      let that = this;
+      api.post(
+        api.api_303,
+        api.getSign({
+          CID: item.id,
+          Count: num,
+          StoProductID: item.sto_product_id,
+          SpecSet: item.specset,
+          StoreID: that.data.order.store_id
+        }),
+        (wx, res) => {
+          cb();
+        }
+      );
     },
     //删除购物车
     api_304(e) {
-      let that = this
+      let that = this;
       //数据
-      let item = e.currentTarget.dataset.item
+      let item = e.currentTarget.dataset.item;
       //请求接口删除
-      api.post(api.api_304, api.getSign({
-        CID: item.id
-      }), function (wx, res) {
-        if (res.data.Basis.State == api.state.state_200) {
-          that.data.result.forEach((ele, index) => {
-            if (ele.id === item.id) {
-              that.data.result.shift(index, 1)
-            }
-          })
+      api.post(
+        api.api_304,
+        api.getSign({
+          CID: item.id
+        }),
+        function(wx, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            that.data.result.forEach((ele, index) => {
+              if (ele.id === item.id) {
+                that.data.result.shift(index, 1);
+              }
+            });
 
-          that.setData({
-            ["result"]: that.data.result
-          })
+            that.setData({
+              ["result"]: that.data.result
+            });
 
-          that.checkUpdate()
-          wx.showToast({
-            title: "删除成功",
-            icon: 'none',
-            duration: 3000
-          })
-        } else {
-          wx.showToast({
-            title: res.data.Basis.Msg,
-            icon: 'none',
-            duration: 3000
-          })
+            that.checkUpdate();
+            wx.showToast({
+              title: "删除成功",
+              icon: "none",
+              duration: 3000
+            });
+          } else {
+            wx.showToast({
+              title: res.data.Basis.Msg,
+              icon: "none",
+              duration: 3000
+            });
+          }
         }
-      })
+      );
+    },
+    // ListTouch触摸开始
+    ListTouchStart(e) {
+      this.listTouchStart = e.touches[0].pageX;
+    },
+
+    // ListTouch计算方向
+    ListTouchMove(e) {
+      this.listTouchDirection =
+        e.touches[0].pageX - this.listTouchStart > 0 ? "right" : "left";
+    },
+
+    // ListTouch计算滚动
+    ListTouchEnd(e) {
+      //console.log(this.listTouchDirection,e.currentTarget.dataset.target)
+      if (this.listTouchDirection == "left") {
+        console.log("aaa", e.currentTarget.dataset.target);
+        this.modalName = e.currentTarget.dataset.target;
+      } else {
+        this.modalName = null;
+      }
+      this.listTouchDirection = null;
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -204,4 +250,40 @@ export default {
     width: 2 * 140px;
   }
 }
+///////
+.btn-del {
+  background-color: #ffb825;
+  color: #fff;
+}
+
+.cu-list + .cu-list {
+  margin-top: 30rpx;
+}
+
+.cu-list > .cu-item {
+  transition: all 0.6s ease-in-out 0s;
+  transform: translateX(0rpx);
+}
+
+.cu-list > .cu-item.move-cur {
+  transform: translateX(-100rpx);
+}
+
+.cu-list > .cu-item .move {
+  position: absolute;
+  right: 0;
+  display: flex;
+  width: 100rpx;
+  height: 100%;
+  transform: translateX(100%);
+  top:0
+}
+
+.cu-list > .cu-item .move view {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
 </style>

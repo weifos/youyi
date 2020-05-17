@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "活动中心",
+  "usingComponents": {
+    "sun-tab": "/components/sun-tab/sun-tab",
+    "activity-item": "/components/yoyi-activity-item/index"
+  }
+}

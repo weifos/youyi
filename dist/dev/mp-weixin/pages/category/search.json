@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "搜索",
+  "usingComponents": {
+    "search-bar": "/components/yoyi-search-bar/index",
+    "uni-tag": "/node-modules/@dcloudio/uni-ui/lib/uni-tag/uni-tag"
+  }
+}

@@ -1,0 +1,1 @@
+.wrapper-user-card{border-top:0.267vw solid #909090}.wrapper-user-card .card-rights-list{display:-webkit-flex;display:flex;-webkit-justify-content:space-around;justify-content:space-around;margin-top:5.333vw}.wrapper-user-card .card-tips{color:#ffb825;text-align:center;position:fixed;left:0;bottom:14.133vw;width:100%}

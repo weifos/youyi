@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "大客户领取礼品卡",
+  "usingComponents": {
+    "yoyi-title": "/components/yoyi-title/index",
+    "operation-button": "/components/yoyi-operation-button/index"
+  }
+}

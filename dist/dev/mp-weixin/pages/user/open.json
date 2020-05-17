@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "会员俱乐部",
+  "usingComponents": {
+    "yoyi-title": "/components/yoyi-title/index",
+    "vip-brand": "/components/yoyi-vip-brand/index",
+    "vip-list-item": "/components/yoyi-vip-list-item/index",
+    "operation-button": "/components/yoyi-operation-button/index"
+  }
+}

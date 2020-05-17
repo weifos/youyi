@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "储值卡充入",
+  "usingComponents": {
+    "yoyi-title": "/components/yoyi-title/index",
+    "operation-button": "/components/yoyi-operation-button/index"
+  }
+}

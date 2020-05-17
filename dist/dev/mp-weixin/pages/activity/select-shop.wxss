@@ -1,0 +1,1 @@
+.list-address .list-item{padding:5.333vw 10.667vw 5.333vw 5.333vw;border-bottom:1px solid #ededed;position:relative}.list-address .item__icon{position:absolute;right:5.333vw;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%)}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "活动",
+  "usingComponents": {
+    "operation-button": "/components/yoyi-operation-button/index"
+  }
+}

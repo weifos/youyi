@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我的订单",
+  "usingComponents": {
+    "sun-tab": "/components/sun-tab/sun-tab",
+    "yoyi-order-item": "/components/yoyi-order-item/index"
+  }
+}

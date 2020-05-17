@@ -1,0 +1,1 @@
+<view data-event-opts="{{[['tap',[['handleClick',['$event']]]]]}}" class="{{['vip-list-item',selected?'selected':'',disabled?'disabled':'']}}" bindtap="__e"><view class="item-title">{{title}}</view><view class="item-price"><text class="item-price-number">{{price}}</text><text class="item-price-unit">{{unit}}</text></view><view class="item-icon"></view></view>

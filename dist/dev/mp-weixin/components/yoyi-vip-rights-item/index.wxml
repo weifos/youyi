@@ -1,0 +1,1 @@
+<view class="vip-rights-item"><view class="{{['rights-item-icon','rights-item-icon-'+type]}}"></view><view class="rights-item-text">{{text}}</view></view>

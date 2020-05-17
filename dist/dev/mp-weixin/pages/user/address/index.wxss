@@ -1,0 +1,1 @@
+.wrapper-user-address{background-color:#f1f1f1;width:100%;min-height:100%;padding:2.667vw;box-sizing:border-box}.wrapper-user-address .user-address-content{padding:6.933vw 4vw;background-color:#fff}.wrapper-user-address .btn-add-address{width:100%;height:12.8vw;color:#fff;line-height:12.8vw;font-size:4.8vw;text-align:center;background-color:#ffb825}

@@ -1,0 +1,92 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/mine/after-sale",
+    "pages/mine/order-details",
+    "pages/mine/order",
+    "pages/card/index",
+    "pages/category/coupon",
+    "pages/category/details",
+    "pages/category/search-result",
+    "pages/category/search",
+    "pages/activity/select-shop",
+    "pages/home/userIndex",
+    "pages/wallet/index",
+    "pages/user/confirm-order",
+    "pages/user/activity",
+    "pages/wallet/coupon",
+    "pages/user/point",
+    "pages/user/about",
+    "pages/user/point-rule",
+    "pages/user/point-convert",
+    "pages/user/point-detail",
+    "pages/user/activity-ticket",
+    "pages/user/activity-detail",
+    "pages/user/address/index",
+    "pages/user/address/form",
+    "pages/user/address/manage",
+    "pages/wallet/gift-buy",
+    "pages/wallet/gift-accept",
+    "pages/wallet/gift-send",
+    "pages/wallet/recharge",
+    "pages/wallet/detail",
+    "pages/wallet/pay-coupon",
+    "pages/wallet/pay",
+    "pages/user/card-transfer",
+    "pages/user/card-second",
+    "pages/user/rights",
+    "pages/user/shopping-cart",
+    "pages/user/card",
+    "pages/user/open",
+    "pages/category/index",
+    "pages/activity/index",
+    "pages/activity/details"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "友谊书城",
+    "navigationBarBackgroundColor": "#fff",
+    "backgroundColor": "#EDEDED"
+  },
+  "tabBar": {
+    "color": "#4F4F4F",
+    "selectedColor": "#0056B2",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "iconPath": "static/icon/home.png",
+        "selectedIconPath": "static/icon/home_a.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/category/index",
+        "iconPath": "static/icon/classify.png",
+        "selectedIconPath": "static/icon/classify_a.png",
+        "text": "分类"
+      },
+      {
+        "pagePath": "pages/activity/index",
+        "iconPath": "static/icon/activity.png",
+        "selectedIconPath": "static/icon/activity_a.png",
+        "text": "活动"
+      },
+      {
+        "pagePath": "pages/card/index",
+        "iconPath": "static/icon/gift.png",
+        "selectedIconPath": "static/icon/gift_a.png",
+        "text": "礼品卡"
+      },
+      {
+        "pagePath": "pages/home/userIndex",
+        "iconPath": "static/icon/mine.png",
+        "selectedIconPath": "static/icon/mine_a.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json"
+}

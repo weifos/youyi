@@ -1,0 +1,1 @@
+<view data-event-opts="{{[['tap',[['handleClick',['$event']]]]]}}" class="{{['wrapper-wallet-detail-item',(price<0)?'wrapper-wallet-detail-item-out':'']}}" bindtap="__e"><view><view class="detail-item-name">{{name}}</view><view class="detail-item-date">{{date}}</view></view><view class="detail-item-sum">{{price>0?'+'+price:price}}</view></view>
