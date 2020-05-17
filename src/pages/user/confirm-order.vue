@@ -15,13 +15,13 @@
       <view class="order-list">
         <view class="list-item hidden" v-for="item in orderList" :key="item">
           <view class="img-bar image-size-sm fl">
-            <image :src="item.url" />
+            <image :src="item.img_url" />
           </view>
           <view class="text-bar">
-            <view class="ellipsis">{{item.name}}</view>
+            <view class="ellipsis">{{item.product_name}}</view>
             <view class="side-bar">
-              <text class="text-size-basic">￥{{item.price}}</text>
-              <text class="text-no">x {{item.no}}</text>
+              <text class="text-size-basic">￥{{item.sale_price}}</text>
+              <text class="text-no">x {{item.count}}</text>
             </view>
           </view>
         </view>
@@ -119,14 +119,7 @@ export default {
         contact: "",
         mobile: ""
       },
-      orderList: [
-        {
-          url: "/static/images/27891160-1_l_2.png",
-          name: "中国少年儿童百科全书(全套共全套共全套共...",
-          price: "96.72",
-          no: 2
-        }
-      ]
+      orderList: []
     }
   },
   components: {
@@ -142,15 +135,11 @@ export default {
         url: '/pages/home/userIndex'
       })
     } else {
-      if (opt.said) {
-        this.addr.id = opt.said
-      }
-
+      //设置选择的收货地址ID
+      if (opt.said) { this.addr.id = opt.said }
       //当前购买的商品信息
       let item = user.methods.getBuyNow()
       this.orderList.push(item)
-      console.log(this.orderList)
-      return
       //加载收货地址和运费
       this.api_307()
     }
@@ -163,7 +152,6 @@ export default {
       this.$refs.popup.close()
     },//更改支付方式
     changePay() {
-
     },//更改收货地址
     selectAddress() {
       uni.navigateTo({
@@ -172,13 +160,15 @@ export default {
     },//加载收货地址和运费
     api_307() {
       let that = this
-      let dd = user.methods.getBuyNow()
-      console.log(dd)
-      return
-
+      //请求参数
+      let order = {
+        id: 0,
+        details: that.orderList
+      }
+      //初始化收货地址和运费
       api.post(api.api_307, api.getSign({
-        AddressID: that.data.addr.id,
-        Order: ""
+        AddressID: that.addr.id,
+        Order: order
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
           that.addr = res.data.Result
@@ -187,7 +177,6 @@ export default {
         }
       })
     }
-
   }
 }
 </script>

@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "收货地址",
-  "usingComponents": {
-    "evan-form": "/components/evan-form/evan-form",
-    "pick-regions": "/components/pick-regions/pick-regions",
-    "evan-form-item": "/components/evan-form/evan-form-item"
-  }
-}

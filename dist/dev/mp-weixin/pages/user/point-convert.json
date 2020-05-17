@@ -1,9 +1,0 @@
-{
-  "navigationBarTitleText": "积分兑换",
-  "navigationBarTextStyle": "white",
-  "navigationBarBackgroundColor": "#004EA2",
-  "usingComponents": {
-    "yoyi-coupon": "/components/yoyi-coupon/index",
-    "operation-button": "/components/yoyi-operation-button/index"
-  }
-}

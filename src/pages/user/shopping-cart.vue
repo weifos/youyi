@@ -1,16 +1,7 @@
 <template>
   <view class="content page-cart">
     <view class="cu-list cart-list menu-avatar">
-      <view
-        class="cu-item list-item"
-        :class="modalName=='move-box-'+ index?'move-cur':''"
-        v-for="(item,index) in cartList"
-        :key="item"
-        @touchstart="ListTouchStart"
-        @touchmove="ListTouchMove"
-        @touchend="ListTouchEnd"
-        :data-target="'move-box-' + index"
-      >
+      <view class="cu-item list-item" :class="modalName=='move-box-'+ index?'move-cur':''" v-for="(item,index) in cartList" :key="item" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index">
         <view class="content">
           <view class="cont">
             <view class="check-bar">
@@ -28,7 +19,7 @@
             </view>
           </view>
         </view>
-        <view class="move">
+        <view class="move" @click="api_304">
           <view class="btn-del">删除</view>
         </view>
       </view>
@@ -62,42 +53,22 @@ export default {
       modalName: null,
       listTouchStart: 0,
       listTouchDirection: null,
-      options: [
-        {
-          text: "删除",
-          style: {
-            backgroundColor: "#FFB825"
-          }
-        }
-      ],
       cartList: [
         {
           url: "/static/images/27891160-1_l_2.png",
           name: "中国少年儿童百科全书(全套共全套共全套共...",
           price: "96.72",
           no: 2,
-          checked: 0,
-          options: [{
-            text: '删除',
-            style: {
-              backgroundColor: '#FFB825'
-            }
-          }]
+          checked: 0
         }
       ]
     };
   },
   methods: {
-    onClick(e) {
-      console.log('当前点击的是第' + e.index + '个按钮，点击内容是' + e.content.text)
-    },
-    change(open) {
-      console.log('当前开启状态：' + open)
-    },
     //加载购物车
     api_302() {
       let that = this;
-      this.post(app_g.api.api_302, api.getSign(), function(vue, res) {
+      this.post(app_g.api.api_302, api.getSign(), function (vue, res) {
         if (res.data.Basis.State == app_g.state.state_200) {
           that.setData({
             result: res.data.Result
@@ -133,14 +104,27 @@ export default {
     api_304(e) {
       let that = this;
       //数据
-      let item = e.currentTarget.dataset.item;
+      let item = e.currentTarget.dataset.item
+
+      uni.showModal({
+        title: '提示',
+        content: '确认删除吗',
+        success: function (res) {
+          if (res.confirm) {
+            console.log('用户点击确定')
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
+return
       //请求接口删除
       api.post(
         api.api_304,
         api.getSign({
           CID: item.id
         }),
-        function(wx, res) {
+        function (wx, res) {
           if (res.data.Basis.State == api.state.state_200) {
             that.data.result.forEach((ele, index) => {
               if (ele.id === item.id) {
@@ -281,7 +265,7 @@ export default {
   width: 100rpx;
   height: 100%;
   transform: translateX(100%);
-  top:0
+  top: 0;
 }
 
 .cu-list > .cu-item .move view {
@@ -290,5 +274,4 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
 </style>

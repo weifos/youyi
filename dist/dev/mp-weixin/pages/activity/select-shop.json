@@ -1,6 +1,0 @@
-{
-  "navigationBarTitleText": "门店选择",
-  "usingComponents": {
-    "yoyi-location": "/components/yoyi-location/index"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "零钱明细",
-  "usingComponents": {
-    "sun-tab": "/components/sun-tab/sun-tab",
-    "money-detail-item": "/components/yoyi-money-detail-item/index"
-  }
-}

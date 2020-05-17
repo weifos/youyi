@@ -1,1 +1,0 @@
-<view data-event-opts="{{[['tap',[['onFilterClick',['$event']]]]]}}" class="{{['component-filter','component-filter-'+curIndex]}}" bindtap="__e"><slot></slot></view>

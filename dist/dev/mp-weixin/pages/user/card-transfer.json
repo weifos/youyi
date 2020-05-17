@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "会员卡迁移",
-  "usingComponents": {
-    "vip-brand": "/components/yoyi-vip-brand/index",
-    "operation-button": "/components/yoyi-operation-button/index"
-  }
-}

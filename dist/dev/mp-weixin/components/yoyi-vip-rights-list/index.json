@@ -1,6 +1,0 @@
-{
-  "component": true,
-  "usingComponents": {
-    "rights-item": "/components/yoyi-vip-rights-item/index"
-  }
-}

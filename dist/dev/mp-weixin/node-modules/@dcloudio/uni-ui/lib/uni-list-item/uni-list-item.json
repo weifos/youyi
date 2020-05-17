@@ -1,7 +1,0 @@
-{
-  "component": true,
-  "usingComponents": {
-    "uni-badge": "/node-modules/@dcloudio/uni-ui/lib/uni-badge/uni-badge",
-    "uni-icons": "/node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons"
-  }
-}

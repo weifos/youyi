@@ -1,8 +1,0 @@
-{
-  "navigationBarTitleText": "售后",
-  "usingComponents": {
-    "uni-list": "/node-modules/@dcloudio/uni-ui/lib/uni-list/uni-list",
-    "uni-list-item": "/node-modules/@dcloudio/uni-ui/lib/uni-list-item/uni-list-item",
-    "operation-button": "/components/yoyi-operation-button/index"
-  }
-}

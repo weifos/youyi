@@ -1,1 +1,0 @@
-<view class="wrapper-title data-v-39dbc1c4"><view class="title-main data-v-39dbc1c4">{{title}}</view><block wx:if="{{url==''}}"><view class="title-more data-v-39dbc1c4">{{more}}</view></block><block wx:else><navigator class="title-more data-v-39dbc1c4" hover-class url="{{url}}">{{more+">"}}</navigator></block></view>
