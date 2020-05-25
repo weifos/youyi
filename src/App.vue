@@ -2,11 +2,20 @@
 
 //身份认证脚本
 import passport from '@/modules/passport'
-//用户信息脚本
 import userInfo from '@/modules/userInfo'
+import appG from '@/modules/appGlobal'
 
 export default {
   onLaunch() {
+    // uni.getLocation({
+    //   type: 'wgs84',
+    //   success: function (res) {
+    //     console.log('当前位置的经度：' + res.longitude)
+    //     console.log('当前位置的纬度：' + res.latitude)
+    //     let tmp = appG.util.map.qqMapTransBMap(res.longitude, res.latitude)
+    //     console.log('百度位置的经度：' + tmp.lng + ",纬度：" + tmp.lat)
+    //   }
+    // })
     //检查登录态是否过期
     passport.checkSession(() => { })
     console.log('App Launch')

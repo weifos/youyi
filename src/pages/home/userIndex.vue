@@ -28,19 +28,19 @@
     </view>
     <navigator class="user-index-card" hover-class :class="[`user-index-card-${userType}`]" :url="`/pages/user/open?type=${userType}`"></navigator>
     <view class="user-index-my">
-      <view class="my-item">
+      <view class="my-item" @click="goUrl('/pages/user/shopping-cart')">
         <image class="item-icon" src="/static/images/user/user-cart.png" mode="aspectFit" />
         <view class="item-text">购物车</view>
       </view>
-      <view class="my-item">
+      <view class="my-item" @click="goUrl('/pages/user/shopping-cart')">
         <image class="item-icon" src="/static/images/user/user-gift.png" mode="aspectFit" />
         <view class="item-text">礼品卡</view>
       </view>
-      <view class="my-item">
+      <view class="my-item" @click="goUrl('/pages/user/shopping-cart')">
         <image class="item-icon" src="/static/images/user/user-favor.png" mode="aspectFit" />
         <view class="item-text">商品收藏</view>
       </view>
-      <view class="my-item">
+      <view class="my-item" @click="goUrl('/pages/mine/order-list')">
         <image class="item-icon" src="/static/images/user/user-order.png" mode="aspectFit" />
         <view class="item-text">订单</view>
       </view>
@@ -125,7 +125,6 @@ export default {
         that.checkRedirect()
       }
     })
-
   },
   methods: {
     /**
@@ -138,18 +137,13 @@ export default {
           that.isLogin = true
           userInfo.login_name = appG.util.getHideMobile(user.login_name)
         }
-
-        wx.getStorage({
-          key: 'returl',
-          success(res) {
-            if (res.data) {
-              router.goUrl({
-                url: res.data
-              })
-            }
-            wx.removeStorageSync('returl')
-          }
-        })
+        //是否存在重定向
+        let returl = uni.getStorageSync('returl')
+        if (returl) {
+          uni.removeStorage({ key: 'returl', success: function (res) { } })
+          //重定向
+          uni.navigateTo({ url: returl })
+        }
       })
     },
     /**
@@ -177,10 +171,7 @@ export default {
     api_106: function () {
       let that = this
       let userInfo = user.methods.getUser()
-      api.post(api.api_106,
-        api.getSign({
-          OpenID: userInfo.openid
-        }),
+      api.post(api.api_106, api.getSign({ OpenID: userInfo.openid }),
         function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
             if (res.data.Result.login_name != undefined) {
@@ -219,40 +210,12 @@ export default {
     checkRedirect(url) {
       let returl = uni.getStorageSync('returl')
       if (returl != "") {
-        uni.removeStorage({
-          key: 'returl',
-          success: function (res) { }
-        })
+        uni.removeStorage({ key: 'returl', success: function (res) { } })
         //关闭所有页面，打开到应用内的某个页面。
         //uni.reLaunch({ url: returl })
         uni.navigateTo({ url: returl })
       }
     }
-
-  },
-  /**
-  * 获取手机号码
-  */
-  getMobile: function (e) {
-    let that = this
-    passport.bindMobile(e, function (code, user) {
-      if (code == api.state.state_200) {
-        that.isLogin = true
-        that.userInfo.login_name = appG.util.getHideMobile(user.login_name)
-      }
-
-      wx.getStorage({
-        key: 'returl',
-        success(res) {
-          if (res.data) {
-            router.goUrl({
-              url: res.data
-            })
-          }
-          wx.removeStorageSync('returl')
-        }
-      })
-    })
   }
 }
 </script>

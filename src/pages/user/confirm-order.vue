@@ -13,7 +13,7 @@
     <view class="section-order-info bg-white">
       <view class="section-title">商品信息</view>
       <view class="order-list">
-        <view class="list-item hidden" v-for="item in orderList" :key="item">
+        <view class="list-item hidden" v-for="item in order.details" :key="item">
           <view class="img-bar image-size-sm fl">
             <image :src="item.img_url" />
           </view>
@@ -31,7 +31,7 @@
     <view class="section-order-price-bar bg-white">
       <view class="price-item text-size-basic">
         <text>商品原价</text>
-        <text>¥ 65.8</text>
+        <text>¥ {{order.total_amount}}</text>
       </view>
       <view class="price-item text-size-basic">
         <text>优惠券</text>
@@ -43,7 +43,7 @@
       </view>
       <view class="price-item text-size-basic">
         <text>运费</text>
-        <text>¥ 10</text>
+        <text>¥ {{freight}}</text>
       </view>
     </view>
 
@@ -66,11 +66,12 @@
       </view>
     </view>-->
 
+    <!-- <view class="notice-bar" v-if="discount_amount>0"> -->
     <view class="notice-bar">
-      <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" text="已优惠 ¥20"></uni-notice-bar>
+      <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" :text="'已优惠 ¥'+discount_amount"></uni-notice-bar>
     </view>
     <view class="section-btns" @click="openPopup">
-      <operationButton price="78.5" buttonText="去支付"></operationButton>
+      <operationButton :price="order.total_amount" buttonText="去支付"></operationButton>
     </view>
     <!-- popup s -->
     <uniPopup ref="popup" type="bottom" class="pop-pay yoyi-pop">
@@ -79,23 +80,24 @@
         <radio-group class="agreement-checkbox" @change="changePay">
           <view class="pay-item mt20">
             <view class="text-size-basic">
-              <radio checked="checked" color="#FFB825" />
+              <radio :checked="order.pay_method == 31" color="#FFB825" value="31" />
               <text class="dib vam ml20">钱包支付</text>
             </view>
-            <view class="text-gray text-size-sm text-desc">钱包余额 ¥23，尚需 ¥194.5</view>
+            <view class="text-gray text-size-sm text-desc">钱包余额 ¥{{userInfo.balance}}，尚需 ¥{{order.actual_amount}}</view>
             <view class="btns-bar mt20">
-              <button class="btn btn-round btn-size-full text-size-md btn-bg-main text-white">立即充值 ¥194.5</button>
+              <button class="btn btn-round btn-size-full text-size-md btn-bg-main text-white">立即充值 ¥{{order.actual_amount}}</button>
               <button class="btn btn-round btn-size-full btn-line-main text-size-md bg-white text-sub mt20">其他充值优惠</button>
             </view>
           </view>
           <view class="pay-item mt20">
             <view class="text-size-basic">
-              <radio color="#FFB825" />
+              <radio :checked="order.pay_method== 13" color="#FFB825" value="13" />
               <text class="dib vam ml20">微信支付</text>
             </view>
           </view>
         </radio-group>
       </view>
+      <button class="btn btn-bg-main text-white btn-size-full text-size-lg" style="margin-bottom:0px" @click="buyNow">确定购买</button>
     </uniPopup>
     <!-- popup e -->
   </view>
@@ -108,8 +110,24 @@ import user from '@/modules/userInfo'
 import { uniNoticeBar, uniPopup } from "@dcloudio/uni-ui"
 import operationButton from '@/components/yoyi-operation-button/'
 export default {
+  components: {
+    operationButton,
+    uniNoticeBar,
+    uniPopup
+  },
   data() {
     return {
+      //是否支付中
+      isPaying: false,
+      //是否提交购物车
+      isShoppingCart: false,
+      //微信支付配置
+      wechatpay: {},
+      //电子钱包
+      userInfo: {
+        balance: 0
+      },
+      //收货地址
       addr: {
         id: 0,
         province: "",
@@ -119,15 +137,37 @@ export default {
         contact: "",
         mobile: ""
       },
-      orderList: []
+      //临时订单
+      order: {
+        //门店ID
+        store_id: 0,
+        //线上商品订单
+        type: 5,
+        //支付方式 13微信小程序支付 31电子钱包支付
+        pay_method: 1,
+        //总金额
+        total_amount: 0,
+        //实付金额
+        actual_amount: 0,
+        //优惠券ID
+        user_coupon_id: 0,
+        //订单详情
+        details: []
+      },
+      //商品金额
+      productAmount: 0,
+      //配送方式ID
+      mode_id: 0,
+      //运费
+      freight: 0,
+      //配送方式ID
+      mode_id: 0,
+      //已优惠金额
+      discount_amount: 0
     }
   },
-  components: {
-    operationButton,
-    uniNoticeBar,
-    uniPopup
-  },
   onLoad(opt) {
+    let that = this
     if (!user.methods.isLogin()) {
       let page = getCurrentPages()[2]
       uni.setStorageSync('returl', "/" + page.route);
@@ -137,11 +177,24 @@ export default {
     } else {
       //设置选择的收货地址ID
       if (opt.said) { this.addr.id = opt.said }
-      //当前购买的商品信息
-      let item = user.methods.getBuyNow()
-      this.orderList.push(item)
+      //是否是提交购物车
+      if (opt.isByCart) {
+      } else {
+        //当前购买的商品信息
+        let item = user.methods.getBuyNow()
+        //临时订单
+        this.order.details.push(item)
+      }
+      //计算商品金额
+      that.order.details.forEach(function (ele, index, arr) {
+        that.productAmount += ele.sale_price
+      })
+      //总金额
+      that.order.total_amount = that.productAmount
+      //实付金额
+      that.order.actual_amount = that.order.total_amount
       //加载收货地址和运费
-      this.api_307()
+      that.api_307()
     }
   },
   methods: {
@@ -151,31 +204,109 @@ export default {
     closePopup() {
       this.$refs.popup.close()
     },//更改支付方式
-    changePay() {
+    changePay(e) {
+      this.order.pay_method = e.detail.value
     },//更改收货地址
     selectAddress() {
       uni.navigateTo({
-        url: "address/manage?check=1"
+        url: "address/manage?isSelect=1"
       })
     },//加载收货地址和运费
     api_307() {
       let that = this
-      //请求参数
-      let order = {
-        id: 0,
-        details: that.orderList
-      }
       //初始化收货地址和运费
       api.post(api.api_307, api.getSign({
         AddressID: that.addr.id,
-        Order: order
+        Order: that.order
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
-          that.addr = res.data.Result
+          that.addr = res.data.Result.data.address
+          that.freight = res.data.Result.data.freight
+          that.mode_id = res.data.Result.data.mode_id
+          //登录
+          user.methods.login(res.data.Result.user)
+          //当前页面用户钱包
+          that.userInfo = res.data.Result.user
+          //更新总金额
+          that.order.total_amount += that.freight
+          //更新实付金额
+          that.order.actual_amount += that.freight
+          //设置默认支付方式
+          if (that.order.balance > that.order.actual_amount) {
+            that.order.pay_method = 31
+          } else {
+            that.order.pay_method = 13
+          }
         } else {
           uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
+    },//微信小程序预支付订单
+    api_314(provider) {
+      let that = this
+      //let store = user.methods.getStore()
+      api.post(api.api_314,
+        api.getSign({
+          Order: that.order,
+          IsShoppingCart: that.isShoppingCart
+        }),
+        function (vue, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            //通过uni-app吊起支付
+            uni.requestPayment({
+              provider: provider,
+              appId: res.data.Result.wechatpay.appId,
+              timeStamp: res.data.Result.wechatpay.timeStamp,
+              nonceStr: res.data.Result.wechatpay.nonceStr,
+              package: res.data.Result.wechatpay.package,
+              signType: res.data.Result.wechatpay.signType,
+              paySign: res.data.Result.wechatpay.paySign,
+              success: function (res) {
+                console.log('success:' + JSON.stringify(res))
+                uni.navigateTo({
+                  url: '../mine/order-list'
+                })
+              },
+              fail: function (err) {
+                setTimeout(() => {
+                  that.isPaying = false
+                }, 500)
+              },
+              complete: () => {
+                setTimeout(() => {
+                  that.isPaying = false
+                }, 500)
+              }
+            })
+          } else {
+            wx.showToast({
+              title: res.data.Basis.Msg,
+              icon: 'none',
+              duration: 3000
+            })
+          }
+        }
+      )
+    },//立即购买
+    buyNow() {
+      let that = this
+      //是否在支付中
+      if (that.isPaying) return
+      //微信支付
+      if (this.order.pay_method == 13) {
+        //获取uni-app服务提供商
+        uni.getProvider({
+          service: 'payment',
+          success: function (res) {
+            //微信支付
+            if (~res.provider.indexOf('wxpay')) {
+              //生成订单吊起支付
+              that.api_314(res.provider[0])
+            }
+          }
+        })
+        //钱包支付
+      } else if (this.order.pay_method == 31) { }
     }
   }
 }

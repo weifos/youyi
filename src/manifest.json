@@ -1,6 +1,6 @@
 {
     "name": "覔书店",
-    "appid": "wxb14b7424a3df25fd",
+    "appid": "wx871ac84b4e36e6f4",
     "description": "",
     "versionName": "1.0.0",
     "versionCode": "100",
@@ -58,10 +58,15 @@
         /* 快应用特有相关 */
     },
     "mp-weixin": {
-        /* 微信小程序特有相关 */
-        "appid": "wxb14b7424a3df25fd",
+        /* 微信小程序特有相关 友谊小程序：wx083ea92421f639d8，覔：wx871ac84b4e36e6f4 */
+        "appid": "wx871ac84b4e36e6f4",
         "setting": {
             "urlCheck": false
+        },
+        "permission": {
+            "scope.userLocation": {
+                "desc": "小程序获取离您最近的所属门店"
+            }
         },
         "usingComponents": true
     },

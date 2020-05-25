@@ -82,7 +82,7 @@
           <text>+￥{{orderInfo.priceInfo.cPrice}}</text>
         </view>
         <view class="total-bar mt20">
-          <text class v-if="orderInfo.priceInfo.discount">已优惠¥{{orderInfo.priceInfo.discount}}</text>
+          <text v-if="orderInfo.priceInfo.discount>0">已优惠¥{{orderInfo.priceInfo.discount}}</text>
           <text class="ml20">实付款：</text>
           <text class="text-sub text-size-md bold">¥ {{orderInfo.priceInfo.total}}</text>
         </view>

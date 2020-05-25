@@ -402,7 +402,7 @@ export default {
                 return d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
             },
             //日期格式化
-            DateFormat: function (date, format) {
+            dateFormat: function (date, format) {
                 var d = new Date(date.replace(/-/g, '/'));
                 let o = {
                     "M+": d.getMonth() + 1,
@@ -424,7 +424,7 @@ export default {
                 return format;
             },
             //json格式日期处理
-            ChangeDateFormat: function (time) {
+            changeDateFormat: function (time) {
                 if (time != null) {
                     if (time.indexOf('T') != -1) {
                         return time.substr(0, time.indexOf('T'));
@@ -437,7 +437,7 @@ export default {
                 return "";
             },
             //json格式日期处理（时分秒）
-            ChangeCompleteDateFormat: function (time) {
+            changeCompleteDateFormat: function (time) {
                 if (time != null) {
                     if (time.indexOf('T') != -1) {
                         if (time.indexOf('.') != -1) {
@@ -453,7 +453,7 @@ export default {
                 return "";
             },
             //json格式日期处理（时分秒）
-            ChangeComDateFormat: function (time) {
+            changeComDateFormat: function (time) {
                 if (time != null) {
                     if (time.indexOf('T') != -1) {
                         if (time.indexOf('.') != -1) {
@@ -468,14 +468,45 @@ export default {
                 }
                 return "";
             },//时间比较
-            CompareDate: function (t1, t2) {
-                t1 = new Date(this.ChangeDateFormat(t1));
-                t2 = new Date(this.ChangeDateFormat(t2));
-                return t1 > t2;
+            compareDate: function (t1, t2) {
+                //格式化为了兼容IOS写法
+                t1 = this.dateFormat(t1, "yyyy/MM/dd hh:mm:ss")
+                t2 = this.dateFormat(t2, "yyyy/MM/dd hh:mm:ss")
+                t1 = new Date(Date.parse(t1))
+                t2 = new Date(Date.parse(t2))
+                return t1 > t2
             },
             //时间比较
-            CompareDateNow: function (t1) {
+            compareDateNow: function (t1) {
                 return new Date(t1.replace(new RegExp(/-/gm), "/")) > new Date(this.getDateTimeNow().replace(new RegExp(/-/gm), "/"))
+            }
+        },//地图转换
+        map: {
+            //腾讯转百度 
+            qqMapTransBMap(lng, lat) {
+                let x_pi = 3.14159265358979324 * 3000.0 / 180.0
+                let x = lng, y = lat
+                let z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi)
+                let theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi)
+                let lngs = z * Math.cos(theta) + 0.0065
+                let lats = z * Math.sin(theta) + 0.006
+                return {
+                    lng: lngs,
+                    lat: lats
+                }
+            },
+            //百度转腾讯
+            BMapTransqqMap(lng, lat) {
+                let x_pi = 3.14159265358979324 * 3000.0 / 180.0
+                let x = lng - 0.0065, y = lat - 0.006
+                let z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi)
+                let theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi)
+                let lngs = z * Math.cos(theta)
+                let lats = z * Math.sin(theta)
+                return {
+                    lng: lngs,
+                    lat: lats
+                }
             }
         },
         //判断环境
@@ -536,6 +567,12 @@ export default {
             var Range = Max - Min;
             var Rand = Math.random();
             return (Min + Math.round(Rand * Range));
+        },//占位符
+        getPlaceholder: function (str1, str2) {
+            if (str1.toString().length >= str2.toString().length) {
+                let tmp = str1.substring(0, str1.length - str2.toString().length)
+                return tmp + str2
+            }
         },
         //比对sku字符串
         compareSku: function (sku1, sku2) {

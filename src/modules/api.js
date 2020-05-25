@@ -1,24 +1,15 @@
 import appG from '@/modules/appGlobal'
 import user from '@/modules/userInfo'
 import md5 from 'blueimp-md5'
-import store from '../store'
 
+//正式环境配置
+let domain = "http://api66.yoyibook.com:20182/"
+let res_domain = "http://res66.yoyibook.com:20182/"
 //测试环境
-let domain = "http://yy.api.youyi.com/"
-let res_domain = "http://yy.res.youyi.com/"
-//测试环境配置
 if (process.env.NODE_ENV !== 'production') {
     domain = "http://yy.api.youyi.com/"
     res_domain = "http://yy.res.youyi.com/"
 }
-
-// let domain = "http://api66.yoyibook.com:20182/"
-// let res_domain = "http://yy.res.youyi.com:20182/"
-// //正式环境配置
-// if (process.env.NODE_ENV !== 'production') {
-//     domain = "http://api66.yoyibook.com:20182/"
-//     res_domain = "http://res66.yoyibook.com:20182/"
-// }
 
 /// <summary>
 /// 全局配置类
@@ -70,7 +61,7 @@ module.exports = {
     api_206: domain + "206",
     //
     api_207: domain + "207",
-    //
+    //获取门店列表
     api_208: domain + "208",
     //
     api_209: domain + "209",
@@ -118,6 +109,39 @@ module.exports = {
     api_317: domain + "317",
     //订单列表
     api_318: domain + "318",
+
+    //课程订单生成
+    api_326: domain + "326",
+    //微信小程序预支付订单 课程订单
+    api_327: domain + "327",
+    //课程订单
+    api_328: domain + "328",
+    //课程订单票据
+    api_329: domain + "329",
+    //用户立即充值列表
+    api_330: domain + "330",
+    //用户立即充值
+    api_331: domain + "331",
+    //用户立即充值，完成充值
+    api_332: domain + "332",
+    //电子钱包交易记录
+    api_333: domain + "333",
+    //用户优惠券
+    api_334: domain + "334",
+    //电子钱包支付课程
+    api_335: domain + "335",
+    //电子钱包支付咖啡饮品
+    api_336: domain + "336",
+    //绑定储值卡
+    api_337: domain + "337",
+    //微信小程序支付课程订单
+    api_338: domain + "338",
+    //微信小程序预支付咖啡订单
+    api_339: domain + "339",
+    //积分交易列表
+    api_340: domain + "340",
+    //课程订单申请中
+    api_341: domain + "341",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()

@@ -1,25 +1,25 @@
 <template>
   <view class="content page-cart">
     <view class="cu-list cart-list menu-avatar">
-      <view class="cu-item list-item" :class="modalName=='move-box-'+ index?'move-cur':''" v-for="(item,index) in cartList" :key="item" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index">
+      <view class="cu-item list-item" :class="modalName=='move-box-'+ index?'move-cur':''" v-for="(item,index) in result" :key="item" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index">
         <view class="content">
           <view class="cont">
             <view class="check-bar">
               <checkbox :checked="item.checked" color="#FFB825" />
             </view>
             <view class="img-bar">
-              <image :src="item.url" />
+              <image :src="item.img_url" />
             </view>
             <view class="text-bar">
-              <view class="ellipsis">{{item.name}}</view>
+              <view class="ellipsis">{{item.product_name}}</view>
               <view class="side-bar">
-                <text class="text-sub text-size-basic">￥{{item.price}}</text>
-                <uni-number-box :value="item.no" class="number-box-skin-1"></uni-number-box>
+                <text class="text-sub text-size-basic">￥{{item.product_price}}</text>
+                <uni-number-box :value="item.count" :min="1" @change="api_303($event,item)" class="number-box-skin-1"></uni-number-box>
               </view>
             </view>
           </view>
         </view>
-        <view class="move" @click="api_304">
+        <view class="move" @click="api_304(item)">
           <view class="btn-del">删除</view>
         </view>
       </view>
@@ -43,6 +43,9 @@
 </template>
 
 <script>
+import api from '@/modules/api'
+import user from '@/modules/userInfo'
+import appG from '@/modules/appGlobal'
 import { uniNumberBox } from "@dcloudio/uni-ui";
 export default {
   components: {
@@ -53,116 +56,106 @@ export default {
       modalName: null,
       listTouchStart: 0,
       listTouchDirection: null,
-      cartList: [
-        {
-          url: "/static/images/27891160-1_l_2.png",
-          name: "中国少年儿童百科全书(全套共全套共全套共...",
-          price: "96.72",
-          no: 2,
-          checked: 0
-        }
-      ]
-    };
+      //对应的门店信息
+      store_id: 0,
+      //订单信息
+      order: {
+        store_id: 0,
+        remarks: '',
+        details: []
+      },
+      //购物车列表
+      result: [],
+      //总计
+      totalPrice: 0
+    }
+  },
+  onLoad(opt) {
+    this.api_302()
   },
   methods: {
     //加载购物车
     api_302() {
-      let that = this;
-      this.post(app_g.api.api_302, api.getSign(), function (vue, res) {
-        if (res.data.Basis.State == app_g.state.state_200) {
-          that.setData({
-            result: res.data.Result
-          });
-          that.checkUpdate();
+      let that = this
+      api.post(api.api_302, api.getSign(), function (vue, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          res.data.Result.forEach((ele, index) => {
+            that.$set(ele, "checked", false)
+          })
+          that.checkUpdate()
+          that.result = res.data.Result
         } else {
-          wx.showToast({
-            title: res.data.Basis.Msg,
-            icon: "none",
-            duration: 3000
-          });
+          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
-      });
+      })
     },
     //更新购物车
-    api_303(item, num, cb) {
-      let that = this;
-      api.post(
-        api.api_303,
-        api.getSign({
-          CID: item.id,
-          Count: num,
-          StoProductID: item.sto_product_id,
-          SpecSet: item.specset,
-          StoreID: that.data.order.store_id
-        }),
-        (wx, res) => {
-          cb();
+    api_303(num, item) {
+      let that = this
+      api.post(api.api_303,
+        api.getSign({ CID: item.id, Count: num, ProductID: item.product_id, SpecSet: item.specset }), (vue, res) => {
+          console.log(res)
         }
-      );
+      )
     },
     //删除购物车
-    api_304(e) {
-      let that = this;
-      //数据
-      let item = e.currentTarget.dataset.item
-
+    api_304(item) {
+      let that = this
       uni.showModal({
         title: '提示',
         content: '确认删除吗',
         success: function (res) {
           if (res.confirm) {
-            console.log('用户点击确定')
-          } else if (res.cancel) {
-            console.log('用户点击取消')
-          }
+            //请求接口删除
+            api.post(api.api_304, api.getSign({ Id: item.id }),
+              function (wx, res) {
+                if (res.data.Basis.State == api.state.state_200) {
+                  that.result.forEach((ele, index) => {
+                    if (ele.id === item.id) {
+                      that.result.shift(index, 1);
+                    }
+                  })
+                  that.result = that.result
+                  that.checkUpdate()
+                  uni.showToast({ title: "删除成功", duration: 2000 })
+                } else {
+                  uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+                }
+              }
+            )
+          } else if (res.cancel) { }
         }
       })
-return
-      //请求接口删除
-      api.post(
-        api.api_304,
-        api.getSign({
-          CID: item.id
-        }),
-        function (wx, res) {
-          if (res.data.Basis.State == api.state.state_200) {
-            that.data.result.forEach((ele, index) => {
-              if (ele.id === item.id) {
-                that.data.result.shift(index, 1);
-              }
-            });
-
-            that.setData({
-              ["result"]: that.data.result
-            });
-
-            that.checkUpdate();
-            wx.showToast({
-              title: "删除成功",
-              icon: "none",
-              duration: 3000
-            });
-          } else {
-            wx.showToast({
-              title: res.data.Basis.Msg,
-              icon: "none",
-              duration: 3000
-            });
-          }
+    },
+    //勾选改变更新小计
+    checkUpdate(ele) {
+      let that = this
+      //总计临时变量
+      let total = 0
+      this.result.map((item, index) => {
+        //更新修改
+        if (ele != null && ele != undefined && item.specset == ele.specset && item.product_id == ele.product_id) {
+          item = ele
         }
-      );
+        //当前小计 
+        item.subtotal = item.product_price * item.count
+        //更新购物车
+        that.result[index] = item
+        //总计
+        total += item.subtotal
+      })
+      that.totalPrice = total
+      //更新购物车信息
+      user.methods.setShoppingCart(that.result)
     },
     // ListTouch触摸开始
     ListTouchStart(e) {
       this.listTouchStart = e.touches[0].pageX;
     },
-
     // ListTouch计算方向
     ListTouchMove(e) {
-      this.listTouchDirection =
-        e.touches[0].pageX - this.listTouchStart > 0 ? "right" : "left";
+      this.listTouchDirection = e.touches[0].pageX - this.listTouchStart > 0 ? "right" : "left";
     },
-
     // ListTouch计算滚动
     ListTouchEnd(e) {
       //console.log(this.listTouchDirection,e.currentTarget.dataset.target)
@@ -172,7 +165,7 @@ return
       } else {
         this.modalName = null;
       }
-      this.listTouchDirection = null;
+      //this.listTouchDirection = null;
     }
   }
 };

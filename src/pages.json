@@ -20,13 +20,13 @@
             }
         },
         {
-            "path": "pages/mine/order",
+            "path": "pages/mine/order-list",
             "style": {
                 "navigationBarTitleText": "我的订单"
             }
         },
         {
-            "path": "pages/card/index",
+            "path": "pages/home/cardIndex",
             "style": {
                 "navigationBarTitleText": "大客户领取礼品卡"
             }
@@ -245,7 +245,7 @@
             }
         },
         {
-            "path": "pages/activity/index",
+            "path": "pages/home/activityIndex",
             "style": {
                 "navigationBarTitleText": "活动"
             }
@@ -282,13 +282,13 @@
                 "text": "分类"
             },
             {
-                "pagePath": "pages/activity/index",
+                "pagePath": "pages/home/activityIndex",
                 "iconPath": "static/icon/activity.png",
                 "selectedIconPath": "static/icon/activity_a.png",
                 "text": "活动"
             },
             {
-                "pagePath": "pages/card/index",
+                "pagePath": "pages/home/cardIndex",
                 "iconPath": "static/icon/gift.png",
                 "selectedIconPath": "static/icon/gift_a.png",
                 "text": "礼品卡"

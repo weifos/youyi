@@ -2,6 +2,7 @@ import api from '@/modules/api'
 
 export default {
     data: {
+        store: null,
         user: { token: '' },
         //购物车信息
         sCartOrder: {},
@@ -64,12 +65,7 @@ export default {
         },//设置购物车
         setShoppingCart(result) {
             this.sCartOrder = result
-            //异步设置购物车
-            uni.setStorageSync({
-                key: 'sCartOrder',
-                data: JSON.stringify(result),
-                success: function () { }
-            })
+            uni.setStorage('sCartOrder', JSON.stringify(result))
         },//设置立即购买
         setBuyNow(result) {
             this.buyNowOrder = result
@@ -82,30 +78,19 @@ export default {
                 return JSON.parse(entity)
             }
             return null
-        },//设置历史查看商品
-        setHistoryProduct(result) {
-            if (result == undefined || result == '') return
-            let products = window.localStorage.getItem("historyProduct")
-            if (products == null) {
-                products = []
-                products.push(result)
-            } else {
-                products = JSON.parse(products)
-                if (!products.some((ele) => { return ele.id == result.id })) {
-                    products.splice(0, 0, result)
-                    if (products.length > 10) {
-                        products.splice(products.length - 1, 1)
-                    }
-                }
+        },
+        //设置门店信息
+        setStore(result) {
+            this.store = result
+            uni.setStorageSync('store', JSON.stringify(result))
+        },
+        //获取门店信息
+        getStore() {
+            let entity = uni.getStorageSync('store')
+            if (entity) {
+                return JSON.parse(entity)
             }
-
-            window.localStorage.setItem("historyProduct", JSON.stringify(products))
-            this.historyProduct = products
-        },//设置商品列表页布局
-        setPdtListLayout(result) {
-            if (result == undefined || result == '') return
-            window.localStorage.setItem("pdtListLayout", result)
-            this.pdtListLayout = result
+            return null
         },//设置历史查询关键词
         setHistoryKeyWord(result) {
             if (result == undefined || result == '') return
@@ -125,25 +110,6 @@ export default {
 
             window.localStorage.setItem("historyKeyWord", JSON.stringify(keyWords))
             this.historyKeyWord = keyWords
-        },//设置课程查询历史关键词
-        setHisCourseKeyWord(result) {
-            if (result == undefined || result == '') return
-            let keyWords = window.localStorage.getItem("hisCourseKeyWord")
-            if (keyWords == null) {
-                keyWords = []
-                keyWords.push(result)
-            } else {
-                keyWords = JSON.parse(keyWords)
-                if (!keyWords.some((ele) => { return ele == result })) {
-                    keyWords.splice(0, 0, result)
-                    if (keyWords.length > 10) {
-                        keyWords.splice(keyWords.length - 1, 1)
-                    }
-                }
-            }
-
-            window.localStorage.setItem("hisCourseKeyWord", JSON.stringify(keyWords))
-            this.hisCourseKeyWord = keyWords
         },//删除单个历史查询关键词
         delHistoryKeyWord(keyword) {
             if (this.historyKeyWord.length == 0) return
@@ -154,33 +120,11 @@ export default {
             })
             window.localStorage.setItem("historyKeyWord", JSON.stringify(this.historyKeyWord))
             this.historyKeyWord = this.historyKeyWord
-        },//删除课程单个历史查询关键词
-        delHisCourseKeyWord(keyword) {
-            if (this.hisCourseKeyWord.length == 0) return
-            this.hisCourseKeyWord.forEach((ele, index) => {
-                if (ele == keyword) {
-                    this.hisCourseKeyWord.splice(index, 1)
-                }
-            })
-            window.localStorage.setItem("hisCourseKeyWord", JSON.stringify(this.hisCourseKeyWord))
-            this.hisCourseKeyWord = this.hisCourseKeyWord
         },//清空历史查询关键词
         clearHistoryKeyWord() {
             if (this.historyKeyWord.length == 0) return
             window.localStorage.setItem("historyKeyWord", JSON.stringify([]))
             this.historyKeyWord = []
-        },//清空历史查询关键词
-        clearHisCourseKeyWord() {
-            if (this.hisCourseKeyWord.length == 0) return
-            this.$vux.confirm.show({
-                title: '确认清空吗',
-                onCancel() { },
-                onConfirm() {
-                    window.localStorage.setItem("hisCourseKeyWord", JSON.stringify([]))
-                    this.hisCourseKeyWord = []
-                }
-            })
-
         },//是否登录
         isLogin() {
             let user = this.getUser()

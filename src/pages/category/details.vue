@@ -34,7 +34,8 @@
       <view class="text-freight mt10">运费：6元</view>
     </view>-->
     <view class="product-detail-bar section">
-      <image src="/static/images/dt.png" style="width:100%;height:1358rpx;" />
+      <!-- style="width:100%;height:1358rpx;" -->
+      <jyf-parser :html="pResult.product.details"></jyf-parser>
     </view>
     <!-- product-side-bar s -->
     <view class="product-side-bar">
@@ -101,6 +102,7 @@ import user from '@/modules/userInfo'
 import appG from '@/modules/appGlobal'
 import { uniPopup, uniNumberBox } from "@dcloudio/uni-ui"
 import operationButton from '@/components/yoyi-operation-button/'
+import parser from "@/components/jyf-parser/jyf-parser"
 
 export default {
   data() {
@@ -124,7 +126,10 @@ export default {
       totalPrice: 0,
       //商品详情
       pResult: {
-        product: { name: '' },
+        product: {
+          name: '',
+          details: ''
+        },
         skus: [],
         imgs: []
       },
@@ -135,11 +140,13 @@ export default {
         name: "现在购买享受 ¥ 27.50，限购10件…"
       }
       ],
+      html: '<div>Hello World!</div>',
       //小图封面
       coverUrl: ''
     }
   },
   components: {
+    parser,
     uniPopup,
     uniNumberBox,
     operationButton
@@ -148,11 +155,7 @@ export default {
     getCustomName: function (specCustoms, name_id, val_id, val) {
       var custom_name = val
       specCustoms.forEach(function (item, index) {
-        if (
-          name_id == item.specname_id &&
-          val_id == item.specvalue_id &&
-          item.custom_value != ''
-        ) {
+        if (name_id == item.specname_id && val_id == item.specvalue_id && item.custom_value != '') {
           custom_name = item.custom_value
           return
         }
@@ -281,7 +284,7 @@ export default {
       let items = that.pResult.specValues.filter(val => val.checked == true)
       if (items.length < that.pResult.specNames.length) {
         let name = that.pResult.specNames[items.length].name
-        uni.showToast({ title: "请选择" + name, duration: 2000 })
+        uni.showToast({ title: "请选择" + name, duration: 2000, icon: "none" })
         return null
       }
 
@@ -306,12 +309,13 @@ export default {
     },
     //提交
     submit() {
-      this.$refs.popup.close()
+      let that = this
       //初始化是否能够提交
       if (!this.isCanSubmit) return
       //选中的商品SKU
       let tmp = this.getSelectSkuVal()
-
+      //封面图片
+      tmp.img_url = this.pResult.product.img_url
       if (tmp != null) {
         //门店商品ID
         //tmp.sto_product_id = this.selectSku.product.id
@@ -321,15 +325,14 @@ export default {
         tmp.count = this.buyCount
         //加入购物车
         if (this.isAddToCart) {
-          user.methods.setShoppingCart(tmp)
+          that.api_306()
         } else {
           //加入本地存取立即购买
           user.methods.setBuyNow(tmp)
-          uni.navigateTo({
-            url: '/pages/user/confirm-order'
-          })
+          //关闭弹框
+          that.$refs.popup.close()
+          uni.navigateTo({ url: '/pages/user/confirm-order' })
         }
-
       }
     },
     //关闭当前页
@@ -361,10 +364,6 @@ export default {
     handleInput() {
       let value = this.validateNumber(e.detail.value)
       val.replace(/\D/g, '')
-    },
-    //初始化
-    init: function () {
-
     },
     /**
      * 加载商品详情
@@ -406,7 +405,6 @@ export default {
         }
       })
     },
-
     /**
      * 提交订单
      */
@@ -423,6 +421,27 @@ export default {
 
         }
       })
+    },
+    /**
+     * 加入购物车
+     */
+    api_306(e) {
+      let that = this
+      api.post(api.api_306,
+        api.getSign({
+          ProductID: that.selectSku.product_id,
+          SpecSet: that.selectSku.specset,
+          Count: that.buyCount
+        }),
+        function (vue, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            //关闭弹框
+            that.$refs.popup.close()
+          } else {
+            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+          }
+        }
+      )
     },
     /**
      * 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面

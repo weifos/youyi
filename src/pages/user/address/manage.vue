@@ -3,7 +3,7 @@
     <view class="user-address-content">
       <view class="list-address">
         <view class="address-item" v-for="(item,index) in addressList" :key="item">
-          <checkbox :checked="item.is_default" :value="item.is_default" class="btn-check" color="#FFB825" v-on:click="setPopShow(item)" />
+          <radio :checked="item.is_default" :value="item.is_default" class="btn-check" color="#FFB825" v-on:click="select(item)" />
           <view class="txt-name">
             {{item.contact}}
             <text class="txt-tel">{{getHideMobile(item.mobile)}}</text>
@@ -11,7 +11,8 @@
           <view class="txt-address">{{item.province}} {{item.city}} {{item.area}} {{item.address}}</view>
         </view>
       </view>
-      <view class="btn-add-address">新增收货地址</view>
+      <view class="btn-add-address" v-if="!isSelect" @click="select">新增收货地址</view>
+      <view class="btn-add-address" v-if="isSelect" @click="select">确认</view>
       <!-- 弹层 -->
       <view class="setting-pop" v-if="popShow">
         <view class="pop-wrap">
@@ -25,7 +26,6 @@
     </view>
   </view>
 </template>
-
 
 <script>
 import api from '@/modules/api'
@@ -41,9 +41,7 @@ export default {
       //收货地址列表
       addressList: [],
       //设置默认时的临时收货地址
-      tmpAddress: {},
-      //是否显示设置默认收货地址
-      isCanDefault: true
+      tmpAddress: {}
     }
   },
   onLoad(opt) {
@@ -117,29 +115,20 @@ export default {
       return appG.util.getHideMobile(mobile)
     },
     /**
+     * 选择收货地址或者
      * 弹出设置默认收货地址框
      */
-    setPopShow: function (item) {
+    select: function (item) {
       let that = this
-      if (that.isSelect) {
-        uni.navigateTo({
-          url: "../address/manage?said=" + item.id
-        })
-      } else {
-        //如果是默认
-        this.isCanDefault = !item.is_default
-        //   if (item.is_default) {
-        //     this.addressList.forEach((ele, index) => {
-        //       if (ele.id == item.id) {
-        //         that.$set(ele, 'is_default', true)
-        //         that.is_default = true
-        //       }
-        //     })
-        //   }
+      if (!that.isSelect) {
         //反向设置默认值
         item.is_default = !item.is_default
         this.popShow = true
         this.tmpAddress = item
+      } else {
+        uni.navigateTo({
+          url: "../confirm-order?said=" + item.id
+        })
       }
     },
     /**
@@ -179,7 +168,6 @@ export default {
       let that = this
       that.api_310(this.tmpAddress.id)
     }
-
   }
 }
 </script>
@@ -205,8 +193,8 @@ export default {
   .btn-check {
     position: absolute;
     left: 40px;
-    top: 50%;
-    transform: translateY(-50%) scale(1.2);
+    top: 35%;
+    //transform: translateY(-50%) scale(1.2);
   }
   .txt-name {
     font-weight: bold;
