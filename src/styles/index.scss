@@ -296,6 +296,10 @@ image{
     display: inline-block;
     vertical-align: middle;
     text-align: center;
+
+    .uni-numbox--text{
+      font-size: 2*20px;
+    }
   }
   .uni-numbox__value{
     font-size: 2*18px;
@@ -341,4 +345,10 @@ radio{
 }
 .pop-pay{
   .uni-transition{background-color: #fff;padding: 20px 0;}
+}
+.uni-popup .pop-content{
+  background-color: #fff;
+}
+.pop-btns{
+  background-color: #fff;
 }

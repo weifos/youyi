@@ -97,13 +97,13 @@
           </view>
         </radio-group>
       </view>
-      <button class="btn btn-bg-main text-white btn-size-full text-size-lg" style="margin-bottom:0px" @click="buyNow">确定购买</button>
+      <button class="btn btn-bg-main text-white btn-size-full text-size-lg btn-sure" style="margin-bottom:0px" @click="buyNow">确定购买</button>
     </uniPopup>
     <!-- popup e -->
   </view>
 </template>
 
-<script> 
+<script>
 
 import api from '@/modules/api'
 import user from '@/modules/userInfo'
@@ -385,7 +385,7 @@ page {
   left: 0;
   width: 100%;
   .uni-noticebar {
-    margin-bottom: 0;
+    margin-bottom: 0!important;
   }
 }
 .pop-pay {
@@ -401,5 +401,7 @@ page {
     margin-left: 60px;
     margin-right: 60px;
   }
+  .btn-sure{margin-top: 20px;}
+  .uni-transition{padding-bottom: 0;}
 }
 </style>
