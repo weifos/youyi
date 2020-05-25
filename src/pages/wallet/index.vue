@@ -128,18 +128,14 @@ export default {
               signType: res.data.Result.wechatpay.signType,
               paySign: res.data.Result.wechatpay.paySign,
               success: function (res) {
-                debugger
                 that.api_332()
               },
               fail: function (err) {
-                debugger
-
                 setTimeout(() => {
                   that.isPaying = false
                 }, 500)
               },
               complete: () => {
-                debugger
                 setTimeout(() => {
                   that.isPaying = false
                 }, 500)

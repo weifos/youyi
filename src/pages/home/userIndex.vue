@@ -112,6 +112,8 @@ export default {
     }
   },
   onLoad() {
+  },
+  onShow() {
     let that = this
     //检测成功回调
     passport.checkSession(function (openid) {
@@ -211,8 +213,6 @@ export default {
       let returl = uni.getStorageSync('returl')
       if (returl != "") {
         uni.removeStorage({ key: 'returl', success: function (res) { } })
-        //关闭所有页面，打开到应用内的某个页面。
-        //uni.reLaunch({ url: returl })
         uni.navigateTo({ url: returl })
       }
     }
