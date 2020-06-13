@@ -1,6 +1,6 @@
 <template>
   <view class="page-select-shop">
-    <yoyiLocation></yoyiLocation>
+    <yoyiLocation v-on:updateSelect="selectByCity"></yoyiLocation>
     <view class="list list-address">
       <view class="list-item" v-for="(item,index) in stores" :key="item" @click="selectAddress(index)">
         <view class="item__title">{{item.name}}</view>
@@ -53,6 +53,12 @@ export default {
           uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
         }
       })
+    },
+    /**
+     * 根据城市筛选门店
+     */
+    selectByCity: function (text) {
+      console.log(text)
     }
   }
 }

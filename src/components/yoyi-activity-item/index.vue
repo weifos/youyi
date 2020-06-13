@@ -15,7 +15,8 @@
       </view>
     </view>
     <view class="item-btns mt10 align-right">
-      <button class="btn btn-line-yellow text-sub btn-size-sm" hover-class @click.stop="handleClick('button')">{{buttonText}}</button>
+      <button class="btn btn-line-yellow text-sub btn-size-sm" @click.stop="handleClick('button')">{{buttonText}}</button>
+      <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" v-if="!isPay" @click.stop="handleClick('goPay')">去支付</button>
     </view>
   </view>
 </template>
@@ -51,7 +52,11 @@ export default {
     status: {
       type: [Number, String],
       default: 1,
-    }, // 状态 1:可报名 2:已报名 3：已使用 4：已过期
+    }, // 是否支付
+    isPay: {
+      type: Boolean,
+      default: false
+    },
   },
   computed: {
     buttonText() {
@@ -82,8 +87,15 @@ export default {
         case 'button':
           this.$emit('buttonClick')
           break;
+        case 'goPay':
+          this.$emit('goPay')
+          break;
       }
     },
+    goPay() {
+      debugger
+      console.log(goPay)
+    }
   },
 }
 </script>

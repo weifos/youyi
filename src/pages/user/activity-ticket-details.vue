@@ -2,25 +2,81 @@
   <view class="wrapper-user-activity-ticket">
     <view class="user-activity-ticket">
       <view class="activity-ticket-content-1">
-        <view class="activity-ticket-title">补习班正在杀死你的孩子！父母到底要如何培养学霸孩子？</view>
-        <view class="activity-ticket-date">2019年8月10日 9:00 ～ 2019年9月15日 20:00</view>
-        <view class="activity-ticket-guest">嘉宾：毛俊程老师</view>
-        <view class="activity-ticket-address">地点：罗湖店</view>
+        <view class="activity-ticket-title">{{result.course_name}}</view>
+        <view class="activity-ticket-date">{{result.start_date + "至" + result.end_date}}</view>
+        <view class="activity-ticket-guest">嘉宾：{{result.teacher_name}}</view>
+        <view class="activity-ticket-address">地点：{{result.address}}</view>
       </view>
       <view class="activity-ticket-content-2">
         <view class="activity-ticket-sub-title">扫码验核票券码</view>
         <view class="activity-ticket-code">
-          <image />
+          <canvas class="code-image" canvas-id="myQrcode" style="background:#fff;width: 180px;height: 180px;margin:0 auto;" />
         </view>
-        <view class="activity-ticket-number">票号：123456890987</view>
+        <!-- <view class="activity-ticket-number">票号：123456890987</view> -->
       </view>
     </view>
   </view>
 </template>
 
 <script>
-export default {}
+
+import api from '@/modules/api'
+import appG from '@/modules/appGlobal'
+import QRCode from '../../modules/weapp-qrcode.js'
+
+export default {
+  data() {
+    return {
+      result: {
+        name: '',
+        teacher_name: '',
+        qRcode: ''
+      }
+    }
+  },
+  components: {},
+  onLoad(opt) {
+    this.api_339(opt.id)
+  },
+  methods: {
+    /**
+     * 加载课堂详票据情页数据
+     */
+    api_339: function (id) {
+      var that = this
+      api.post(api.api_339, api.getSign({ ID: id }), function (app, res) {
+        if (res.data.Basis.State != api.state.state_200) {
+          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+        } else {
+          that.result = res.data.Result
+          that.createQRCode(that.result.ticket)
+          //延迟一秒执行兼容华为手机
+          setTimeout(() => {
+            that.createQRCode(that.result.ticket)
+          }, 1000)
+        }
+      })
+    },
+    /**
+     * 生成二维码
+     * 用户ID#优惠券ID#时间戳
+     */
+    createQRCode(ticket) {
+      new QRCode('myQrcode', {
+        text: ticket,
+        width: 180,
+        height: 180,
+        padding: 12, // 生成二维码四周自动留边宽度，不传入默认为0
+        correctLevel: QRCode.CorrectLevel.L, // 二维码可辨识度
+        callback: (res) => {
+          console.log(res.path)
+        }
+      })
+    }
+  }
+}
 </script>
+
 
 <style lang="scss">
 .wrapper-user-activity-ticket {

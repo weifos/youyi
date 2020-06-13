@@ -34,14 +34,15 @@ export default {
   methods: {
     showLayout() {
       if (this.show) {
-        this.show = false;
+        this.show = false
       } else {
-        this.show = true;
+        this.show = true
       }
     },
     selectItem(text) {
-      this.selected = text;
-      this.show = false;
+      this.selected = text
+      this.show = false
+      this.$emit('updateSelect', text)
     }
   }
 }

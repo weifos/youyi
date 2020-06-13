@@ -56,12 +56,6 @@
             }
         },
         {
-            "path": "pages/activity/select-shop",
-            "style": {
-                "navigationBarTitleText": "门店选择"
-            }
-        },
-        {
             "path": "pages/home/userIndex",
             "style": {
                 "navigationBarTextStyle": "white",
@@ -131,7 +125,13 @@
             }
         },
         {
-            "path": "pages/user/activity-ticket",
+            "path": "pages/user/activity-ticket-details",
+            "style": {
+                "navigationBarTitleText": "活动票券"
+            }
+        },
+        {
+            "path": "pages/user/activity-ticket-list",
             "style": {
                 "navigationBarTitleText": "活动票券"
             }
@@ -158,6 +158,18 @@
             "path": "pages/user/address/manage",
             "style": {
                 "navigationBarTitleText": "收货地址"
+            }
+        },
+        {
+            "path": "pages/user/personalInfo",
+            "style": {
+                "navigationBarTitleText": "个人资料"
+            }
+        },
+        {
+            "path": "pages/user/collectProduct",
+            "style": {
+                "navigationBarTitleText": "商品收藏"
             }
         },
         {
@@ -239,7 +251,7 @@
             }
         },
         {
-            "path": "pages/category/index",
+            "path": "pages/home/productList",
             "style": {
                 "navigationBarTitleText": "分类"
             }
@@ -254,6 +266,24 @@
             "path": "pages/activity/details",
             "style": {
                 "navigationBarTitleText": "活动详情"
+            }
+        },
+        {
+            "path": "pages/activity/select-shop",
+            "style": {
+                "navigationBarTitleText": "门店选择"
+            }
+        },
+        {
+            "path": "pages/activity/sign-up",
+            "style": {
+                "navigationBarTitleText": "调查问卷"
+            }
+        },
+        {
+            "path": "pages/activity/pay",
+            "style": {
+                "navigationBarTitleText": "活动报名支付"
             }
         }
     ],
@@ -276,7 +306,7 @@
                 "text": "首页"
             },
             {
-                "pagePath": "pages/category/index",
+                "pagePath": "pages/home/productList",
                 "iconPath": "static/icon/classify.png",
                 "selectedIconPath": "static/icon/classify_a.png",
                 "text": "分类"

@@ -11,7 +11,7 @@
           <view class="txt-address">{{item.province}} {{item.city}} {{item.area}} {{item.address}}</view>
         </view>
       </view>
-      <view class="btn-add-address" v-if="!isSelect" @click="select">新增收货地址</view>
+      <view class="btn-add-address" v-if="!isSelect" @click="addNewAddress">新增收货地址</view>
       <view class="btn-add-address" v-if="isSelect" @click="select">确认</view>
       <!-- 弹层 -->
       <view class="setting-pop" v-if="popShow">
@@ -167,6 +167,15 @@ export default {
     delAddress: function () {
       let that = this
       that.api_310(this.tmpAddress.id)
+    },
+    /**
+    * 新增收货地址
+    */
+    addNewAddress: function () {
+      let that = this
+      uni.navigateTo({
+        url: "form"
+      })
     }
   }
 }

@@ -64,14 +64,7 @@ export default {
       } else if (item.content_type == 10) {
         url = '../activity/details?id=' + item.content_value
       }
-
-      uni.navigateTo({
-        url: "../user/index?id=42603"
-      })
-      //   uni.navigateTo({
-      //     url: url
-      //   })
-
+      uni.navigateTo({ url: url })
     }
   }
 }

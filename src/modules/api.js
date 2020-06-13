@@ -3,7 +3,7 @@ import user from '@/modules/userInfo'
 import md5 from 'blueimp-md5'
 
 //正式环境配置
-let domain = "http://api66.yoyibook.com:20182/"
+let domain = "https://api66.yoyibook.com/"
 let res_domain = "http://res66.yoyibook.com:20182/"
 //测试环境
 if (process.env.NODE_ENV !== 'production') {
@@ -57,19 +57,19 @@ module.exports = {
     api_204: domain + "204",
     // 课堂页数据
     api_205: domain + "205",
-    //
+    //课堂详情数据
     api_206: domain + "206",
-    //
+    //查看往期的活动或者课程
     api_207: domain + "207",
     //获取门店列表
     api_208: domain + "208",
-    //
+    //领取礼品卡获取验证码
     api_209: domain + "209",
-    //
+    //领取礼品卡
     api_210: domain + "210",
-    //
+    //获取搜索页关键词
     api_211: domain + "211",
-    //
+    //根据关键词查询商品
     api_212: domain + "212",
     //
     api_213: domain + "213",
@@ -83,7 +83,7 @@ module.exports = {
     api_303: domain + "303",
     //删除购物车
     api_304: domain + "304",
-    //
+    //获取退货单
     api_305: domain + "305",
     //加入购物车
     api_306: domain + "306",
@@ -140,8 +140,14 @@ module.exports = {
     api_339: domain + "339",
     //积分交易列表
     api_340: domain + "340",
-    //课程订单申请中
+    //是否收藏
     api_341: domain + "341",
+    //立即收藏
+    api_342: domain + "342",
+    //取消收藏
+    api_343: domain + "343",
+    //用户收藏列表
+    api_344: domain + "344",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()
@@ -223,19 +229,13 @@ module.exports = {
                     //弹出登录失效错误信息
                     uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
                     //当前页面路径
-                    var returl = getCurrentPages()[0].route
+                    let returl = appG.route.getCurPath()
                     //存储到缓存
-                    uni.setStorage({
-                        key: 'returl',
-                        data: returl,
-                        success: function () { }
-                    })
-
+                    uni.setStorage({ key: 'returl', data: returl, success: function () { } })
                     //重新跳转到用户中心
-                    uni.switchTab({
+                    uni.navigateTo({
                         url: "/pages/user/index?backUrl=" + returl
-                    });
-
+                    })
                 } else {
                     cb(this, res)
                 }

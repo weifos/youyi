@@ -1,7 +1,7 @@
 <template>
   <view class="content page-category">
     <view class="top-bar">
-      <searchBar></searchBar>
+      <searchBar :placeholderText="'搜索您想要的商品'" @goSearch="goSearch"></searchBar>
     </view>
     <view class="category-bar">
       <view class="cate-bar scrolling">
@@ -10,8 +10,8 @@
         </view>
       </view>
       <scroll-view scroll-y="true" class="list-bar scrolling" @scroll="scroll">
-        <view class="filter-bar hidden">
-          <text>默认</text>
+        <view class="filter-bar hidden" @click="orderByPrice">
+          <text @click.stop="orderByDefault">默认</text>
           <filter>价格</filter>
         </view>
         <view class="list__item" v-for="(item,index) in cateInfo[curIndex].list" :key="item" @click="goDetails(item)">
@@ -40,6 +40,8 @@ export default {
       title: '分类',
       //是否初始化
       isInit: true,
+      //价格排序
+      byPrice: 0,
       //滚动高度
       scrollTop: 0,
       //每页大小
@@ -68,8 +70,9 @@ export default {
     onCateItemClick(index) {
       this.curIndex = index
       let catg = this.cateInfo[index]
+      this.api_202(catg)
+
       if (!catg.firstLoad) {
-        this.api_202(catg)
       }
     },
     //获取商品列表
@@ -107,51 +110,93 @@ export default {
     //获取商品列表
     api_202(catg) {
       let that = this
-      //设置加载中
-      catg.loading = true
-      //请求数据
-      api.post(api.api_202, api.getSign({
-        Size: catg.pageSize,
-        Index: catg.pageIndex,
-        CatgID: catg.id
-      }), function (vue, res) {
-        if (res.data.Basis.State == api.state.state_200) {
-          //页面加一
-          catg.pageIndex++
-          //加载完成
-          catg.loading = false
-          //总页数
-          catg.totalPage = parseInt(item.totalRow / that.pageSize) + (item.totalRow % that.pageSize == 0 ? 0 : 1)
-          //达到总页数
-          if (catg.pageIndex >= catg.totalPage) {
-            catg.loadComplete = true
-          }
-          res.data.Result.productList.forEach(function (item, index) {
-            if (catg.id == item.gcatg_id) {
-              catg.list.push(item)
+      //是否加载中
+      if (!catg.loading && !catg.loadComplete) {
+        catg.loading = true
+        //请求数据
+        api.post(api.api_202, api.getSign({
+          Size: that.pageSize,
+          ByPrice: that.byPrice,
+          Index: catg.pageIndex,
+          CatgID: catg.id
+        }), function (vue, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            //页面加一
+            catg.pageIndex++
+            //加载完成
+            catg.loading = false
+            //总页数
+            catg.totalPage = parseInt(res.data.Result.totalRow / that.pageSize) + (res.data.Result.totalRow % that.pageSize == 0 ? 0 : 1)
+            //达到总页数
+            if (catg.pageIndex >= catg.totalPage) {
+              catg.loadComplete = true
+              uni.showToast({
+                title: '加载完成',
+                icon: 'success',
+                duration: 3000
+              })
             }
-          })
-        }
-      })
+
+            res.data.Result.productList.forEach(function (item, index) {
+              if (catg.id == item.gcatg_id) {
+                catg.list.push(item)
+              }
+            })
+          }
+        })
+      }
     },
     //查询详情
     goDetails(item) {
       uni.navigateTo({
-        url: 'details?id=' + item.id
+        url: '../category/details?id=' + item.id
       })
     },
     //局部上拉滚动
     scroll(e) {
       let that = this
+      //console.log(e.detail.scrollHeight - e.detail.scrollTop)
       //下拉
-      if (e.detail.scrollTop < this.scrollTop) {
+      if (e.detail.scrollTop > 0 && e.detail.scrollTop - that.scrollTop > 0 && (e.detail.scrollHeight - e.detail.scrollTop) < 505) {
         //当前加载数据的分类
         let catg = this.cateInfo[this.curIndex]
-        //下拉到指定位置
-        if (e.detail.scrollTop - e.detail.scrollHeight > -430) {
-          that.api_202(catg)
-        }
+        that.api_202(catg)
       }
+      //记录上次滚动位置
+      that.scrollTop = e.detail.scrollTop
+    },
+    //根据价格设置
+    orderByDefault() {
+      this.byPrice = 0
+      //当前加载数据的分类
+      let catg = this.cateInfo[this.curIndex]
+      catg.list = []
+      catg.pageIndex = 0
+      this.api_202(catg)
+    },
+    //根据价格排序
+    orderByPrice() {
+      if (this.byPrice == 0) {
+        this.byPrice = 1
+      } else if (this.byPrice == 1) {
+        this.byPrice = 2
+      } else if (this.byPrice == 2) {
+        this.byPrice = 1
+      }
+
+      //当前加载数据的分类
+      let catg = this.cateInfo[this.curIndex]
+      catg.list = []
+      catg.pageIndex = 0
+      //下拉到指定位置
+      this.api_202(catg)
+
+    },
+    //去搜索
+    goSearch() {
+      uni.navigateTo({
+        url: "../category/search"
+      })
     }
   }
 }
@@ -166,6 +211,7 @@ export default {
   left: 0;
 
   .top-bar {
+    z-index: 100;
     position: fixed;
     width: 100%;
     height: 2 * 44px;

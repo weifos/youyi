@@ -89,7 +89,8 @@ export default {
     let str2 = appG.util.getPlaceholder('000000000000000', this.cid)
     //设置付款码
     this.user_code = str1 + str2
-
+    //
+    this.userInfo = _user
     this.bindUser(_user)
 
     this.createQRCode(this.user_code)

@@ -17,7 +17,7 @@
         <view class="text-size-md bold">商品已发货，请您确认收货</view>
         <view class="text-size-sm mt20">感谢您对我们的信任</view>
         <view class="btns align-right mt20">
-          <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">开发票</button>
+          <!-- <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">开发票</button> -->
           <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20">确认收货</button>
         </view>
       </view>

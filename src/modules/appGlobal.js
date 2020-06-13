@@ -403,6 +403,7 @@ export default {
             },
             //日期格式化
             dateFormat: function (date, format) {
+                if (!date) return
                 var d = new Date(date.replace(/-/g, '/'));
                 let o = {
                     "M+": d.getMonth() + 1,
@@ -767,6 +768,12 @@ export default {
         },
         parseInt: function (value) {
             return Number(value);
+        }
+    },
+    route: {
+        getCurPath() {
+            let pages = getCurrentPages()
+            return (pages[pages.length - 1]).route
         }
     }
 }

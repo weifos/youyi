@@ -70,7 +70,7 @@
             <view class="con-price">
               <text class="text-sub text-price">￥{{unitPrice}}</text>
             </view>
-            <view class="con-select-info mt10">已选 黑色 大号</view>
+            <view class="con-select-info mt10">{{pResult.product.name}}</view>
           </view>
         </view>
         <view class="parameter-list mt20 border-bottom" v-for="(item,index) in pResult.specNames" :key="index">
@@ -80,7 +80,7 @@
         <view class="con-no mt40">
           <text>数量</text>
           <view>
-            <uni-number-box class="number-box-skin-1" :value="buyCount" :min="1" @change="change"></uni-number-box>
+            <uni-number-box class="number-box-skin-1" :value="buyCount" :min="1" @change="updateNum"></uni-number-box>
           </view>
         </view>
       </view>
@@ -127,6 +127,7 @@ export default {
       //商品详情
       pResult: {
         product: {
+          id: 0,
           name: '',
           details: ''
         },
@@ -176,10 +177,22 @@ export default {
   },
   onLoad(opt) {
     this.api_203(opt.id)
+    //如果已登录
+    if (user.methods.isLogin()) {
+      this.api_341(opt.id)
+    }
   },
   methods: {
+    //收藏商品
     onClickCollect() {
-      this.collected = true;
+      //如果没有收藏
+      if (this.collected) {
+        //取消收藏
+        this.api_343()
+      } else {
+        //立即收藏
+        this.api_342()
+      }
     },
     //购买或加入购物车
     popupOpen(isAddToCart) {
@@ -193,8 +206,9 @@ export default {
     closePopup() {
       this.$refs.popup.close()
     },
-    change(value) {
-      this.buyCount = value;
+    //数量更新
+    updateNum(value) {
+      this.buyCount = value
     },
     //规格选中事件
     check(item) {
@@ -314,6 +328,7 @@ export default {
       if (!this.isCanSubmit) return
       //选中的商品SKU
       let tmp = this.getSelectSkuVal()
+      if (tmp == null) return
       //封面图片
       tmp.img_url = this.pResult.product.img_url
       if (tmp != null) {
@@ -437,6 +452,53 @@ export default {
           if (res.data.Basis.State == api.state.state_200) {
             //关闭弹框
             that.$refs.popup.close()
+          } else {
+            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+          }
+        }
+      )
+    },
+    /**
+     * 是否收藏
+     */
+    api_341(id) {
+      let that = this
+      api.post(api.api_341, api.getSign({ StoreID: 0, BizID: id, BizType: 0 }),
+        function (vue, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            that.collected = res.data.Result > 0
+          } else {
+            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+          }
+        }
+      )
+    },
+    /**
+     * 立即收藏
+     */
+    api_342() {
+      let that = this
+      api.post(api.api_342, api.getSign({ StoreID: 0, BizID: that.pResult.product.id, BizType: 0 }),
+        function (vue, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+            that.collected = true
+          } else {
+            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+          }
+        }
+      )
+    },
+    /**
+     * 取消收藏
+     */
+    api_343() {
+      let that = this
+      api.post(api.api_343, api.getSign({ StoreID: 0, BizID: that.pResult.product.id, BizType: 0 }),
+        function (vue, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+            that.collected = false
           } else {
             uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
           }

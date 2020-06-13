@@ -14,7 +14,6 @@
               <view class="ellipsis">{{item.product_name}}</view>
               <view class="side-bar">
                 <text class="text-sub text-size-basic">￥{{item.product_price}}</text>
-                <uni-number-box :value="item.count" :min="1" @change="api_303($event,item)" class="number-box-skin-1"></uni-number-box>
               </view>
             </view>
           </view>

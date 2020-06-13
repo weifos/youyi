@@ -1,27 +1,22 @@
 <template>
   <view class="content page-activity">
-    <searchBar type="location"></searchBar>
+    <searchBar type="location" @click></searchBar>
     <view class="banner align-center">
-      <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
-        <swiper-item v-for="item in banners" :key="item">
-          <image :src="item.imgurl" />
-        </swiper-item>
-      </swiper>
-      <!-- <image class="img" src="/static/images/i1.png" /> -->
+      <image class="img" src="/static/images/i1.png" />
     </view>
     <sun-tab :value.sync="index" activeColor="#0056B2" :tabList="tabList" :rangeKey="'title'"></sun-tab>
     <view class="tab-con">
       <view class="tab-c" v-if="index == 0">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[0].list" :key="key">
-            <activityItem :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @click="itemClick(item)" @buttonClick="itemButtonClick(item)"></activityItem>
+            <activityItem :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
       <view class="tab-c" v-if="index == 1">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[1].list" :key="key">
-            <activityItem :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @click="itemClick(item)" @buttonClick="itemButtonClick(item)"></activityItem>
+            <activityItem :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
@@ -67,19 +62,20 @@ export default {
     activityItem,
   },
   methods: {
-    //去报名
-    itemClick(item) {
+    //查看详情
+    goDetails(item) {
+      console.log('goDetails')
       uni.navigateTo({
         url: "../activity/details?id=" + item.id
       })
     },
-    itemButtonClick(item) {
-      console.log('button', item)
+    //去报名
+    goSignup(item) {
+      console.log('goSignup')
       uni.navigateTo({
-        url: "../activity/select-shop?id=" + item.id
+        url: "../activity/sign-up?id=" + item.id
       })
     },
-
     /**
      * 加载课堂页数据
      */
@@ -147,7 +143,6 @@ export default {
         })
       }
     },
-
     /**
      * 加载课程历史数据
      */
@@ -179,8 +174,7 @@ export default {
           }
         })
       }
-    },
-
+    }
   }
 }
 </script>

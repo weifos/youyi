@@ -1,27 +1,39 @@
 <template>
   <view class="component-order-item">
     <view class="title-bar">
-      <view class="order-time">{{item.time}}</view>
+      <view class="order-time">{{item.created_date}}</view>
       <view class="order-status">
-        <text class="ml20" v-if="item.type == 1 || item.type == 3">在线支付</text>
-        <text class="text-sub ml20">{{item.status}}</text>
+        <text class="ml20" v-if="item.pay_method == 11">微信付款码支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 13">微信小程序支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 14">微信扫码支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 21">支付宝支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 31">电子钱包支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 41">储值卡支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 51">现金支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 61">刷卡支付</text>
+        <text class="ml20" v-else-if="item.pay_method == 100">混合支付</text>
+
+        <text class="text-sub ml20" v-if="item.status == 1">待付款</text>
+        <text class="text-sub ml20" v-else-if="item.status == 3">已付款</text>
+        <text class="text-sub ml20" v-else-if="item.status == 10">已发货</text>
+        <text class="text-sub ml20" v-else-if="item.status == 18">交易成功</text>
       </view>
     </view>
     <view class="list-bar">
-      <view class="order-item image-size-sm" v-for="sItem in item.list" :key="sItem">
-        <image :src="sItem" />
+      <view class="order-item image-size-sm" v-for="sItem in item.store_details" :key="sItem">
+        <image :src="sItem.img_url" />
       </view>
     </view>
     <view class="side-bar">
       <view class="order-price">
-        <view class="dib vam">共{{item.num}}件</view>
+        <view class="dib vam">共{{item.count}}件</view>
         <view class="dib vam ml20">
           合计：
-          <text>¥ {{item.price}}</text>
+          <text>¥ {{item.actual_amount}}</text>
         </view>
       </view>
       <view class="order-btns" v-if="item.type == 1">
-        <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">开发票</button>
+        <!-- <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">开发票</button> -->
         <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">确认收货</button>
       </view>
       <view class="order-btns" v-else-if="item.type == 2">
@@ -32,7 +44,7 @@
         <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">去支付</button>
       </view>
       <view class="order-btns" v-else-if="item.type == 3">
-        <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">开发票</button>
+        <!-- <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">开发票</button> -->
         <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">申请售后</button>
       </view>
       <view class="order-btns" v-else-if="item.type == 4">

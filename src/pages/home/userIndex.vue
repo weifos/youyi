@@ -32,11 +32,11 @@
         <image class="item-icon" src="/static/images/user/user-cart.png" mode="aspectFit" />
         <view class="item-text">购物车</view>
       </view>
-      <view class="my-item" @click="goUrl('/pages/user/shopping-cart')">
+      <view class="my-item" @click="goUrl('/pages/user/card')">
         <image class="item-icon" src="/static/images/user/user-gift.png" mode="aspectFit" />
         <view class="item-text">礼品卡</view>
       </view>
-      <view class="my-item" @click="goUrl('/pages/user/shopping-cart')">
+      <view class="my-item" @click="goUrl('/pages/user/collectProduct')">
         <image class="item-icon" src="/static/images/user/user-favor.png" mode="aspectFit" />
         <view class="item-text">商品收藏</view>
       </view>
@@ -70,9 +70,9 @@
     <view class="user-index-list">
       <uni-list>
         <uni-list-item title="付款码" note="门店扫码积分或优惠券、电子钱包支付" @click="goUrl('/pages/wallet/pay')"></uni-list-item>
-        <uni-list-item title="授权副卡" @click="goUrl('/pages/user/card-second')"></uni-list-item>
+        <!-- <uni-list-item title="授权副卡" @click="goUrl('/pages/user/card-second')"></uni-list-item> -->
         <uni-list-item title="收货地址" @click="goUrl('/pages/user/address/manage')"></uni-list-item>
-        <uni-list-item title="个人资料"></uni-list-item>
+        <uni-list-item title="个人资料" @click="goUrl('/pages/user/personalInfo')"></uni-list-item>
         <uni-list-item title="关于书城" @click="goUrl('/pages/user/about')"></uni-list-item>
       </uni-list>
     </view>
@@ -190,7 +190,7 @@ export default {
               that.isLogin = false
             }
           } else {
-            wx.showToast({
+            uni.showToast({
               title: res.data.Basis.Msg,
               icon: 'none',
               duration: 3000

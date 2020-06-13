@@ -94,8 +94,8 @@ export default {
         },//设置历史查询关键词
         setHistoryKeyWord(result) {
             if (result == undefined || result == '') return
-            let keyWords = window.localStorage.getItem("historyKeyWord")
-            if (keyWords == null) {
+            let keyWords = uni.getStorageSync('historyKeyWord')
+            if (!keyWords.length) {
                 keyWords = []
                 keyWords.push(result)
             } else {
@@ -107,10 +107,17 @@ export default {
                     }
                 }
             }
-
-            window.localStorage.setItem("historyKeyWord", JSON.stringify(keyWords))
+            uni.setStorageSync('historyKeyWord', JSON.stringify(keyWords))
             this.historyKeyWord = keyWords
-        },//删除单个历史查询关键词
+        },//获取历史查询关键词
+        getHistoryKeyWord() {
+            let keyWords = uni.getStorageSync('historyKeyWord')
+            if (keyWords.length) {
+                return JSON.parse(keyWords)
+            }
+            return []
+        },
+        //删除单个历史查询关键词
         delHistoryKeyWord(keyword) {
             if (this.historyKeyWord.length == 0) return
             this.historyKeyWord.forEach((ele, index) => {
@@ -122,8 +129,7 @@ export default {
             this.historyKeyWord = this.historyKeyWord
         },//清空历史查询关键词
         clearHistoryKeyWord() {
-            if (this.historyKeyWord.length == 0) return
-            window.localStorage.setItem("historyKeyWord", JSON.stringify([]))
+            uni.removeStorageSync('historyKeyWord')
             this.historyKeyWord = []
         },//是否登录
         isLogin() {

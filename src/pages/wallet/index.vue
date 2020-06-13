@@ -17,8 +17,8 @@
     <view class="wallet-list">
       <uni-list>
         <uni-list-item title="储值卡充入" @click="jump('/pages/wallet/recharge')"></uni-list-item>
-        <uni-list-item title="购买礼品卡" @click="jump('/pages/wallet/gift-buy')"></uni-list-item>
-        <uni-list-item title="交易密码设置"></uni-list-item>
+        <!-- <uni-list-item title="购买礼品卡" @click="jump('/pages/wallet/gift-buy')"></uni-list-item>
+        <uni-list-item title="交易密码设置"></uni-list-item>-->
       </uni-list>
     </view>
     <operationButton :price="10" @click="api_331"></operationButton>
@@ -79,11 +79,7 @@ export default {
           that.rechargeList = res.data.Result.recharges
           user.methods.login(res.data.Result.user)
         } else {
-          uni.showToast({
-            title: res.data.Basis.Msg,
-            icon: 'none',
-            duration: 3000
-          })
+          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
         }
       })
     },
@@ -93,14 +89,9 @@ export default {
     api_331(provider) {
       let that = this
       if (this.selected == -1) {
-        uni.showToast({
-          title: '请选择充值金额',
-          icon: 'none',
-          duration: 3000
-        })
+        uni.showToast({ title: '请选择充值金额', icon: 'none', duration: 3000 })
         return
       }
-
       //设置支付状态
       that.isPaying = true
       //获取充值的选项
@@ -108,59 +99,51 @@ export default {
       api.post(api.api_331, api.getSign({
         ID: item == undefined ? 0 : item.id,
         Amount: that.rechargeAmount
-      }),
-        function (app, res) {
-          if (res.data.Basis.State != api.state.state_200) {
-            uni.showToast({
-              title: res.data.Basis.Msg,
-              icon: 'none',
-              duration: 3000
-            })
-          } else {
-            that.serial_no = res.data.Result.serial_no
-            //通过uni-app吊起支付
-            uni.requestPayment({
-              provider: provider,
-              appId: res.data.Result.wechatpay.appId,
-              timeStamp: res.data.Result.wechatpay.timeStamp,
-              nonceStr: res.data.Result.wechatpay.nonceStr,
-              package: res.data.Result.wechatpay.package,
-              signType: res.data.Result.wechatpay.signType,
-              paySign: res.data.Result.wechatpay.paySign,
-              success: function (res) {
-                that.api_332()
-              },
-              fail: function (err) {
-                setTimeout(() => {
-                  that.isPaying = false
-                }, 500)
-              },
-              complete: () => {
-                setTimeout(() => {
-                  that.isPaying = false
-                }, 500)
-              }
-            })
-          }
-        })
+      }), function (app, res) {
+        if (res.data.Basis.State != api.state.state_200) {
+          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+        } else {
+          that.serial_no = res.data.Result.serial_no
+          //通过uni-app吊起支付
+          uni.requestPayment({
+            provider: provider,
+            appId: res.data.Result.wechatpay.appId,
+            timeStamp: res.data.Result.wechatpay.timeStamp,
+            nonceStr: res.data.Result.wechatpay.nonceStr,
+            package: res.data.Result.wechatpay.package,
+            signType: res.data.Result.wechatpay.signType,
+            paySign: res.data.Result.wechatpay.paySign,
+            success: function (res) {
+              that.api_332()
+            },
+            fail: function (err) {
+              setTimeout(() => {
+                that.isPaying = false
+              }, 500)
+            },
+            complete: () => {
+              setTimeout(() => {
+                that.isPaying = false
+              }, 500)
+            }
+          })
+        }
+      })
     },
     /**
      * 完成充值
      */
     api_332: function () {
       var that = this
-      api.post(api.api_332, api.getSign({ No: that.data.serial_no }), function (app, res) {
+      api.post(api.api_332, api.getSign({ No: that.serial_no }), function (app, res) {
         if (res.data.Basis.State == api.state.state_200) {
-          router.goUrl({ url: '../home/userIndex' })
+          that.checkRedirect()
         } else {
-          uni.showToast({
-            title: res.data.Basis.Msg,
-            icon: 'none',
-            duration: 3000
-          })
+          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
         }
       })
-    },//立即购买
+    },
+    //立即购买
     buyNow() {
       let that = this
       //是否在支付中
@@ -178,6 +161,18 @@ export default {
             }
           }
         })
+      }
+    },
+    /**
+     * 检测是否需要重定向
+     */
+    checkRedirect() {
+      let returl = uni.getStorageSync('returl')
+      if (returl != "") {
+        uni.removeStorage({ key: 'returl', success: function (res) { } })
+        uni.navigateTo({ url: returl })
+      } else {
+        uni.navigateTo({ url: 'pay' })
       }
     }
   }
