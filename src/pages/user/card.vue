@@ -9,8 +9,7 @@
       <rightsList :type="3"></rightsList>
     </template>
     <view class="card-tips">升级会员享更多优惠！</view>
-    <!-- <operationButton buttonText="立即升级" @click="jump('/pages/user/open')"></operationButton> -->
-    <operationButton buttonText="立即升级"></operationButton>
+    <operationButton buttonText="立即升级" @click="jump('/pages/user/open')"></operationButton>
   </view>
 </template>
 

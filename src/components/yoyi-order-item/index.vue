@@ -32,23 +32,20 @@
           <text>¥ {{item.actual_amount}}</text>
         </view>
       </view>
+      <view class="order-btns">
+        <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20" @click="goDetails(item)">查看详情</button>
+      </view>
       <view class="order-btns" v-if="item.type == 1">
         <!-- <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">开发票</button> -->
-        <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">确认收货</button>
+        <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" @click="confirmReceipt(item)">确认收货</button>
       </view>
-      <view class="order-btns" v-else-if="item.type == 2">
-        <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">查看详情</button>
-      </view>
-      <view class="order-btns" v-else-if="item.type == 0">
-        <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">取消订单</button>
-        <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">去支付</button>
+      <view class="order-btns" v-else-if="item.status == 1">
+        <!-- <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">取消订单</button> -->
+        <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" @click="goPay(item)">去支付</button>
       </view>
       <view class="order-btns" v-else-if="item.type == 3">
         <!-- <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray ml20">开发票</button> -->
         <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">申请售后</button>
-      </view>
-      <view class="order-btns" v-else-if="item.type == 4">
-        <button class="btn btn-size-sm btn-line-gray btn-round-sm text-gray">查看详情</button>
       </view>
     </view>
   </view>
@@ -57,19 +54,35 @@
 <script>
 
 export default {
+  components: {},
   name: 'orderItem',
   props: {
     item: [Object],
     default: {}
   },
   data() {
-    return {
-
+    return {}
+  },
+  methods: {
+    /**
+     * 查看详情
+     */
+    goDetails(item) {
+      uni.navigateTo({ url: 'order-details?no=' + item.serial_no })
+    },
+    /**
+     * 去付款
+     */
+    goPay(value) {
+      uni.navigateTo({ url: 'order-details?no=' + item.serial_no })
+    },
+    /**
+     * 确认收货
+     */
+    confirmReceipt(value) {
+      this.$emit('confirmReceipt')
     }
-  },
-  components: {
-
-  },
+  }
 }
 </script>
 

@@ -12,16 +12,18 @@
         </view>
       </view>
       <view class="user-info">
-        <navigator class="info-item" hover-class url="/pages/user/point">
-          <view class="item-text1">0</view>
+        <!-- <navigator class="info-item" hover-class url="/pages/user/point"> -->
+        <navigator class="info-item" hover-class>
+          <view class="item-text1">{{userInfo.point}}</view>
           <view class="item-text2">积分</view>
         </navigator>
-        <navigator class="info-item" hover-class url="/pages/wallet/coupon">
+        <navigator class="info-item">
+          <!-- <navigator class="info-item" hover-class url="/pages/wallet/coupon"> -->
           <view class="item-text1">0</view>
           <view class="item-text2">优惠券</view>
         </navigator>
         <navigator class="info-item" hover-class url="/pages/wallet/index">
-          <view class="item-text1">0</view>
+          <view class="item-text1">{{userInfo.balance}}</view>
           <view class="item-text2">钱包</view>
         </navigator>
       </view>
@@ -107,7 +109,7 @@ export default {
         id: 0,
         nick_name: '未设置',
         login_name: '未登录',
-        headimgurl: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big99008.jpg'
+        headimgurl: '/static/images/user/user-avatar.png'
       }
     }
   },
@@ -137,7 +139,7 @@ export default {
       passport.bindMobile(e, function (code, user) {
         if (code == api.state.state_200) {
           that.isLogin = true
-          userInfo.login_name = appG.util.getHideMobile(user.login_name)
+          that.bindUser(user)
         }
         //是否存在重定向
         let returl = uni.getStorageSync('returl')
@@ -155,17 +157,21 @@ export default {
       let that = this
       passport.getWxUser(e, function (code, user) {
         if (code == api.state.state_200) {
-          that.userInfo.headimgurl = appG.util.getHideMobile(user.avatarUrl)
+          that.userInfo.headimgurl = user.avatarUrl
+          that.bindUser(that.userInfo)
         }
       })
     },
     /**
      * 加载微信用户信息
      */
-    bindUser: function (user) {
-      if (user.nickname) this.userInfo.nick_name = user.nickname
-      if (user.headimgurl) this.userInfo.headimgurl = user.headimgurl
-      this.userInfo.login_name = appG.util.getHideMobile(user.login_name)
+    bindUser: function (_user) {
+      if (_user.headimgurl != undefined && !_user.headimgurl.length) _user.headimgurl = '/static/images/user/user-avatar.png'
+      this.userInfo.login_name = appG.util.getHideMobile(_user.login_name)
+      if (_user.nickname) this.userInfo.nick_name = _user.nickname
+      this.userInfo = _user
+      //登录  
+      user.methods.login(_user)
     },
     /**
      * 加载用户信息
@@ -177,10 +183,10 @@ export default {
         function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
             if (res.data.Result.login_name != undefined) {
+              //设置登录状态
+              that.isLogin = true
               //昵称
               res.data.Result.nickname = decodeURI(res.data.Result.nickname)
-              //登录
-              user.methods.login(res.data.Result)
               //绑定用户
               that.bindUser(res.data.Result)
               //检测页面重定向

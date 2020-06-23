@@ -11,31 +11,27 @@
               <image :src="item.img_url" />
             </view>
             <view class="text-bar">
-              <view class="ellipsis">{{item.product_name}}</view>
+              <view class="ellipsis">{{item.name}}</view>
               <view class="side-bar">
-                <text class="text-sub text-size-basic">￥{{item.product_price}}</text>
+                <text class="text-sub text-size-basic">￥{{item.price}}</text>
               </view>
             </view>
           </view>
         </view>
-        <view class="move" @click="api_304(item)">
+        <view class="move" @click="cancel(item)">
           <view class="btn-del">删除</view>
         </view>
       </view>
     </view>
     <view class="operation-bar">
       <view class="text-bar align-center">
-        <view class="dib text-size-md">
+        <view class="dib text-size-md" @click="checkAll">
           <checkbox :checked="checked" color="#FFB825" />
           <text class="dib vam">全选</text>
         </view>
-        <view class="dib text-size-basic">
-          合计：¥
-          <text class="bold text-size-md">{{totalPrice}}元</text>
-        </view>
       </view>
       <view class="btns-bar">
-        <button class="btn text-size-basic text-white bg-sub">去结算</button>
+        <button class="btn text-size-basic text-white bg-sub" @click="cancelSelect">删除选中</button>
       </view>
     </view>
   </view>
@@ -55,66 +51,85 @@ export default {
       listTouchDirection: null,
       //对应的门店信息
       store_id: 0,
-      //订单信息
-      order: {
-        store_id: 0,
-        remarks: '',
-        details: []
-      },
+      //每页大小
+      pageSize: 6,
+      //当前类别索引
+      pageIndex: 0,
+      //全选
+      isCheckAll: false,
       //购物车列表
       result: [],
+      //取消收藏的商品
+      ids: [],
       //总计
       totalPrice: 0
     }
   },
   onLoad(opt) {
-    this.api_302()
+    this.api_344()
   },
   methods: {
-    //加载购物车
-    api_302() {
+    //加载商品收藏
+    api_344() {
       let that = this
-      api.post(api.api_302, api.getSign(), function (vue, res) {
+      api.post(api.api_344, api.getSign({
+        BizType: 0,
+        Size: that.pageSize,
+        Index: that.pageIndex
+      }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
-          res.data.Result.forEach((ele, index) => {
-            that.$set(ele, "checked", false)
-          })
-          that.checkUpdate()
           that.result = res.data.Result
         } else {
           uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
     },
-    //更新购物车
-    api_303(num, item) {
+    //取消收藏
+    cancel(item) {
       let that = this
-      api.post(api.api_303,
-        api.getSign({ CID: item.id, Count: num, ProductID: item.product_id, SpecSet: item.specset }), (vue, res) => {
-          console.log(res)
-        }
-      )
+      that.ids = [item.id]
+      that.api_343()
     },
-    //删除购物车
-    api_304(item) {
+    //取消选中收藏
+    cancelSelect() {
       let that = this
+      that.ids = that.result.filter(item => item.checked).map(function (ele, index) {
+        return ele.id
+      })
+
+      that.api_343()
+    },
+    //取消收藏
+    api_343() {
+      let that = this
+      let idStr = ''
+      that.ids.forEach((ele, index) => {
+        if (idStr.length == 0) {
+          idStr += ele
+        } else {
+          idStr += ',' + ele
+        }
+      })
       uni.showModal({
         title: '提示',
-        content: '确认删除吗',
+        content: '确认取消收藏吗',
         success: function (res) {
           if (res.confirm) {
-            //请求接口删除
-            api.post(api.api_304, api.getSign({ Id: item.id }),
+            api.post(api.api_343, api.getSign({ Ids: idStr }),
               function (wx, res) {
                 if (res.data.Basis.State == api.state.state_200) {
-                  that.result.forEach((ele, index) => {
-                    if (ele.id === item.id) {
-                      that.result.shift(index, 1);
-                    }
+                  let tmp = []
+                  that.ids.forEach((ele, index) => {
+                    that.result.forEach((ele1, index1) => {
+                      if (ele === ele1.id) {
+                        that.result.shift(index, 1)
+                        return
+                      }
+                    })
                   })
+
                   that.result = that.result
-                  that.checkUpdate()
-                  uni.showToast({ title: "删除成功", duration: 2000 })
+                  uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
                 } else {
                   uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
                 }
@@ -124,39 +139,40 @@ export default {
         }
       })
     },
-    //付款框选中事件
-    selectedChange(val) {
+    //局部上拉滚动
+    scroll(e) {
       let that = this
-      item.is_default = !item.is_default
-
-
-
-      that.totalPrice = 0
-      that.result.forEach((item, index) => {
-        that.totalPrice += item.product_price * item.count
-      })
+      //下拉
+      if (e.detail.scrollTop > 0 && e.detail.scrollTop - that.scrollTop > 0 && (e.detail.scrollHeight - e.detail.scrollTop) < 505) {
+        //当前加载数据的分类
+        let catg = this.cateInfo[this.curIndex]
+        that.api_202(catg)
+      }
+      //记录上次滚动位置
+      that.scrollTop = e.detail.scrollTop
     },
-    //勾选改变更新小计
-    checkUpdate(ele) {
+    //全选
+    checkAll() {
       let that = this
-      //总计临时变量
-      let total = 0
-      that.result.map((item, index) => {
-        //更新修改
-        if (ele != null && ele != undefined && item.specset == ele.specset && item.product_id == ele.product_id) {
-          item = ele
-        }
-        //当前小计 
-        item.subtotal = item.product_price * item.count
-        //更新购物车
-        that.result[index] = item
-        //总计
-        total += item.subtotal
-      })
+      if (that.isCheckAll) {
+        that.isCheckAll = false
+      } else {
+        that.isCheckAll = true
+      }
 
-      that.totalPrice = total
-      //更新购物车信息
-      user.methods.setShoppingCart(that.result)
+      that.result.forEach((ele, index) => {
+        if (that.isCheckAll) {
+          ele.checked = true
+        } else {
+          ele.checked = false
+        }
+      })
+      that.result = that.result
+    },
+    //付款框选中事件
+    selectedChange(item) {
+      let that = this
+      item.checked = !item.checked
     },
     // ListTouch触摸开始
     ListTouchStart(e) {
@@ -239,7 +255,7 @@ export default {
   }
   .btn {
     height: 2 * 48px;
-    width: 2 * 140px;
+    width: 4 * 140px;
   }
 }
 ///////

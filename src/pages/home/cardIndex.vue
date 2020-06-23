@@ -60,7 +60,12 @@ export default {
       if (that.timer.num >= 0 && that.timer.num < 60) { return }
 
       //发送短信
-      api.post(api.api_209, api.getSign({ Mobile: that.mobile, UserName: that.userName }), function (vue, res) {
+      api.post(api.api_209, api.getSign({
+        Mobile: that.mobile,
+        UserName: that.userName,
+        //领取礼品卡获取验证码
+        SmsType: 15
+      }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
           that.startSetInter()
         } else {
@@ -111,7 +116,7 @@ export default {
       }, 1000)
     },
     /**
-     * 开始计时器
+     * 结束计时器
      */
     endSetInter: function () {
       let that = this

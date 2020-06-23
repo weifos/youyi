@@ -109,6 +109,8 @@ module.exports = {
     api_317: domain + "317",
     //订单列表
     api_318: domain + "318",
+    //订单明细
+    api_319: domain + "319",
 
     //课程订单生成
     api_326: domain + "326",
@@ -148,6 +150,10 @@ module.exports = {
     api_343: domain + "343",
     //用户收藏列表
     api_344: domain + "344",
+    //检测用户在老系统是否存在
+    api_345: domain + "345",
+    //加载付费会员卡购买列表
+    api_346: domain + "346",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()
@@ -210,9 +216,7 @@ module.exports = {
     },
     //请求对象
     post(url, data, cb, ch) {
-        uni.showLoading({
-            title: '加载中'
-        })
+        uni.showLoading({ title: '加载中' })
         uni.request({
             url: url,
             method: "post",

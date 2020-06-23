@@ -43,7 +43,7 @@
       </view>
       <view class="price-item text-size-basic">
         <text>运费</text>
-        <text>¥ {{freight}}</text>
+        <text>¥ {{order.freight}}</text>
       </view>
     </view>
 
@@ -154,6 +154,8 @@ export default {
         user_coupon_id: 0,
         //订单详情
         details: [],
+        //运费
+        freight: 0,
         //订单详情
         store_details: []
       },
@@ -161,8 +163,6 @@ export default {
       productAmount: 0,
       //配送方式ID
       mode_id: 0,
-      //运费
-      freight: 0,
       //配送方式ID
       mode_id: 0,
       //已优惠金额
@@ -191,6 +191,7 @@ export default {
         that.order.details.push(item)
         that.order.store_details = that.order.details
       }
+
       //计算商品金额
       that.order.details.forEach(function (ele, index, arr) {
         that.productAmount += ele.sale_price * ele.count
@@ -230,16 +231,16 @@ export default {
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
           that.addr = res.data.Result.data.address
-          that.freight = res.data.Result.data.freight
+          that.order.freight = res.data.Result.data.freight
           that.mode_id = res.data.Result.data.mode_id
           //登录
           user.methods.login(res.data.Result.user)
           //当前页面用户钱包
           that.userInfo = res.data.Result.user
           //更新总金额
-          that.order.total_amount += that.freight
+          that.order.total_amount += that.order.freight
           //更新实付金额
-          that.order.actual_amount += that.freight
+          that.order.actual_amount += that.order.freight
           //设置默认支付方式
           if (that.order.balance > that.order.actual_amount) {
             that.order.pay_method = 31
@@ -256,34 +257,37 @@ export default {
      */
     api_314(provider) {
       let that = this
-      api.post(api.api_314, api.getSign({ Order: that.order, IsShoppingCart: that.isShoppingCart }),
-        function (vue, res) {
-          if (res.data.Basis.State == api.state.state_200) {
-            //通过uni-app吊起支付
-            uni.requestPayment({
-              provider: provider,
-              appId: res.data.Result.wechatpay.appId,
-              timeStamp: res.data.Result.wechatpay.timeStamp,
-              nonceStr: res.data.Result.wechatpay.nonceStr,
-              package: res.data.Result.wechatpay.package,
-              signType: res.data.Result.wechatpay.signType,
-              paySign: res.data.Result.wechatpay.paySign,
-              success: function (res) {
-                console.log('success:' + JSON.stringify(res))
-                uni.navigateTo({ url: '../mine/order-list' })
-              },
-              fail: function (err) {
-                setTimeout(() => { that.isPaying = false }, 500)
-              },
-              complete: () => {
-                setTimeout(() => { that.isPaying = false }, 500)
-              }
-            })
-          } else {
-            uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
-            setTimeout(() => { that.isPaying = false }, 500)
-          }
+      api.post(api.api_314, api.getSign({
+        Order: that.order,
+        IsShoppingCart: that.isShoppingCart,
+        UserAddressId: that.addr.id
+      }), function (vue, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          //通过uni-app吊起支付
+          uni.requestPayment({
+            provider: provider,
+            appId: res.data.Result.wechatpay.appId,
+            timeStamp: res.data.Result.wechatpay.timeStamp,
+            nonceStr: res.data.Result.wechatpay.nonceStr,
+            package: res.data.Result.wechatpay.package,
+            signType: res.data.Result.wechatpay.signType,
+            paySign: res.data.Result.wechatpay.paySign,
+            success: function (res) {
+              console.log('success:' + JSON.stringify(res))
+              uni.navigateTo({ url: '../mine/order-list' })
+            },
+            fail: function (err) {
+              setTimeout(() => { that.isPaying = false }, 500)
+            },
+            complete: () => {
+              setTimeout(() => { that.isPaying = false }, 500)
+            }
+          })
+        } else {
+          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          setTimeout(() => { that.isPaying = false }, 500)
         }
+      }
       )
     },
     /**
@@ -291,19 +295,25 @@ export default {
      */
     api_336() {
       let that = this
-      api.post(api.api_336, api.getSign({ UserCouponId: 0, Order: that.order, IsShoppingCart: that.isShoppingCart }),
-        function (vue, res) {
-          if (res.data.Basis.State == api.state.state_200) {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
-            setTimeout(function () {
-              uni.navigateTo({ url: '../mine/order-list' })
-            }, 1000)
-          } else {
+      api.post(api.api_336, api.getSign({
+        UserCouponId: 0,
+        Order: that.order,
+        IsShoppingCart: that.isShoppingCart,
+        UserAddressId: that.addr.id
+      }), function (vue, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          setTimeout(function () {
+            uni.navigateTo({ url: '../mine/order-list' })
+          }, 1000)
+        } else {
+          setTimeout(function () {
             uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
-            that.isPaying = false
-          }
+          }, 50)
+          setTimeout(function () { uni.hideToast() }, 3000)
+          that.isPaying = false
         }
-      )
+      })
     },
     /**
      * 立即充值
@@ -378,6 +388,12 @@ export default {
         })
         //钱包支付
       } else if (this.order.pay_method == 31) {
+        if (that.order.actual_amount - that.userInfo.balance) {
+          uni.showToast({ title: '钱包余额不足', icon: 'none', duration: 3000 })
+          setTimeout(function () { uni.hideToast() }, 3000)
+          return
+        }
+
         that.api_336()
       }
     }
