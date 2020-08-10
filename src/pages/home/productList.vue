@@ -95,7 +95,13 @@ export default {
             item.list = []
             item.loading = false
             item.loadComplete = false
-            item.totalPage = parseInt(item.totalRow / that.pageSize) + (item.totalRow % that.pageSize == 0 ? 0 : 1)
+            item.totalPage = parseInt(res.data.Result.totalRow / that.pageSize) + (res.data.Result.totalRow % that.pageSize == 0 ? 0 : 1)
+
+            //达到总页数
+            if (item.pageIndex >= item.totalPage) {
+              item.loadComplete = true
+            }
+
             res.data.Result.productList.forEach(function (item1, index1) {
               if (item.id == item1.gcatg_id) {
                 item.list.push(item1)
@@ -130,11 +136,7 @@ export default {
             //达到总页数
             if (catg.pageIndex >= catg.totalPage) {
               catg.loadComplete = true
-              uni.showToast({
-                title: '加载完成',
-                icon: 'success',
-                duration: 3000
-              })
+              appG.dialog.showToast({ title: '加载完成', icon: 'success', duration: 3000 })
             }
 
             res.data.Result.productList.forEach(function (item, index) {

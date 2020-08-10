@@ -71,8 +71,12 @@ module.exports = {
     api_211: domain + "211",
     //根据关键词查询商品
     api_212: domain + "212",
-    //
+    //加载课程活动报名
     api_213: domain + "213",
+    // 
+    api_214: domain + "214",
+    //定位最近门店
+    api_299: domain + "299",
     //
     api_300: domain + "300",
     //保存用户信息
@@ -111,7 +115,6 @@ module.exports = {
     api_318: domain + "318",
     //订单明细
     api_319: domain + "319",
-
     //课程订单生成
     api_326: domain + "326",
     //微信小程序预支付订单 课程订单
@@ -154,6 +157,38 @@ module.exports = {
     api_345: domain + "345",
     //加载付费会员卡购买列表
     api_346: domain + "346",
+    //付费会员卡预支付
+    api_347: domain + "347",
+    //购卡成功
+    api_348: domain + "348",
+    //加载礼品卡配置
+    api_349: domain + "349",
+    //购买礼品卡配置
+    api_350: domain + "350",
+    //礼品卡购买成功通知
+    api_351: domain + "351",
+    //我的礼品卡包
+    api_352: domain + "352",
+    //使用礼品卡
+    api_353: domain + "353",
+    //加载赠送的礼品卡
+    api_354: domain + "354",
+    //立即赠送礼品卡
+    api_355: domain + "355",
+    //加载被赠送的礼品卡
+    api_356: domain + "356",
+    //接受赠送礼品卡
+    api_357: domain + "357",
+    //加载赠送的数量
+    api_358: domain + "358",
+    //提交调查问卷
+    api_359: domain + "359",
+    //校验课程券码
+    api_360: domain + "360",
+    //绑定老会员卡
+    api_361: domain + "361",
+    //检测当前会员在老系统是否存在
+    api_362: domain + "362",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()
@@ -235,10 +270,10 @@ module.exports = {
                     //当前页面路径
                     let returl = appG.route.getCurPath()
                     //存储到缓存
-                    uni.setStorage({ key: 'returl', data: returl, success: function () { } })
+                    uni.setStorage({ key: 'returl', data: "/" + returl, success: function () { } })
                     //重新跳转到用户中心
-                    uni.navigateTo({
-                        url: "/pages/user/index?backUrl=" + returl
+                    uni.reLaunch({
+                        url: "/pages/home/userIndex"
                     })
                 } else {
                     cb(this, res)

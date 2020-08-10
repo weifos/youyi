@@ -88,6 +88,7 @@ export default {
       } else {
         this.back = false;
       }
+
       // this.value = index;
       this.$emit('update:value', index);
       this.$emit('change', { tab: tab });

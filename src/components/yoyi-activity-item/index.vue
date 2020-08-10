@@ -6,16 +6,21 @@
       </view>
       <view class="item-info">
         <view class="item-title ellipsis2 text-size-basic">{{title}}</view>
-        <view class="item-guest text-gray text-size-sm mt10">嘉宾：{{guest}}</view>
+        <!-- <view class="item-guest text-gray text-size-sm mt10">嘉宾：{{guest}}</view> -->
+        <view class="item-bar flex text-size-sm mt10">
+          <text class="text-gray">嘉宾：{{guest}}</text>
+          <text class="text-gray item-address">&nbsp;</text>
+          <text class="text-gray">{{address}}</text>
+        </view>
         <view class="item-bar flex text-size-sm mt10">
           <text class="text-gray">{{time}}</text>
-          <text class="text-gray item-address">{{address}}</text>
+          <text class="text-gray item-address">&nbsp;</text>
           <text class="text-sub" v-if="status == 1 || status == 4">&yen;{{price}}</text>
         </view>
       </view>
     </view>
     <view class="item-btns mt10 align-right">
-      <button class="btn btn-line-yellow text-sub btn-size-sm" @click.stop="handleClick('button')">{{buttonText}}</button>
+      <button class="btn btn-line-yellow text-sub btn-size-sm" v-if="isPay" @click.stop="handleClick('button')">{{buttonText}}</button>
       <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" v-if="!isPay" @click.stop="handleClick('goPay')">去支付</button>
     </view>
   </view>
@@ -93,7 +98,6 @@ export default {
       }
     },
     goPay() {
-      debugger
       console.log(goPay)
     }
   },

@@ -51,6 +51,7 @@ export default {
             that.result.push({
               id: o.id,
               name: course.course_name,
+              is_used: o.is_used,
               startTime: appG.util.date.dateFormat(course.start_date, 'yyyy-MM-dd hh:mm'),
               endTime: appG.util.date.dateFormat(course.end_date, 'yyyy-MM-dd hh:mm')
             })

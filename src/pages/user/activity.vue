@@ -78,7 +78,7 @@ export default {
      */
     itemButtonClick(item) {
       uni.navigateTo({
-        url: `/pages/user/activity-ticket-list?id=${item.course_id}`,
+        url: `/pages/user/activity-ticket-list?id=${item.id}`,
       })
     },
     /**

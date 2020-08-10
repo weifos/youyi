@@ -28,13 +28,14 @@
         </navigator>
       </view>
     </view>
-    <navigator class="user-index-card" hover-class :class="[`user-index-card-${userType}`]" :url="`/pages/user/open?type=${userType}`"></navigator>
+    <!-- <navigator class="user-index-card" hover-class :class="[`user-index-card-${userType}`]" :url="`/pages/user/open?type=${userType}`"></navigator> -->
+    <navigator class="user-index-card" hover-class :class="[`user-index-card-${userType}`]" :url="`/pages/user/card`"></navigator>
     <view class="user-index-my">
       <view class="my-item" @click="goUrl('/pages/user/shopping-cart')">
         <image class="item-icon" src="/static/images/user/user-cart.png" mode="aspectFit" />
         <view class="item-text">购物车</view>
       </view>
-      <view class="my-item" @click="goUrl('/pages/user/card')">
+      <view class="my-item" @click="goUrl('/pages/wallet/gift-buy?count='+acceptCount)">
         <image class="item-icon" src="/static/images/user/user-gift.png" mode="aspectFit" />
         <view class="item-text">礼品卡</view>
       </view>
@@ -71,6 +72,7 @@
     </view>
     <view class="user-index-list">
       <uni-list>
+        <uni-list-item title="验核活动券码" v-if="userInfo.verify_ticket" note="验核用户活动报名的券码" @click="goUrl('/pages/user/check-ticket')"></uni-list-item>
         <uni-list-item title="付款码" note="门店扫码积分或优惠券、电子钱包支付" @click="goUrl('/pages/wallet/pay')"></uni-list-item>
         <!-- <uni-list-item title="授权副卡" @click="goUrl('/pages/user/card-second')"></uni-list-item> -->
         <uni-list-item title="收货地址" @click="goUrl('/pages/user/address/manage')"></uni-list-item>
@@ -105,8 +107,12 @@ export default {
     return {
       userType: 1,//1:非会员 2:普通会员 3:高级会员
       isLogin: true,
+      mobile: '',
+      //查询接受到的礼品卡
+      acceptCount: 0,
       userInfo: {
         id: 0,
+        verify_ticket: false,
         nick_name: '未设置',
         login_name: '未登录',
         headimgurl: '/static/images/user/user-avatar.png'
@@ -117,16 +123,17 @@ export default {
   },
   onShow() {
     let that = this
-    //检测成功回调
+    //检验当前用户的session_key是否有效
     passport.checkSession(function (openid) {
-      let wxUser = user.methods.getUser()
-      if (!wxUser.login_name) {
-        //加载用户信息
+      let is_login = user.methods.isLogin()
+      //如果未登录
+      if (!is_login) {
+        //根据openid加载用户信息
         that.api_106()
       } else {
-        that.bindUser(wxUser)
-        //检测页面重定向
-        that.checkRedirect()
+        let userInfo = user.methods.getUser()
+        that.bindUser(userInfo)
+        that.api_358()
       }
     })
   },
@@ -166,8 +173,8 @@ export default {
      * 加载微信用户信息
      */
     bindUser: function (_user) {
-      if (_user.headimgurl != undefined && !_user.headimgurl.length) _user.headimgurl = '/static/images/user/user-avatar.png'
-      this.userInfo.login_name = appG.util.getHideMobile(_user.login_name)
+      if (_user.headimgurl == undefined || !_user.headimgurl.length) _user.headimgurl = '/static/images/user/user-avatar.png'
+      _user.login_name = appG.util.getHideMobile(_user.login_name)
       if (_user.nickname) this.userInfo.nick_name = _user.nickname
       this.userInfo = _user
       //登录  
@@ -191,16 +198,29 @@ export default {
               that.bindUser(res.data.Result)
               //检测页面重定向
               that.checkRedirect()
+              that.api_358()
             } else {
               //弹出手机号码授权
               that.isLogin = false
             }
           } else {
-            uni.showToast({
-              title: res.data.Basis.Msg,
-              icon: 'none',
-              duration: 3000
-            })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
+    },
+    /**
+     * 加载赠送的数量
+     */
+    api_358: function () {
+      let that = this
+      api.post(api.api_358, api.getSign(),
+        function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            if (res.data.Result.count != undefined) {
+              that.acceptCount = res.data.Result.count
+            }
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           }
         })
     },
@@ -208,16 +228,14 @@ export default {
      * 路由跳转
      */
     goUrl(url) {
-      uni.navigateTo({
-        url,
-      })
+      uni.navigateTo({ url })
     },
     /**
      * 检测是否需要重定向
      */
-    checkRedirect(url) {
+    checkRedirect() {
       let returl = uni.getStorageSync('returl')
-      if (returl != "") {
+      if (returl != "" && returl != '/pages/home/userIndex') {
         uni.removeStorage({ key: 'returl', success: function (res) { } })
         uni.navigateTo({ url: returl })
       }

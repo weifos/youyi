@@ -568,7 +568,19 @@ export default {
             var Range = Max - Min;
             var Rand = Math.random();
             return (Min + Math.round(Rand * Range));
-        },//占位符
+        },
+        //保留两位小数，不四舍五入
+        formatDecimal: function (num, decimal) {
+            num = num.toString()
+            let index = num.indexOf('.')
+            if (index !== -1) {
+                num = num.substring(0, decimal + index + 1)
+            } else {
+                num = num.substring(0)
+            }
+            return parseFloat(num).toFixed(decimal)
+        },
+        //占位符
         getPlaceholder: function (str1, str2) {
             if (str1.toString().length >= str2.toString().length) {
                 let tmp = str1.substring(0, str1.length - str2.toString().length)
@@ -768,6 +780,28 @@ export default {
         },
         parseInt: function (value) {
             return Number(value);
+        }
+    },
+    dialog: {
+        /// <summary>
+        /// uni显示消息提示框，兼容微信
+        /// title 提示的内容，长度与 icon 取值有关
+        /// icon  图标，success显示成功图标，此时 title 文本最多显示 7 个汉字长度。默认值	
+        /// icon  loading 显示加载图标，此时 title 文本最多显示 7 个汉字长度。支付宝小程序不支持
+        /// icon  none 显示成功图标，此时 title 文本最多显示 7 个汉字长度。默认值
+        /// duration 不显示图标，此时 title 文本在小程序最多可显示两行，App仅支持单行显示
+        /// </summary>
+        showToast(item) {
+            //标题
+            let title = item.title == undefined ? '' : item.title
+            //图标
+            let icon = item.icon == undefined ? 'none' : item.icon
+            //时间
+            let duration = item.duration == undefined ? 3000 : item.duration
+            setTimeout(function () {
+                uni.showToast({ title: title, icon: icon, duration: duration })
+            }, 50)
+            setTimeout(function () { uni.hideToast() }, 3000)
         }
     },
     route: {

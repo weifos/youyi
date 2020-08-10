@@ -13,7 +13,7 @@ module.exports = {
         let userInfo = user.methods.getUser()
         //检查登录
         wx.checkSession({
-            //未过期
+            //未过期，处于登录态
             success() {
                 wx.getSetting({
                     success: res => {
@@ -44,6 +44,7 @@ module.exports = {
             //调用接口获取登录凭证（code），包含openid，session_key
             success: function (res) {
                 if (res.code) {
+                    //小程序初始化微信用户
                     api.post(api.api_103, api.getSign({
                         Code: res.code
                     }), function (app, res) {

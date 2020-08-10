@@ -108,6 +108,7 @@ export default {
   data() {
     return {
       imgUrl: '',
+      collect_id: 0,
       isShow: false,
       //是否能够购买
       isCanSubmit: false,
@@ -200,7 +201,7 @@ export default {
       if (this.pResult.skus.length > 0) {
         this.$refs.popup.open()
       } else {
-        uni.showToast({ title: '库存不足', duration: 2000, icon: 'none' })
+        appG.dialog.showToast({ title: '库存不足', duration: 2000, icon: 'none' })
       }
     },
     closePopup() {
@@ -298,7 +299,7 @@ export default {
       let items = that.pResult.specValues.filter(val => val.checked == true)
       if (items.length < that.pResult.specNames.length) {
         let name = that.pResult.specNames[items.length].name
-        uni.showToast({ title: "请选择" + name, duration: 2000, icon: "none" })
+        appG.dialog.showToast({ title: "请选择" + name, duration: 2000, icon: "none" })
         return null
       }
 
@@ -318,6 +319,7 @@ export default {
       }
 
       that.selectSku = data
+      that.selectSku.unit_price = that.selectSku.sale_price
       that.checkUpdate()
       return data
     },
@@ -343,7 +345,7 @@ export default {
           that.api_306()
         } else {
           //加入本地存取立即购买
-          user.methods.setBuyNow(tmp)
+          user.methods.setBuyNow([tmp])
           //关闭弹框
           that.$refs.popup.close()
           uni.navigateTo({ url: '/pages/user/confirm-order' })
@@ -416,7 +418,7 @@ export default {
           that.isCanSubmit = that.pResult.skus.filter(sku => sku.is_enable).length > 0
 
         } else {
-          uni.showToast({ title: res.data.Msg, duration: 2000 })
+          appG.dialog.showToast({ title: res.data.Msg, duration: 2000 })
         }
       })
     },
@@ -453,7 +455,7 @@ export default {
             //关闭弹框
             that.$refs.popup.close()
           } else {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
           }
         }
       )
@@ -467,8 +469,9 @@ export default {
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
             that.collected = res.data.Result > 0
+            that.collect_id = res.data.Result
           } else {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
           }
         }
       )
@@ -481,10 +484,11 @@ export default {
       api.post(api.api_342, api.getSign({ StoreID: 0, BizID: that.pResult.product.id, BizType: 0 }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
             that.collected = true
+            that.collect_id = res.data.Result
           } else {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
           }
         }
       )
@@ -494,13 +498,13 @@ export default {
      */
     api_343() {
       let that = this
-      api.post(api.api_343, api.getSign({ StoreID: 0, BizID: that.pResult.product.id, BizType: 0 }),
+      api.post(api.api_343, api.getSign({ Ids: that.collect_id }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
             that.collected = false
           } else {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
           }
         }
       )

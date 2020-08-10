@@ -1,7 +1,7 @@
 <template>
   <view class="content page-cart">
     <view class="cu-list cart-list menu-avatar">
-      <view class="cu-item list-item" :class="modalName=='move-box-'+ index?'move-cur':''" v-for="(item,index) in result" :key="item" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index">
+      <view class="cu-item list-item" :class="modalName=='move-box-'+ index?'move-cur':''" v-for="(item,index) in result" :key="index" @touchstart="ListTouchStart" @touchmove="ListTouchMove" @touchend="ListTouchEnd" :data-target="'move-box-' + index">
         <view class="content">
           <view class="cont">
             <view class="check-bar">
@@ -13,7 +13,7 @@
             <view class="text-bar">
               <view class="ellipsis">{{item.product_name}}</view>
               <view class="side-bar">
-                <text class="text-sub text-size-basic">￥{{item.product_price}}</text>
+                <text class="text-sub text-size-basic">￥{{item.unit_price}}</text>
                 <uni-number-box :value="item.count" :min="1" @change="api_303($event,item)" class="number-box-skin-1"></uni-number-box>
               </view>
             </view>
@@ -27,16 +27,16 @@
     <view class="operation-bar">
       <view class="text-bar align-center">
         <view class="dib text-size-md">
-          <checkbox :checked="checked" color="#FFB825" />
+          <checkbox :checked="checked" @click="checkedAll($event)" color="#FFB825" />
           <text class="dib vam">全选</text>
         </view>
         <view class="dib text-size-basic">
           合计：¥
-          <text class="bold text-size-md">{{totalPrice}}元</text>
+          <text class="bold text-size-md">{{totalPrice.toFixed(2)}}元</text>
         </view>
       </view>
       <view class="btns-bar">
-        <button class="btn text-size-basic text-white bg-sub">去结算</button>
+        <button class="btn text-size-basic text-white bg-sub" @click="submit">去结算</button>
       </view>
     </view>
   </view>
@@ -54,8 +54,10 @@ export default {
       modalName: null,
       listTouchStart: 0,
       listTouchDirection: null,
+      checked: false,
       //对应的门店信息
       store_id: 0,
+      loading: false,
       //订单信息
       order: {
         store_id: 0,
@@ -83,18 +85,25 @@ export default {
           that.checkUpdate()
           that.result = res.data.Result
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
     },
     //更新购物车
     api_303(num, item) {
       let that = this
-      api.post(api.api_303,
-        api.getSign({ CID: item.id, Count: num, ProductID: item.product_id, SpecSet: item.specset }), (vue, res) => {
-          console.log(res)
-        }
-      )
+      if (!that.loading) {
+        that.loading = true
+        api.post(api.api_303, api.getSign({ CID: item.id, Count: num, ProductID: item.product_id, SpecSet: item.specset }), (vue, res) => {
+          that.result.forEach((ele, index) => {
+            if (ele.id == item.id) {
+              item.count = num
+            }
+          })
+          that.checkUpdate()
+          that.loading = false
+        })
+      }
     },
     //删除购物车
     api_304(item) {
@@ -110,14 +119,14 @@ export default {
                 if (res.data.Basis.State == api.state.state_200) {
                   that.result.forEach((ele, index) => {
                     if (ele.id === item.id) {
-                      that.result.shift(index, 1);
+                      that.result.shift(index, 1)
                     }
                   })
                   that.result = that.result
                   that.checkUpdate()
-                  uni.showToast({ title: "删除成功", duration: 2000 })
+                  appG.dialog.showToast({ title: "删除成功", duration: 2000 })
                 } else {
-                  uni.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
+                  appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
                 }
               }
             )
@@ -125,16 +134,24 @@ export default {
         }
       })
     },
-    //付款框选中事件
-    selectedChange(val) {
+    //全选
+    checkedAll(e) {
       let that = this
-      item.is_default = !item.is_default
-
-
-
-      that.totalPrice = 0
+      that.checked = !that.checked
       that.result.forEach((item, index) => {
-        that.totalPrice += item.product_price * item.count
+        item.checked = that.checked
+      })
+      that.checkUpdate()
+    },
+    //付款框选中事件
+    selectedChange(item) {
+      let that = this
+      item.checked = !item.checked
+      that.totalPrice = 0
+      that.result.forEach((ele, index) => {
+        if (ele.checked) {
+          that.totalPrice += ele.unit_price * ele.count
+        }
       })
     },
     //勾选改变更新小计
@@ -143,21 +160,38 @@ export default {
       //总计临时变量
       let total = 0
       that.result.map((item, index) => {
-        //更新修改
-        if (ele != null && ele != undefined && item.specset == ele.specset && item.product_id == ele.product_id) {
-          item = ele
+        if (item.checked) {
+          //更新修改
+          if (ele != null && ele != undefined && item.specset == ele.specset && item.product_id == ele.product_id) {
+            item = ele
+          }
+          //当前小计 
+          item.subtotal = item.unit_price * item.count
+          //更新购物车
+          that.result[index] = item
+          //总计
+          total += item.subtotal
         }
-        //当前小计 
-        item.subtotal = item.product_price * item.count
-        //更新购物车
-        that.result[index] = item
-        //总计
-        total += item.subtotal
       })
 
       that.totalPrice = total
       //更新购物车信息
       user.methods.setShoppingCart(that.result)
+    },
+    //提交
+    submit() {
+      let that = this
+      let tmps = that.result.filter(item => item.checked)
+      if (tmps.length > 0) {
+        let details = []
+        tmps.forEach((item, i) => {
+          item.shopping_cart_id = item.id
+          details.push(item)
+        })
+        //加入本地存取立即购买
+        user.methods.setBuyNow(details)
+        uni.navigateTo({ url: '/pages/user/confirm-order' })
+      }
     },
     // ListTouch触摸开始
     ListTouchStart(e) {

@@ -3,7 +3,7 @@
     <vipBrand type="1"></vipBrand>
     <yoyiTitle title="开通会员" more="开通会员享更多好礼"></yoyiTitle>
     <view class="user-open-list">
-      <vipListItem v-for="(item,index) in rechargeList" :key="index" class="open-item" :title="item.name" :price="item.full_amount" :selected="selected == index" :disabled="false" @click="selected = index"></vipListItem>
+      <vipListItem v-for="(item,index) in rechargeList" :key="index" class="open-item" :title="item.name" :price="item.full_amount" :selected="selected == index" :disabled="false" @click="select(index)"></vipListItem>
     </view>
     <view class="user-agreement">
       <checkbox-group class="agreement-checkbox" @change="checkboxChange">
@@ -14,7 +14,7 @@
         </view>
       </checkbox-group>
     </view>
-    <operationButton :price="10" @click="recharge()"></operationButton>
+    <operationButton :price="rechargeList[selected].amount" @click="api_347()"></operationButton>
   </view>
 </template>
 
@@ -32,6 +32,7 @@ export default {
   components: { yoyiTitle, vipBrand, vipListItem, operationButton },
   data() {
     return {
+      price: 0,
       selected: 0,
       checked: false,
       isPaying: false,
@@ -43,6 +44,9 @@ export default {
   onShow() {
     this.api_346()
     this.api_345()
+    // if (userInfo.card_no.length > 0) {
+    //   uni.navigateTo({ url: 'card' })
+    // }
   },
   methods: {
     select(value) {
@@ -102,20 +106,22 @@ export default {
       let that = this
 
       //请同意付费协议
-      if (that.checked) {
-        setTimeout(function () {
-          uni.showToast({ title: '请同意付费协议', icon: 'none', duration: 3000 })
-        }, 50)
-        setTimeout(function () { uni.hideToast() }, 3000)
+      if (!that.checked) {
+        appG.dialog.showToast({ title: '请同意付费协议', icon: 'none', duration: 3000 })
+        return
       }
 
       //请选择购买的会员卡
       let item = that.rechargeList[this.selected]
-      if (item != null) {
-        setTimeout(function () {
-          uni.showToast({ title: '请选择购买的会员卡', icon: 'none', duration: 3000 })
-        }, 50)
-        setTimeout(function () { uni.hideToast() }, 3000)
+      if (item == null) {
+        appG.dialog.showToast({ title: '请选择购买的会员卡', icon: 'none', duration: 3000 })
+        return
+      } else {
+        var userInfo = user.methods.getUser()
+        if (userInfo.mbr_dis_count == item.dis_count) {
+          appG.dialog.showToast({ title: '你已具备该会员权益', icon: 'none', duration: 3000 })
+          return
+        }
       }
 
       uni.getProvider({
@@ -131,7 +137,7 @@ export default {
                 }, 50)
                 setTimeout(function () { uni.hideToast() }, 3000)
               } else {
-                that.serial_no = res.data.Result.serial_no
+                var memberCard = res.data.Result.member_card
                 //通过uni-app吊起支付
                 uni.requestPayment({
                   provider: provider,
@@ -142,8 +148,8 @@ export default {
                   signType: res.data.Result.wechatpay.signType,
                   paySign: res.data.Result.wechatpay.paySign,
                   success: function (res) {
-
-
+                    //购卡成功
+                    that.api_348(memberCard.card_no)
                   },
                   fail: function (err) {
                     setTimeout(() => { that.isPaying = false }, 500)
@@ -157,7 +163,23 @@ export default {
           }
         }
       })
-
+    },
+    /**
+     * 购卡成功
+     */
+    api_348: function (card_no) {
+      let that = this
+      api.post(api.api_348, api.getSign({ CardNo: card_no }),
+        function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            //登录  
+            user.methods.login(res.data.Result)
+            //跳转到会员卡页面
+            uni.navigateTo({ url: 'card' })
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
     }
   }
 }

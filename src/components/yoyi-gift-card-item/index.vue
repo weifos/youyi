@@ -5,8 +5,11 @@
         <image :src="image" />
       </view>
       <view class="gift-card-item-button">
-        <view v-if="showSendButton" @click="handleClick('send')">赠送</view>
-        <view @click="handleClick('use')">使用</view>
+        <view v-if="showUseButton && sendStatus == 0" @click="handleClick('send')">赠送</view>
+        <view v-else-if="showUseButton && sendStatus == 1" style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;">赠送中</view>
+        <view v-else-if="sendStatus == 10" style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;">已赠送</view>
+        <view v-if="showUseButton && (sendStatus == 0 || sendStatus == -1)" @click="handleClick('use')">使用</view>
+        <view v-else-if="!showUseButton && (sendStatus == 0 || sendStatus == -1)" style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;">已使用</view>
       </view>
     </view>
     <view class="gift-card-item-content2">
@@ -22,27 +25,31 @@
 <script>
 export default {
   name: 'giftCardItem',
-  props: {
+  props: {// 金额
     price: {
       type: [String, Number],
       default: 0,
-    }, // 金额
+    }, // 时间
     date: {
       type: [String, Number],
       default: '',
-    }, // 时间
+    }, // 卡号
     number: {
       type: [String, Number],
       default: '',
-    }, // 卡号
+    }, // 卡面
     image: {
       type: [String],
       default: require('@/static/images/wallet-recharge-card.png'),
-    }, // 卡面
-    showSendButton: {
+    }, // 赠送状态
+    sendStatus: {
+      type: Number,
+      default: 0,
+    }, // 是否可用
+    showUseButton: {
       type: [Boolean],
       default: false,
-    }, // 是否可赠送
+    }
   },
   methods: {
     handleClick(type) {
@@ -56,7 +63,7 @@ export default {
           break;
       }
     },
-  },
+  }
 }
 </script>
 

@@ -25,8 +25,8 @@
     </view>
     <view class="operation-bar">
       <view class="text-bar align-center">
-        <view class="dib text-size-md" @click="checkAll">
-          <checkbox :checked="checked" color="#FFB825" />
+        <view class="dib text-size-md">
+          <checkbox :checked="checked" color="#FFB825" @click="checkAll" />
           <text class="dib vam">全选</text>
         </view>
       </view>

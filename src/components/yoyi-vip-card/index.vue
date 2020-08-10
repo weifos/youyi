@@ -10,7 +10,8 @@
       </view>
       <view class="card-info">
         <view class="card-number">{{number}}</view>
-        <view class="card-date">有效期 {{startDate}} - {{endDate}}</view>
+        <view class="card-date" v-if="startDate != null">有效期 {{startDate}} - {{endDate}}</view>
+        <view class="card-date" v-else>有效期 -</view>
       </view>
       <navigator class="card-qrcode" hover-class url="/pages/user/pay"></navigator>
     </view>

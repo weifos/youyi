@@ -20,7 +20,7 @@
           <view class="text-bar">
             <view class="ellipsis">{{item.product_name}}</view>
             <view class="side-bar">
-              <text class="text-size-basic">￥{{item.sale_price}}</text>
+              <text class="text-size-basic">￥{{item.unit_price}}</text>
               <text class="text-no">x {{item.count}}</text>
             </view>
           </view>
@@ -31,7 +31,7 @@
     <view class="section-order-price-bar bg-white">
       <view class="price-item text-size-basic">
         <text>商品原价</text>
-        <text>¥ {{order.total_amount}}</text>
+        <text>¥ {{productAmount}}</text>
       </view>
       <view class="price-item text-size-basic">
         <text>优惠券</text>
@@ -40,6 +40,10 @@
           <text class="dib vam text-gray">0张优惠券</text>
           <view class="icon-arrow dib vam ml10"></view>
         </view>
+      </view>
+      <view class="price-item text-size-basic">
+        <text>会员折扣</text>
+        <text>-¥{{discount_amount}}</text>
       </view>
       <view class="price-item text-size-basic">
         <text>运费</text>
@@ -67,11 +71,11 @@
     </view>-->
 
     <!-- <view class="notice-bar" v-if="discount_amount>0"> -->
-    <view class="notice-bar">
-      <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" :text="'已优惠 ¥'+discount_amount"></uni-notice-bar>
-    </view>
+    <!-- <view class="notice-bar">
+      <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" :text="'已优惠 ¥'+(productAmount * ((10-userInfo.mbr_dis_count) / 10)).toFixed(4)"></uni-notice-bar>
+    </view>-->
     <view class="section-btns" @click="openPopup">
-      <operationButton :price="order.total_amount" buttonText="去支付"></operationButton>
+      <operationButton :price="order.total_amount - discount_amount" buttonText="去支付"></operationButton>
     </view>
     <!-- popup s -->
     <uniPopup ref="popup" type="bottom" class="pop-pay yoyi-pop">
@@ -85,7 +89,7 @@
             </view>
             <view class="text-gray text-size-sm text-desc">钱包余额 ¥{{userInfo.balance}}，尚需 ¥{{order.actual_amount}}</view>
             <view class="btns-bar mt20">
-              <button class="btn btn-round btn-size-full text-size-md btn-bg-main text-white" @click="api_331((order.actual_amount - userInfo.balance).toFixed(2))" v-if="order.actual_amount > userInfo.balance">立即充值 ¥{{(order.actual_amount - userInfo.balance).toFixed(2)}}</button>
+              <button class="btn btn-round btn-size-full text-size-md btn-bg-main text-white" @click="api_331((order.actual_amount - userInfo.balance).toFixed(4))" v-if="order.actual_amount > userInfo.balance">立即充值 ¥{{(order.actual_amount - userInfo.balance).toFixed(4)}}</button>
               <button class="btn btn-round btn-size-full btn-line-main text-size-md bg-white text-sub mt20" @click="goRecharge">其他充值优惠</button>
             </view>
           </view>
@@ -118,6 +122,8 @@ export default {
   },
   data() {
     return {
+      //未设置收货地址
+      notSetAddress: false,
       //是否请求中
       isPaying: false,
       //是否提交购物车
@@ -126,12 +132,13 @@ export default {
       wechatpay: {},
       //电子钱包
       userInfo: {
-        balance: 0
+        balance: 0,
+        mbr_dis_count: 1
       },
       //收货地址
       addr: {
         id: 0,
-        province: "",
+        province: "请选择收货地址",
         city: "",
         area: "",
         address: "",
@@ -182,22 +189,21 @@ export default {
       that.userInfo = user.methods.getUser()
       //设置选择的收货地址ID
       if (opt.said) { that.addr.id = opt.said }
-      //是否是提交购物车
-      if (opt.isByCart) {
-      } else {
-        //当前购买的商品信息
-        let item = user.methods.getBuyNow()
-        //临时订单
+
+      let items = user.methods.getBuyNow()
+      items.forEach((item, i) => {
         that.order.details.push(item)
-        that.order.store_details = that.order.details
-      }
+      })
+
+      that.order.store_details = that.order.details
 
       //计算商品金额
       that.order.details.forEach(function (ele, index, arr) {
-        that.productAmount += ele.sale_price * ele.count
+        that.productAmount += ele.unit_price * ele.count
       })
+
       //总金额
-      that.order.total_amount = parseFloat(that.productAmount.toFixed(2))
+      that.order.total_amount = parseFloat(that.productAmount.toFixed(4))
       //实付金额
       that.order.actual_amount = that.order.total_amount
       //加载收货地址和运费
@@ -247,8 +253,15 @@ export default {
           } else {
             that.order.pay_method = 13
           }
+
+          that.discount_amount = appG.util.formatDecimal(that.productAmount * ((10 - that.userInfo.mbr_dis_count) / 10), 2)
+          that.notSetAddress = false
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          //未设置收货地址
+          if (res.data.Basis.State == 803) {
+            that.notSetAddress = true
+          }
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
     },
@@ -284,11 +297,10 @@ export default {
             }
           })
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           setTimeout(() => { that.isPaying = false }, 500)
         }
-      }
-      )
+      })
     },
     /**
      * 电子钱包支付
@@ -302,13 +314,15 @@ export default {
         UserAddressId: that.addr.id
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
-          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          //更新用户信息
+          user.methods.login(res.data.Result)
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
           setTimeout(function () {
             uni.navigateTo({ url: '../mine/order-list' })
           }, 1000)
         } else {
           setTimeout(function () {
-            uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           }, 50)
           setTimeout(function () { uni.hideToast() }, 3000)
           that.isPaying = false
@@ -328,7 +342,7 @@ export default {
           if (~res.provider.indexOf('wxpay')) {
             api.post(api.api_331, api.getSign({ ID: 0, Amount: rechargeAmount }), function (app, res) {
               if (res.data.Basis.State != api.state.state_200) {
-                uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+                appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
               } else {
                 that.serial_no = res.data.Result.serial_no
                 //通过uni-app吊起支付
@@ -374,6 +388,12 @@ export default {
       if (that.isPaying) return
       //设置支付中
       that.isPaying = true
+      //是否设置收货地址
+      if (that.notSetAddress) {
+        appG.dialog.showToast({ title: '未设置收货地址', duration: 2000 })
+        return
+      }
+
       //微信支付
       if (this.order.pay_method == 13) {
         //获取uni-app服务提供商
@@ -386,14 +406,13 @@ export default {
             }
           }
         })
+
         //钱包支付
       } else if (this.order.pay_method == 31) {
-        if (that.order.actual_amount - that.userInfo.balance) {
-          uni.showToast({ title: '钱包余额不足', icon: 'none', duration: 3000 })
-          setTimeout(function () { uni.hideToast() }, 3000)
+        if (that.order.actual_amount - that.userInfo.balance > 0) {
+          appG.dialog.showToast({ title: '钱包余额不足', icon: 'none', duration: 2000 })
           return
         }
-
         that.api_336()
       }
     }

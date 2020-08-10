@@ -17,12 +17,13 @@
           <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20">去支付</button>
         </view>
       </view>
-      <view class="section-status mt20" v-else-if="orderInfo.type == 1">
+      <view class="section-status mt20" v-if="orderInfo1.status == 10">
         <view class="text-size-md bold">商品已发货，请您确认收货</view>
-        <view class="text-size-sm mt20">感谢您对我们的信任</view>
+        <view class="text-size-sm mt20">物流单号：{{delivery.tracking_no}}</view>
         <view class="btns align-right mt20">
+          <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20" @click="goLogistics">查看物流</button>
           <!-- <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">开发票</button> -->
-          <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20">确认收货</button>
+          <!-- <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20">确认收货</button> -->
         </view>
       </view>
       <view class="section-status mt20" v-if="orderInfo.type == 111">
@@ -75,18 +76,22 @@
       <view class="section-price mt20">
         <view class="price-item bold">
           <text>商品原价</text>
-          <text>￥{{orderInfo1.total_amount}}</text>
+          <text>￥{{orderInfo1.total_amount - orderInfo1.freight}}</text>
         </view>
         <view class="price-item mt20" v-if="orderInfo1.orderInfo1 > 0">
           <text>使用优惠券</text>
           <text>-￥{{orderInfo1.coupon_amount}}</text>
         </view>
         <view class="price-item mt20">
+          <text>折扣</text>
+          <text>-￥{{orderInfo1.max_dis_amount}}</text>
+        </view>
+        <view class="price-item mt20">
           <text>运费</text>
           <text>+￥{{orderInfo1.freight}}</text>
         </view>
         <view class="total-bar mt20">
-          <text v-if="orderInfo.priceInfo.discount>0">已优惠¥{{(orderInfo1.total_amount-orderInfo1.actual_amount).toFixed(2)}}</text>
+          <text v-if="orderInfo1.total_amount - orderInfo1.freight - orderInfo1.actual_amount >0">已优惠¥{{(orderInfo1.total_amount-orderInfo1.actual_amount).toFixed(2)}}</text>
           <text class="ml20">实付款：</text>
           <text class="text-sub text-size-md bold">¥ {{orderInfo1.actual_amount}}</text>
         </view>
@@ -94,7 +99,7 @@
       <view class="section-order mt20 mb20 text-gray rel">
         <!-- <button class="btn btn-size-sm btn-line-gray text-gray btn-round-ss btn-copy">复制</button> -->
         <view class="order-list">
-          <view class="order-item" v-if="orderInfo.formInfo.id">订单编号：{{orderInfo1.serial_no}}</view>
+          <view class="order-item">订单编号：{{orderInfo1.serial_no}}</view>
           <view class="order-item mt20" v-if="orderInfo1.pay_method== 11">支付方式：微信付款码支付</view>
           <view class="order-item mt20" v-if="orderInfo1.pay_method== 13">支付方式：微信小程序支付</view>
           <view class="order-item mt20" v-if="orderInfo1.pay_method== 14">支付方式：微信扫码支付</view>
@@ -123,58 +128,13 @@ export default {
   components: {},
   data() {
     return {
-      orderInfo: {
-        type: 2,//0:待付款，1:待收货，2:退款/售后，3:已完成，4:已取消，
-        status: "待付款",
-        address: {
-          city: "广东省深圳市",
-          addr: "龙华区星星小区5栋1303室",
-          name: "徐先生",
-          tel: "13234568769"
-        },
-        orderList: [
-          {
-            url: "/static/images/27891160-1_l_2.png",
-            name: "中国少年儿童百科全书(全套共全套共全套共...",
-            price: "96.72",
-            no: 2
-          },
-          {
-            url: "/static/images/27891160-1_l_2.png",
-            name: "中国少年儿童百科全书(全套共全套共全套共...",
-            price: "96.72",
-            no: 1
-          },
-          {
-            url: "/static/images/27891160-1_l_2.png",
-            name: "中国少年儿童百科全书(全套共全套共全套共...",
-            price: "96.72",
-            no: 1
-          }
-        ],
-        priceInfo: {
-          oPrice: "65.8",
-          coupon: "20.0",
-          cPrice: "10.0",
-          discount: "20.0",
-          total: "55.8"
-        },
-        formInfo: {
-          id: "12132445543656547",
-          payType: "电子钱包",
-          timePay: "2019-09-09  12:12:12",
-          timeDeliver: "2019-09-09  12:12:12",
-          timeOrder: "2019-09-09  12:12:12",
-          express: "韵达快递",
-          expressNo: "4212784365837275"
-        }
-      },
       //收货地址
       delivery: {
         province: '',
         city: '',
         area: '',
-        address: ''
+        address: '',
+        tracking_no: ''
       },
       orderInfo1: {
         details: []
@@ -198,6 +158,17 @@ export default {
           that.delivery = res.data.Result.delivery
           that.orderInfo1 = res.data.Result.order
         }
+      })
+    },
+    /**
+     * 查看物流
+     * 打开第三方小程序
+     */
+    goLogistics() {
+      let that = this
+      wx.navigateToMiniProgram({
+        appId: 'wx6885acbedba59c14',
+        path: `pages/result/result?nu=${that.delivery.tracking_no}&com=&querysource=third_xcx`
       })
     }
   }

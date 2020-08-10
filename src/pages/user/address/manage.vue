@@ -2,8 +2,8 @@
   <view class="wrapper-user-address address-manage">
     <view class="user-address-content">
       <view class="list-address">
-        <view class="address-item" v-for="(item,index) in addressList" :key="item">
-          <radio :checked="item.is_default" :value="item.is_default" class="btn-check" color="#FFB825" v-on:click="select(item)" />
+        <view class="address-item" v-for="(item,index) in addressList" :key="item" v-on:click="select(item)">
+          <checkbox disabled="disabled" :checked="item.is_default" :value="item.is_default" class="btn-check" color="#FFB825" />
           <view class="txt-name">
             {{item.contact}}
             <text class="txt-tel">{{getHideMobile(item.mobile)}}</text>
@@ -11,8 +11,7 @@
           <view class="txt-address">{{item.province}} {{item.city}} {{item.area}} {{item.address}}</view>
         </view>
       </view>
-      <view class="btn-add-address" v-if="!isSelect" @click="addNewAddress">新增收货地址</view>
-      <view class="btn-add-address" v-if="isSelect" @click="select">确认</view>
+      <view class="btn-add-address" @click="addNewAddress">新增收货地址</view>
       <!-- 弹层 -->
       <view class="setting-pop" v-if="popShow">
         <view class="pop-wrap">
@@ -48,23 +47,33 @@ export default {
     if (opt.isSelect) {
       this.isSelect = true
     }
-    this.api_308()
+    this.api_308(opt.isSelectAuto)
   },
   methods: {
     /**
      * 获取收货地址列表
      */
-    api_308: function () {
+    api_308: function (isSelectAuto) {
       let that = this
       api.post(api.api_308, api.getSign(),
         function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
             that.addressList = res.data.Result
-            that.addressList.forEach((ele, index) => {
-              if (ele.is_default) {
-                that.tmpAddress = ele
+            if (that.addressList.length > 0) {
+              that.addressList.forEach((ele, index) => {
+                if (ele.is_default) {
+                  that.tmpAddress = ele
+                }
+              })
+
+              //回到确认订单页面
+              if (isSelectAuto) {
+                uni.navigateTo({
+                  url: "../confirm-order?said=" + that.tmpAddress.id
+                })
               }
-            })
+            }
+
           }
         })
     },
@@ -101,10 +110,11 @@ export default {
      */
     api_311: function (id) {
       let that = this
-      api.post(api.api_310, api.getSign({ ID: id }),
+      api.post(api.api_311, api.getSign({ ID: id }),
         function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
-
+            that.addressList.splice(that.addressList.findIndex(item => item.id === id), 1)
+            that.popShow = false
           }
         })
     },
@@ -121,8 +131,6 @@ export default {
     select: function (item) {
       let that = this
       if (!that.isSelect) {
-        //反向设置默认值
-        item.is_default = !item.is_default
         this.popShow = true
         this.tmpAddress = item
       } else {
@@ -137,14 +145,6 @@ export default {
     cancelPopShow: function () {
       let that = this
       that.popShow = false
-      if (that.tmpAddress.id) {
-        that.addressList.forEach((ele, index) => {
-          if (ele.id == that.tmpAddress.id) {
-            ele.is_default = false
-          }
-        })
-        that.tmpAddress = {}
-      }
     },
     /**
      * 设置默认收货地址
@@ -166,7 +166,7 @@ export default {
      */
     delAddress: function () {
       let that = this
-      that.api_310(this.tmpAddress.id)
+      that.api_311(this.tmpAddress.id)
     },
     /**
     * 新增收货地址
@@ -174,7 +174,7 @@ export default {
     addNewAddress: function () {
       let that = this
       uni.navigateTo({
-        url: "form"
+        url: "form?isSelect=" + this.isSelect
       })
     }
   }

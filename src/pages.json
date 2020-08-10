@@ -215,6 +215,12 @@
             }
         },
         {
+            "path": "pages/user/check-ticket",
+            "style": {
+                "navigationBarTitleText": "验核课程票据"
+            }
+        },
+        {
             "path": "pages/user/card-transfer",
             "style": {
                 "navigationBarTitleText": "会员卡迁移"
@@ -286,6 +292,9 @@
                 "navigationBarTitleText": "活动报名支付"
             }
         }
+    ],
+    "navigateToMiniProgramAppIdList": [
+        "wx6885acbedba59c14"
     ],
     "globalStyle": {
         "navigationBarTextStyle": "black",

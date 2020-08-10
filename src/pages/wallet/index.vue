@@ -17,11 +17,11 @@
     <view class="wallet-list">
       <uni-list>
         <uni-list-item title="储值卡充入" @click="jump('/pages/wallet/recharge')"></uni-list-item>
-        <!-- <uni-list-item title="购买礼品卡" @click="jump('/pages/wallet/gift-buy')"></uni-list-item>
-        <uni-list-item title="交易密码设置"></uni-list-item>-->
+        <uni-list-item title="购买礼品卡" @click="jump('/pages/wallet/gift-buy')"></uni-list-item>
+        <!-- <uni-list-item title="交易密码设置"></uni-list-item>-->
       </uni-list>
     </view>
-    <operationButton :price="10" @click="api_331"></operationButton>
+    <operationButton :price="payAmount" @click="api_331"></operationButton>
   </view>
 </template>
 <script>
@@ -40,6 +40,9 @@ export default {
   components: { yoyiTitle, moneyItem, uniList, uniListItem, operationButton },
   data() {
     return {
+      //支付金额
+      payAmount: 0,
+      //是否选择
       selected: -1,
       //充值金额
       rechargeAmount: 0,
@@ -63,6 +66,8 @@ export default {
   methods: {
     selectMoney(value) {
       this.selected = value
+      var item = this.rechargeList[this.selected]
+      this.payAmount = item.amount
     },
     jump(url) {
       uni.navigateTo({
@@ -137,6 +142,11 @@ export default {
       var that = this
       api.post(api.api_332, api.getSign({ No: that.serial_no }), function (app, res) {
         if (res.data.Basis.State == api.state.state_200) {
+          //获取用户信息
+          that.userInfo.balance = (parseFloat(that.payAmount) + parseFloat(that.userInfo.balance)).toFixed(2)
+          //更新本地用户数据
+          user.methods.login(that.userInfo)
+          //重定向
           that.checkRedirect()
         } else {
           uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })

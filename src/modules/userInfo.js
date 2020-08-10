@@ -22,10 +22,15 @@ export default {
                 return JSON.parse(user1)
             }
             return { token: '' }
+        },//是否登录
+        isLogin() {
+            let user = this.getUser()
+            if (user.token.length) { return true }
+            return false
         },//登录设置本地数据
         login(result) {
             this.user = result
-            //同步步设置用户信息
+            //同步设置用户信息
             uni.setStorageSync('user_info', JSON.stringify(result))
         },//登录设置本地数据
         loginOut() {
@@ -79,19 +84,32 @@ export default {
             }
             return null
         },
-        //设置门店信息
-        setStore(result) {
+        //设置门店列表在本地缓存
+        setStores(result) {
             this.store = result
             uni.setStorageSync('store', JSON.stringify(result))
         },
-        //获取门店信息
-        getStore() {
+        //获取门店列表
+        getStores() {
             let entity = uni.getStorageSync('store')
             if (entity) {
                 return JSON.parse(entity)
             }
             return null
-        },//设置历史查询关键词
+        },
+        //设置选择活动的门店信息
+        setAtyStore(result) {
+            uni.setStorageSync('aty_store', JSON.stringify(result))
+        },
+        //获取活动门的门店信息
+        getAtyStore() {
+            let entity = uni.getStorageSync('aty_store')
+            if (entity) {
+                return JSON.parse(entity)
+            }
+            return null
+        },
+        //设置历史查询关键词
         setHistoryKeyWord(result) {
             if (result == undefined || result == '') return
             let keyWords = uni.getStorageSync('historyKeyWord')
@@ -131,11 +149,17 @@ export default {
         clearHistoryKeyWord() {
             uni.removeStorageSync('historyKeyWord')
             this.historyKeyWord = []
-        },//是否登录
-        isLogin() {
-            let user = this.getUser()
-            if (user.token.length) { return true }
-            return false
+        },//设置课程调查问卷
+        setOrderCourseAnswer(result) {
+            uni.setStorageSync('course_answer', JSON.stringify(result))
+        },
+        //获取课程调查问卷
+        getOrderCourseAnswer() {
+            let entity = uni.getStorageSync('course_answer')
+            if (entity) {
+                return JSON.parse(entity)
+            }
+            return null
         }
     }
 }

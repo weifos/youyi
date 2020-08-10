@@ -171,7 +171,8 @@ export default {
         api.getSign({ UserCouponId: that.cid, No: that.orderInfo.serial_no }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
-            uni.navigateTo({ url: '../user/activity' })
+            user.methods.login(res.data.Result)
+            that.api_359()
           } else {
             wx.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
             that.isPayIng = false
@@ -201,9 +202,7 @@ export default {
               paySign: res.data.Result.wechatpay.paySign,
               success: function (res) {
                 if (res.errMsg = "requestPayment:ok") {
-                  uni.navigateTo({
-                    url: '../user/activity?tid=' + that.orderInfo.type
-                  })
+                  that.api_359()
                 }
               },
               //失败执行
@@ -225,6 +224,31 @@ export default {
           }
         }
       )
+    },
+    /**
+     * 提交调查问卷
+     */
+    api_359: function () {
+      var that = this
+      let courseAnswer = user.methods.getOrderCourseAnswer()
+
+      if (courseAnswer != null) {
+        courseAnswer.forEach((o, i) => {
+          o.order_id = that.orderInfo.id
+        })
+
+        api.post(api.api_359, api.getSign({
+          CourseAnswers: courseAnswer
+        }), function (app, res) {
+          if (res.data.Basis.State != api.state.state_200) {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          } else {
+            user.methods.setOrderCourseAnswer(null)
+            uni.navigateTo({ url: '../user/activity?tid=' + that.orderInfo.type })
+          }
+        })
+      }
+
     },
     /**
      * 立即支付

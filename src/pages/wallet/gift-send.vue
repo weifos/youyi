@@ -8,19 +8,82 @@
     </view>
     <view class="uni-form">
       <view class="uni-form-item">
-        <input class="uni-input" type="text" placeholder="请输入留言(仅支持文字信息)" />
+        <input class="uni-input" type="text" v-model="mobile" maxlength="11" placeholder="被赠送的用户(手机号码)" />
       </view>
     </view>
-    <operationButton buttonText="赠送"></operationButton>
+    <view class="uni-form">
+      <view class="uni-form-item">
+        <input class="uni-input" type="text" v-model="giveCard.remarks" placeholder="请输入留言(仅支持文字信息)" />
+      </view>
+    </view>
+    <operationButton buttonText="赠送" @click="api_355"></operationButton>
   </view>
 </template>
 
 <script>
+
+import api from '@/modules/api'
+import user from '@/modules/userInfo'
+import appG from '@/modules/appGlobal'
 import yoyiTitle from '@/components/yoyi-title/'
 import operationButton from '@/components/yoyi-operation-button/'
 
 export default {
   components: { yoyiTitle, operationButton },
+  data() {
+    return {
+      tabIndex: 0,
+      mobile: '',
+      giveCard: {
+        serial_no: '',
+        remarks: ''
+      }
+    }
+  },
+  /**
+  * 生命周期函数--监听页面加载
+  */
+  onLoad: function (opt) {
+    this.api_354(opt.no)
+  },
+  methods: {
+    /**
+     * 加载礼品卡
+     */
+    api_354: function (card_no) {
+      let that = this
+      api.post(api.api_354, api.getSign({ CardNo: card_no }),
+        function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            that.giveCard = res.data.Result
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
+    },
+    /**
+     * 赠送礼品卡
+     */
+    api_355: function () {
+      let that = this
+      if (!appG.verifyStr.isMoblie(that.mobile)) {
+        appG.dialog.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
+        return
+      }
+
+      api.post(api.api_355, api.getSign({
+        Mobile: that.mobile,
+        giveCard: that.giveCard
+      }), function (app, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          uni.navigateTo({ url: 'gift-buy?tab=1' })
+        } else {
+          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+        }
+      })
+
+    }
+  }
 }
 </script>
 

@@ -7,7 +7,7 @@
       <view class="section-content">
         <view class="article-title">{{result.name}}</view>
         <view class="article-price text-sub mt10">￥{{result.sale_price}}</view>
-        <view class="mt10 text-size-sm text-gray">{{result.start_date +"至"+result.start_date}}</view>
+        <view class="mt10 text-size-sm text-gray">{{result.start_date +"至"+result.end_date}}</view>
         <view class="text-size-sm text-gray">嘉宾：{{result.teacher_name}}</view>
         <view class="text-size-sm text-gray">地点：{{result.address}}</view>
       </view>
@@ -15,7 +15,7 @@
         <jyf-parser :html="result.details"></jyf-parser>
       </view>
     </view>
-    <view class="side-bar">
+    <view class="side-bar" v-if="!isOverdue">
       <button class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="api_326">立即报名</button>
       <!-- <view>
         <image src="/static/icon/home.png" class="icon" />
@@ -223,6 +223,7 @@ export default {
           that.imgurl = res.data.Result.imgurl
           //是否过期
           let dateNow = appG.util.date.getDateTimeNow()
+
           if (appG.util.date.compareDate(dateNow, res.data.Result.course.start_date)) {
             that.isOverdue = true
           }
@@ -288,7 +289,6 @@ export default {
             duration: 3000
           })
         } else {
-
           let param = '?no=' + res.data.Result.serial_no + '&store_id=' + res.data.Result.store_id
           if (that.result.type == 1) {
             uni.navigateTo({
@@ -296,8 +296,11 @@ export default {
             })
           } else {
             uni.navigateTo({
-              url: 'pay' + param + "&tid=" + that.result.type
+              url: 'sign-up' + param + "&tid=" + that.result.type + "&id=" + that.result.id
             })
+            // uni.navigateTo({
+            //   url: 'pay' + param + "&tid=" + that.result.type
+            // })
           }
         }
 

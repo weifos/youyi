@@ -7,7 +7,7 @@
             <input class="form-input" placeholder-class="form-input-placeholder" v-model="info.contact" placeholder="姓名" />
           </evan-form-item>
           <evan-form-item label="手机号：">
-            <input class="form-input" placeholder-class="form-input-placeholder" v-model="info.mobile" placeholder=" 11位手机号" />
+            <input class="form-input" placeholder-class="form-input-placeholder" v-model="info.mobile" maxlength="11" placeholder=" 11位手机号" />
           </evan-form-item>
           <evan-form-item label="所在地区：" prop="regionsName">
             <pick-regions :defaultRegion="defaultRegions" @getRegion="handleGetRegions" style="width:100%">
@@ -48,6 +48,7 @@ export default {
   },
   data() {
     return {
+      isSelect: false,
       regions: [],
       defaultRegions: ["广东省", "广州市", "番禺区"],
       hideRequiredAsterisk: true,
@@ -99,9 +100,12 @@ export default {
     };
   },
   onLoad(opt) {
+    if (opt.isSelect) {
+      this.isSelect = true
+    }
+
     if (opt.id) {
       this.api_316(opt.id)
-
     }
   },
   computed: {
@@ -145,15 +149,17 @@ export default {
       that.info.city = regionList[1].name
       that.info.area = regionList[2].name
 
-      api.post(api.api_309,
-        api.getSign(that.info),
+      api.post(api.api_309, api.getSign(that.info),
         function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
-            uni.navigateTo({
-              url: 'manage'
-            })
+            let url = 'manage'
+            if (that.isSelect) {
+              url += '?isSelectAuto=true'
+            }
+
+            uni.navigateTo({ url: url })
           } else {
-            uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
           }
         })
     },
@@ -167,7 +173,7 @@ export default {
         if (res) {
 
           if (!appG.verifyStr.isPhone(this.info.mobile)) {
-            uni.showToast({
+            appG.dialog.showToast({
               title: '手机号码输入有误',
               icon: 'none'
             })

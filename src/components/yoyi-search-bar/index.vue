@@ -3,12 +3,12 @@
     <!-- 选择门店搜索框 -->
     <view class="search-bar--location" v-if="type == 'location'">
       <view class="location text-main search-item__text" @click="selectClick">
-        <text class="icon icon-location" style="background-image: url(/static/icon/icon_location.png);"></text>
+        <text class="icon icon-location" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_location.png);"></text>
         <text class="location-text">{{city+" "+storeName}}</text>
-        <text class="icon icon-select" style="background-image: url(/static/icon/icon_select.png);"></text>
+        <text class="icon icon-select" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_select.png);"></text>
       </view>
       <view class="search-item__input">
-        <text class="icon icon-search" style="background-image: url(/static/icon/icon_search.png);"></text>
+        <text class="icon icon-search" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_search.png);"></text>
         <input type="text" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" />
       </view>
       <view class="search-item__btns">
@@ -17,16 +17,17 @@
     </view>
     <view class="search-bar--buttons" v-else-if="type == 'buttons'">
       <view class="search-item__input">
-        <text class="icon icon-search" style="background-image: url(/static/icon/icon_search.png);" @click="search"></text>
+        <text class="icon icon-search" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_search.png);" @click="search"></text>
         <input type="text" maxlength="30" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @change="keyChange($event)" />
       </view>
       <view class="search-item__btns">
-        <button class="btn-noborder">取消</button>
+        <button class="btn-noborder" @click="selectClick" style="margin-right:3px;">搜索</button>
+        <button class="btn-noborder" @click="cancelClick">取消</button>
       </view>
     </view>
     <view class="search-bar--normal" v-else>
       <view class="search-item__input">
-        <text class="icon icon-search" style="background-image: url(/static/icon/icon_search.png);"></text>
+        <text class="icon icon-search" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_search.png);"></text>
         <input type="text" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @click="goSearch" />
       </view>
     </view>
@@ -38,8 +39,7 @@ export default {
   data() {
     return {
       keyword: "",
-      city: "深圳市",
-      storeName: "罗湖店"
+      city: "深圳市"
     }
   },
   props: {
@@ -47,10 +47,18 @@ export default {
     placeholderText: {
       type: String,
       default: '搜索您想要的商品'
+    },
+    storeName: {
+      type: String,
+      default: ''
     }
   },
   components: {},
   onLoad() {
+    let aty_store = user.methods.getAtyStore()
+    if (aty_store != null) {
+      that.storeName = aty_store.name
+    }
   },
   methods: {
     //选择
@@ -58,6 +66,10 @@ export default {
       uni.navigateTo({
         url: "../activity/select-shop"
       })
+    },
+    //取消选择
+    cancelClick() {
+      this.keyword = ''
     },
     //设置选择查询的关键词
     selectKey(params) {

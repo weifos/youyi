@@ -1,36 +1,85 @@
 <template>
   <view class="wrapper-wallet-gift-accept">
     <view class="wallet-recharge-card">
-      <image src="/static/images/wallet-recharge-card.png" />
+      <image :src="result.img_url" />
     </view>
     <view class="wallet-gift-accept-title">
       <view class="accept-text">收到好友赠送的礼品卡</view>
       <view class="accept-sum">
         <text>&yen;</text>
-        <text>100元</text>
+        <text>{{result.amount}}元</text>
       </view>
     </view>
     <view class="wallet-gift-accept-list">
       <view class="wallet-gift-accept-item">
         <view class="user-profile">
-          <image class="user-avatar" src="/static/images/user/user-avatar.png" />
+          <image class="user-avatar" :src="giveUser.headimgurl" />
           <view class="user-other">
-            <view class="user-phone">134***7818</view>
-            <view class="user-vip">女神节快乐~！</view>
+            <view class="user-phone">{{giveUser.login_name}}</view>
+            <view class="user-vip">{{result.remarks}}</view>
           </view>
         </view>
       </view>
     </view>
-    <operationButton buttonText="领取"></operationButton>
+    <operationButton buttonText="领取" @click="api_357"></operationButton>
   </view>
 </template>
 
 <script>
+
+import api from '@/modules/api'
+import user from '@/modules/userInfo'
+import appG from '@/modules/appGlobal'
 import yoyiTitle from '@/components/yoyi-title/'
 import operationButton from '@/components/yoyi-operation-button/'
 
 export default {
+  data() {
+    return {
+      giveUser: {},
+      result: {}
+    }
+  },
   components: { yoyiTitle, operationButton },
+  onLoad: function () {
+    this.api_356()
+  },
+  methods: {
+    /**
+     * 加载被赠送的礼品卡
+     */
+    api_356: function (item) {
+      let that = this
+      api.post(api.api_356, api.getSign({}),
+        function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            that.giveUser = res.data.Result.userDetails
+            that.giveUser.login_name = appG.util.getHideMobile(that.giveUser.login_name)
+            that.result = res.data.Result.userGiveCard
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
+    },
+    /**
+     * 接受赠送礼品卡
+     */
+    api_357: function (item) {
+      let that = this
+      api.post(api.api_357, api.getSign({}),
+        function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            let wxUser = user.methods.getUser()
+            wxUser.balance += item.amount
+            user.methods.login(wxUser)
+            uni.navigateTo({ url: 'gift-buy' })
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
+    }
+  }
+
 }
 </script>
 

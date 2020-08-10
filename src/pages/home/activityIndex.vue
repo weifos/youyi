@@ -1,22 +1,22 @@
 <template>
   <view class="content page-activity">
-    <searchBar type="location" @click></searchBar>
+    <searchBar type="location" :storeName="aty_store.name"></searchBar>
     <view class="banner align-center">
-      <image class="img" src="/static/images/i1.png" />
+      <image v-for="(item, key) in banners" class="img" :key="key" :src="item.imgurl" @click="bannerSelect(item)" />
     </view>
     <sun-tab :value.sync="index" activeColor="#0056B2" :tabList="tabList" :rangeKey="'title'"></sun-tab>
     <view class="tab-con">
       <view class="tab-c" v-if="index == 0">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[0].list" :key="key">
-            <activityItem :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
+            <activityItem :isPay="true" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
       <view class="tab-c" v-if="index == 1">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[1].list" :key="key">
-            <activityItem :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
+            <activityItem :isPay="true" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
@@ -25,8 +25,8 @@
 </template>
 
 <script>
-
 import api from '@/modules/api'
+import user from '@/modules/userInfo'
 import appG from '@/modules/appGlobal'
 import searchBar from "@/components/yoyi-search-bar"
 import sunTab from '@/components/sun-tab/sun-tab.vue'
@@ -35,6 +35,7 @@ export default {
   data() {
     return {
       title: '活动',
+      aty_store: { id: 0 },
       index: 0,
       tabCur: 0,
       pageSize: 6,
@@ -42,12 +43,14 @@ export default {
       tabList: [{
         title: "活动报名",
         loading: false,
+        loadComplete: false,
         pageIndex: 0,
         list: []
       },
       {
         title: "往期活动",
         loading: false,
+        loadComplete: false,
         pageIndex: 0,
         list: []
       }]
@@ -55,6 +58,12 @@ export default {
   },
   onLoad() {
     this.api_205()
+    this.api_207()
+    //是否定位过门店
+    this.aty_store = user.methods.getAtyStore()
+    if (this.aty_store == null) {
+      this.api_299()
+    }
   },
   components: {
     searchBar,
@@ -64,7 +73,6 @@ export default {
   methods: {
     //查看详情
     goDetails(item) {
-      console.log('goDetails')
       uni.navigateTo({
         url: "../activity/details?id=" + item.id
       })
@@ -105,6 +113,7 @@ export default {
               duration: 3000
             })
           } else {
+
             //banner数据
             if (that.tabCur == 0 && curItem.pageIndex == 0) {
               res.data.Result.banners.map(function (obj, index, arr) {
@@ -121,22 +130,20 @@ export default {
             curItem.loading = false
             curItem.pageIndex = curItem.pageIndex + 1
             res.data.Result.course.forEach(function (o, i) {
-              let s_time = appG.util.date.dateFormat(o.start_date, 'MM/dd')
-              let e_time = appG.util.date.dateFormat(o.end_date, 'MM/dd')
-              o.time = s_time + ' ' + e_time
+              let s_time = appG.util.date.dateFormat(o.start_date, 'MM/dd hh:mm')
+              let e_time = appG.util.date.dateFormat(o.end_date, 'MM/dd hh:mm')
+              o.time = s_time + '至' + e_time
               curItem.list.push(o)
             })
+
+            that.banners = res.data.Result.banners
 
             that.tabList[index] = curItem
             //是否全部加载完毕
             if (res.data.Result.course.length == 0) {
               curItem.loadComplete = true
               that.tabList[index] = curItem
-              uni.showToast({
-                title: '加载完成',
-                icon: 'success',
-                duration: 3000
-              })
+              uni.showToast({ title: '加载完成', icon: 'success', duration: 3000 })
             }
 
           }
@@ -149,9 +156,9 @@ export default {
     api_207: function () {
       var that = this
       //当前选中索引
-      let index = this.tabCur2
+      let index = this.index
       //当前选中项
-      let curItem = this.tabList[1].list[index]
+      let curItem = this.tabList[1]
       //如果没加载过
       if (!curItem.loadComplete) {
         api.post(api.api_207, api.getSign({
@@ -159,21 +166,69 @@ export default {
           Month: index + 1
         }), function (app, res) {
           if (res.data.Basis.State != api.state.state_200) {
-            uni.showToast({
-              title: res.data.Basis.Msg,
-              icon: 'none',
-              duration: 3000
-            })
+            uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           } else {
+            curItem.loading = false
             curItem.loadComplete = true
+            curItem.pageIndex = curItem.pageIndex + 1
+
             res.data.Result.forEach(function (o, i) {
-              o.start_date = appG.util.date.dateFormat(o.start_date, 'yyyy-MM-dd hh:mm')
-              curItem.items.push(o)
+              let s_time = appG.util.date.dateFormat(o.start_date, 'MM/dd hh:mm')
+              let e_time = appG.util.date.dateFormat(o.end_date, 'MM/dd hh:mm')
+              o.time = s_time + '至' + e_time
+              curItem.list.push(o)
             })
-            that.tabList[1].list[index] = curItem
+
+            //是否全部加载完毕
+            if (res.data.Result.length == 0) {
+              curItem.loadComplete = true
+              that.tabList[index] = curItem
+              uni.showToast({ title: '加载完成', icon: 'success', duration: 3000 })
+            }
+
           }
         })
       }
+    },
+    /**
+     * 定位最近的门店
+     */
+    api_299() {
+      let that = this
+      uni.getLocation({
+        type: 'wgs84',
+        success: function (res) {
+          //将小程序定位转换成百度位置的定位
+          let tmp = appG.util.map.qqMapTransBMap(res.longitude, res.latitude)
+          //查询最近门店
+          api.post(api.api_299, api.getSign({ LngLat: tmp.lng + '#' + tmp.lat }), function (app, res) {
+            if (res.data.Basis.State != api.state.state_200) {
+              uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+            } else {
+              that.aty_store = res.data.Result
+              user.methods.setAtyStore(that.aty_store)
+              uni.showToast({ title: '检查到您当前位置已推荐最近门店', icon: 'none', duration: 3000 })
+            }
+          })
+        }
+      })
+    },
+    /**
+     * banner点击事件
+     */
+    bannerSelect(item) {
+      let url = ''
+      //商品列表
+      if (item.content_type == 2) {
+        url = '../category/index?id=' + item.content_value
+        //商品详情
+      } else if (item.content_type == 5) {
+        url = '../category/details?id=' + item.content_value
+        //课程活动详情
+      } else if (item.content_type == 10) {
+        url = '../activity/details?id=' + item.content_value
+      }
+      uni.navigateTo({ url: url })
     }
   }
 }

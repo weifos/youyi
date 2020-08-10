@@ -5,10 +5,10 @@
       <view class="ticket__time">{{ticketInfo.startTime}}至{{ticketInfo.endTime}}</view>
     </view>
     <view class="ticket__discountInfo tac dib vat">
-      <view class="ticket__discount" data-item="ticketInfo" @click="handleClick('used')">点击使用</view>
+      <view class="ticket__discount" data-item="ticketInfo" v-if="!ticketInfo.is_used" @click="handleClick('used')">点击使用</view>
+      <view class="ticket__discount" data-item="ticketInfo" wx:else>已使用</view>
       <!-- <view class="ticket__discount" data-item="ticketInfo" v-if="!ticketInfo.is_used">点击使用</view>
-    <view class="ticket__discount" data-item="ticketInfo" wx:else>已使用</view>
-    <view class="ticket__quota ticket__tk" v-if="!ticketInfo.is_used && !ticketInfo.is_refund" bindtap="appRefund" data-item="ticketInfo" style="margin-top:5px;">申请退款</view>
+           <view class="ticket__quota ticket__tk" v-if="!ticketInfo.is_used && !ticketInfo.is_refund" bindtap="appRefund" data-item="ticketInfo" style="margin-top:5px;">申请退款</view>
       -->
     </view>
   </view>

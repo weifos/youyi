@@ -1,10 +1,10 @@
 <template>
   <view class="wrapper-wallet-pay">
     <view class="user-profile">
-      <image class="user-avatar" src="/static/images/user/user-avatar.png" />
+      <image class="user-avatar" :src="userInfo.headimgurl" />
       <view class="user-other">
-        <view class="user-phone">134***7818</view>
-        <view class="user-number">NO.1234567890</view>
+        <view class="user-phone">{{userInfo.login_name}}</view>
+        <view class="user-number">{{'NO.'+userInfo.card_no}}</view>
       </view>
     </view>
     <view class="pay-list">
@@ -13,7 +13,7 @@
           <checkbox :checked="list[0].checked" :value="list[0].value" color="#202020" />
           <text>使用优惠券</text>
         </checkbox-group>
-        <navigator class="agreement-link" hover-class url="/pages/wallet/pay-coupon">3张优惠券 &gt;</navigator>
+        <navigator class="agreement-link" hover-class url="/pages/wallet/pay-coupon">选择优惠券 &gt;</navigator>
       </view>
       <view class="pay-item" :class="{'checked':list[1].checked}">
         <checkbox-group class="agreement-checkbox" @change="checkboxChange">
@@ -48,9 +48,10 @@ export default {
       userInfo: {
         id: 0,
         balance: 0,
+        card_no: '',
         nick_name: '未设置',
         login_name: '未登录',
-        headimgurl: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big99008.jpg',
+        headimgurl: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big99008.jpg'
       },
       user_code: 0,
       timer: {
@@ -98,6 +99,9 @@ export default {
       this.createQRCode(this.user_code)
       this.startSetInter()
     }, 1000)
+
+    this.userInfo = user.methods.getUser()
+    this.userInfo.login_name = appG.util.getHideMobile(this.userInfo.login_name)
   },
   methods: {
     /**

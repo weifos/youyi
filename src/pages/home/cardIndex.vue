@@ -51,7 +51,7 @@ export default {
     api_209() {
       let that = this
       if (!appG.verifyStr.isMoblie(that.mobile)) {
-        uni.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
+        appG.dialog.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
         return
       }
 
@@ -69,7 +69,7 @@ export default {
         if (res.data.Basis.State == api.state.state_200) {
           that.startSetInter()
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
     },
@@ -78,12 +78,12 @@ export default {
       let that = this
 
       if (that.userName.length == 0) {
-        uni.showToast({ title: '请输入用户名称', duration: 2000, icon: "none" })
+        appG.dialog.showToast({ title: '请输入用户名称', duration: 2000, icon: "none" })
         return
       }
 
       if (appG.verifyStr.isMoblie(that.mobile)) {
-        uni.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
+        appG.dialog.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
         return
       }
 
@@ -95,7 +95,7 @@ export default {
           that.checkUpdate()
           that.result = res.data.Result
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
 

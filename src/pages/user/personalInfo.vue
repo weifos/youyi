@@ -106,7 +106,7 @@ export default {
               that.isLogin = false
             }
           } else {
-            uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           }
         })
     },
@@ -120,10 +120,10 @@ export default {
         UserDetails: that.userInfo
       }), function (app, res) {
         if (res.data.Basis.State == api.state.state_200) {
-          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 2000 })
+          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 2000 })
           that.api_106()
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
         }
       })
     },

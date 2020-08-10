@@ -136,11 +136,11 @@ export default {
   }
   .activity-ticket-code {
     margin: 30px auto;
-    width: 340px;
-    height: 340px;
+    width: 380px;
+    height: 380px;
     image {
-      width: 340px;
-      height: 340px;
+      width: 100%;
+      height: 100%;
     }
   }
   .activity-ticket-number {

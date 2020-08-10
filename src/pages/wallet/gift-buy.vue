@@ -1,15 +1,15 @@
 <template>
   <view class="wrapper-wallet-gift-buy">
     <view class="wallet-gift-buy-tab">
-      <sun-tab :value.sync="index" activeColor="#0056B2" :tabList="tabList"></sun-tab>
+      <sun-tab :value.sync="tabIndex" activeColor="#0056B2" :tabList="tabList"></sun-tab>
     </view>
-    <view class="wallet-gift-buy-content wallet-gift-buy-content-1" v-show="index == 0">
+    <view class="wallet-gift-buy-content wallet-gift-buy-content-1" v-show="tabIndex == 0">
       <yoyiTitle title="选择卡面"></yoyiTitle>
       <view class="gift-buy-swiper">
         <swiper class="swiper" next-margin="30rpx" :indicator-dots="true" @change="swiperChange">
-          <swiper-item v-for="(value,key) in [1,2,3,4,5]" :key="key" @click="swiperItemClick(`${value}`)">
+          <swiper-item v-for="(value,key) in settings.banners" :key="key" @click="swiperItemClick(`${value}`)">
             <view class="swiper-item" :class="{'swiper-item-selected':selectedSwiper==value}">
-              <image :src="require('@/static/images/wallet-recharge-card.png')" />
+              <image :src="value" />
               <view class="swiper-item-icon"></view>
             </view>
           </swiper-item>
@@ -17,16 +17,16 @@
       </view>
       <yoyiTitle title="选择充值金额" more="使用须知" url="/pages/wallet/notice"></yoyiTitle>
       <view class="money-list">
-        <view class="money-item" v-for="(value, key) in [1,2,3,4,5,6]" :key="key">
-          <moneyItem :price="100*value" :present="60*(value%2)" :selected="value == selected" @click="selectMoney(`${value}`)"></moneyItem>
+        <view class="money-item" v-for="(item, index) in settings.items" :key="index">
+          <moneyItem :price="item.amount" :present="'赠'+item.give_amount" :selected="index == selected" @click="selectMoney(`${index}`)"></moneyItem>
         </view>
       </view>
-      <operationButton :price="100"></operationButton>
+      <operationButton :price="selectedItem.amount" @click="api_350"></operationButton>
     </view>
-    <view class="wallet-gift-buy-content wallet-gift-buy-content-2" v-show="index == 1">
+    <view class="wallet-gift-buy-content wallet-gift-buy-content-2" v-show="tabIndex == 1">
       <view class="wallet-gift-card-list">
-        <view class="gift-card-item" v-for="(value, key) in [1,2,3,4,5]" :key="key">
-          <giftCardItem :price="100*key" :image="require('@/static/images/wallet-recharge-card.png')" number="NO.12345678908765423" :date="`2019-0${key+1}-29 11:13:06`" :showSendButton="key%2==0" @use="useGiftCard(key)" @send="sendGiftCard(key)"></giftCardItem>
+        <view class="gift-card-item" v-for="(item, index) in cardList" :key="index">
+          <giftCardItem :price="item.amount" :image="item.img_url" :number="'NO.'+item.serial_no" :date="item.created_date" :showUseButton="!item.is_used" :sendStatus="item.send_status" @use="api_353(item)" @send="sendGiftCard(item)"></giftCardItem>
         </view>
       </view>
     </view>
@@ -34,6 +34,9 @@
 </template>
 
 <script>
+import api from '@/modules/api'
+import user from '@/modules/userInfo'
+import appG from '@/modules/appGlobal'
 import sunTab from '@/components/sun-tab/sun-tab.vue'
 import yoyiTitle from '@/components/yoyi-title/'
 import moneyItem from '@/components/yoyi-money-item/'
@@ -43,33 +46,231 @@ import operationButton from '@/components/yoyi-operation-button/'
 export default {
   data() {
     return {
-      index: 0,
+      tabIndex: 0,
       tabList: ['购卡', '卡包'],
-      selectedSwiper: 1,
-      selected: 1,
+      selectedSwiper: '',
+      selected: -1,
+      selectedItem: {
+        amount: 0
+      },
+      //每页大小
+      pageSize: 6,
+      //当前类别索引
+      pageIndex: 0,
+      loading: false,
+      loadComplete: false,
+      totalPage: 0,
+      //项目配置
+      settings: {
+        banners: [],
+        items: []
+      },
+      cardList: []
     }
   },
   components: { sunTab, yoyiTitle, moneyItem, giftCardItem, operationButton },
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (opt) {
+    if (opt.tab == 1) {
+      that.tabIndex = 1
+    }
+
+    //查看收到的礼品卡
+    if (opt.count > 0) {
+      uni.navigateTo({ url: 'gift-accept' })
+    } else {
+      this.api_349()
+      this.api_352()
+    }
+  },
   methods: {
     swiperChange(event) {
       console.log(event.detail)
     },
+    /**
+     * 选择礼品卡封面
+     */
     swiperItemClick(value) {
       this.selectedSwiper = value
     },
+    /**
+     * 选择礼品卡金额
+     */
     selectMoney(value) {
       this.selected = value
+      let item = this.settings.items[value]
+      if (item != null) {
+        this.selectedItem = item
+      }
     },
+    /**
+     * 使用礼品卡
+     */
     useGiftCard(value) {
       console.log('use', value)
     },
-    sendGiftCard(value) {
-      console.log('send', value)
+    /**
+     * 赠送礼品卡
+     */
+    sendGiftCard(item) {
       uni.navigateTo({
-        url: `/pages/wallet/gift-send?id=1`,
+        url: `/pages/wallet/gift-send?no=` + item.serial_no,
+        //url: `/pages/wallet/gift-accept?no=` + item.serial_no,
       })
     },
-  },
+    /**
+     * 礼品卡配置
+     */
+    api_349: function () {
+      let that = this
+      api.post(api.api_349, api.getSign({}),
+        function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            that.settings = res.data.Result
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
+    },
+    /**
+     * 购买礼品卡
+     */
+    api_350: function () {
+      let that = this
+      if (!that.selectedSwiper.length) {
+        appG.dialog.showToast({ title: '请选择礼品卡封面', icon: 'none', duration: 3000 })
+        return
+      }
+
+      if (that.selectedItem.amount == 0) {
+        appG.dialog.showToast({ title: '请选择礼品卡金额', icon: 'none', duration: 3000 })
+        return
+      }
+
+      uni.getProvider({
+        service: 'payment', success: (res) => {
+          let provider = res.provider[0]
+          //微信支付
+          if (~res.provider.indexOf('wxpay')) {
+            api.post(api.api_350, api.getSign({
+              rece_amount: that.selectedItem.amount,
+              actual_amount: that.selectedItem.amount,
+              total_amount: parseInt(that.selectedItem.amount) + parseInt(that.selectedItem.give_amount),
+              remarks: that.selectedSwiper
+            }), function (app, res) {
+              if (res.data.Basis.State == api.state.state_200) {
+                //通过uni-app吊起支付
+                uni.requestPayment({
+                  provider: provider,
+                  appId: res.data.Result.wechatpay.appId,
+                  timeStamp: res.data.Result.wechatpay.timeStamp,
+                  nonceStr: res.data.Result.wechatpay.nonceStr,
+                  package: res.data.Result.wechatpay.package,
+                  signType: res.data.Result.wechatpay.signType,
+                  paySign: res.data.Result.wechatpay.paySign,
+                  success: function (res1) {
+                    //购卡成功
+                    that.api_351(res.data.Result.user_give_card.serial_no)
+                  },
+                  fail: function (err) {
+                    setTimeout(() => { that.isPaying = false }, 500)
+                  },
+                  complete: () => {
+                    setTimeout(() => { that.isPaying = false }, 500)
+                  }
+                })
+
+              } else {
+                appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+              }
+            })
+
+          }
+        }
+      })
+
+    },
+    /**
+     * 购买礼品卡成功
+     */
+    api_351: function (card_no) {
+      let that = this
+      api.post(api.api_351, api.getSign({ CardNo: card_no }),
+        function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            that.tabIndex = 1
+            that.loadComplete = false
+            that.cardList = []
+            that.api_352()
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
+    },
+    /**
+     * 我的礼品卡包
+     */
+    api_352: function () {
+      let that = this
+      if (!that.loading && !that.loadComplete) {
+        that.loading = true
+        api.post(api.api_352, api.getSign({ Size: that.pageSize, Index: that.pageIndex }), function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            that.pageIndex++
+            that.loading = false
+            that.loadComplete = false
+            that.totalPage = parseInt(res.data.Result.totalRow / that.pageSize) + (res.data.Result.totalRow % that.pageSize == 0 ? 0 : 1)
+
+            //达到总页数
+            if (that.pageIndex >= that.totalPage) {
+              that.loadComplete = true
+            }
+
+            res.data.Result.give_card_list.forEach(function (item, index) {
+              that.cardList.push(item)
+            })
+
+          } else {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }
+        })
+      }
+
+    },
+    /**
+     * 使用礼品卡
+     */
+    api_353: function (item) {
+      let that = this
+      uni.showModal({
+        title: '提示',
+        content: '确认使用吗',
+        success: function (res) {
+          if (res.confirm) {
+            //确认删除吗
+            api.post(api.api_353, api.getSign({ CardNo: item.serial_no }),
+              function (app, res) {
+                if (res.data.Basis.State == api.state.state_200) {
+                  that.cardList.forEach((ele, index) => {
+                    if (ele.id == item.id) {
+                      ele.is_used = true
+                    }
+                  })
+
+                  let wxUser = user.methods.getUser()
+                  wxUser.balance += item.amount
+                  user.methods.login(wxUser)
+                } else {
+                  appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+                }
+              })
+          } else if (res.cancel) { }
+        }
+      })
+    }
+  }
 }
 </script>
 

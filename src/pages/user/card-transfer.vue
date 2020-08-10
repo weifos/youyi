@@ -11,7 +11,7 @@
         <input class="uni-input" type="text" v-model="mobile" placeholder="输入老会员卡绑定的手机号" />
       </view>
       <view class="uni-form-item">
-        <input class="uni-input" type="text" placeholder="请输入验证码" />
+        <input class="uni-input" type="text" v-model="code" placeholder="请输入验证码" />
         <view class="btn-getcode" @click="api_209">{{timer.text}}</view>
       </view>
     </view>
@@ -25,10 +25,14 @@
         </view>
       </checkbox-group>
     </view>
-    <operationButton buttonText="确定"></operationButton>
+    <operationButton :buttonText="btn_text" :disabled="is_vip" @click="api_361"></operationButton>
   </view>
 </template>
 <script>
+
+import api from '@/modules/api'
+import user from '@/modules/userInfo'
+import appG from '@/modules/appGlobal'
 import vipBrand from '@/components/yoyi-vip-brand/'
 import operationButton from '@/components/yoyi-operation-button/'
 
@@ -37,15 +41,31 @@ export default {
   data() {
     return {
       checked: false,
-      mobile: '',
+      //按钮文字
+      btn_text: '确定',
+      //是否成为会员
+      is_vip: false,
+      //是否加载中
       loaing: false,
+      //手机号码
+      mobile: '',
       //老会员卡号
       old_card_no: '',
+      //验证码
+      code: '',
       timer: {
         text: '获取验证码',
         setInter: '',
         num: 60
       }
+    }
+  },
+  onLoad() {
+    var that = this
+    that.userInfo = user.methods.getUser()
+    if (that.userInfo.card_no != '') {
+      that.btn_text = "已成为会员"
+      that.is_vip = true
     }
   },
   methods: {
@@ -60,61 +80,86 @@ export default {
     api_209() {
       let that = this
 
+      //已经成为会员
+      if (that.is_vip) {
+        return
+      }
+
       //老会员卡号
-      if (!appG.verifyStr.anyCharacter(that.old_card_no)) {
-        uni.showToast({ title: '请输入老会员卡', duration: 2000, icon: "none" })
+      if (that.old_card_no == "") {
+        appG.dialog.showToast({ title: '请输入老会员卡', duration: 2000, icon: "none" })
         return
       }
 
       //手机号码
       if (!appG.verifyStr.isMoblie(that.mobile)) {
-        uni.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
+        appG.dialog.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
         return
       }
 
+      //是否加载
       if (that.loaing) { return }
       that.loaing = true
+
+      //倒计时
       if (that.timer.num >= 0 && that.timer.num < 60) { return }
 
-      //发送短信
+      //发送短信，绑定会卡验证码
       api.post(api.api_209, api.getSign({
         Mobile: that.mobile,
         UserName: that.userName,
-        //领取礼品卡获取验证码
-        SmsType: 15
+        SmsType: 20
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
           that.startSetInter()
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          that.loaing = false
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
     },
     /**
-    * 立即领卡
+    * 绑定老会员卡
     */
-    api_210() {
+    api_361() {
       let that = this
 
-      if (that.userName.length == 0) {
-        uni.showToast({ title: '请输入用户名称', duration: 2000, icon: "none" })
+      //已经成为会员
+      if (that.is_vip) {
         return
       }
 
-      if (appG.verifyStr.isMoblie(that.mobile)) {
-        uni.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
+      //老会员卡号
+      if (that.old_card_no == "") {
+        appG.dialog.showToast({ title: '请输入老会员卡', duration: 2000, icon: "none" })
         return
       }
 
-      api.post(api.api_210, api.getSign(), function (vue, res) {
-        if (res.data.Basis.State == api.state.state_200) {
-          res.data.Result.forEach((ele, index) => {
-            that.$set(ele, "checked", false)
-          })
-          that.checkUpdate()
-          that.result = res.data.Result
+      //手机号码
+      if (!appG.verifyStr.isMoblie(that.mobile)) {
+        appG.dialog.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
+        return
+      }
+
+      //验证码
+      if (that.code == "") {
+        appG.dialog.showToast({ title: '验证码不能为空', duration: 2000, icon: "none" })
+        return
+      }
+
+      //绑定老会员卡
+      api.post(api.api_361, api.getSign({
+        Code: that.code,
+        CardNo: that.old_card_no,
+        Mobile: that.mobile
+      }), function (vue, res) {
+        if (res.data.Basis.State != 500) {
+          //刷新用户信息
+          user.methods.login(res.data.Result)
+          //会员卡页面
+          uni.navigateTo({ url: "/pages/user/card" })
         } else {
-          uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
         }
       })
 
