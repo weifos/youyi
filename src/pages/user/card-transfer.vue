@@ -129,11 +129,18 @@ export default {
         return
       }
 
+      //请同意协议规则
+      if (!that.checked) {
+        appG.dialog.showToast({ title: '请同意协议规则', duration: 2000, icon: "none" })
+        return
+      }
+
       //老会员卡号
       if (that.old_card_no == "") {
         appG.dialog.showToast({ title: '请输入老会员卡', duration: 2000, icon: "none" })
         return
       }
+
 
       //手机号码
       if (!appG.verifyStr.isMoblie(that.mobile)) {
@@ -153,7 +160,7 @@ export default {
         CardNo: that.old_card_no,
         Mobile: that.mobile
       }), function (vue, res) {
-        if (res.data.Basis.State != 500) {
+        if (res.data.Basis.State == api.state.state_200 || res.data.Basis.State == 227) {
           //刷新用户信息
           user.methods.login(res.data.Result)
           //会员卡页面

@@ -1,5 +1,5 @@
 import api from '@/modules/api'
-import store from '@/store'
+import appG from '@/modules/appGlobal'
 import user from '@/modules/userInfo'
 import WXBizDataCrypt from '@/modules/WXBizDataCrypt'
 
@@ -71,37 +71,34 @@ module.exports = {
       * 绑定手机号码
       */
     bindMobile: function (e, func) {
-        var this_ = this
-        var userInfo = user.methods.getUser()
+        let this_ = this
+        let userInfo = user.methods.getUser()
         if (e.detail.errMsg === "getPhoneNumber:ok") {
             //小程序appId
             let appId = wx.getAccountInfoSync().miniProgram.appId
             //解密数据
-            var pc = new WXBizDataCrypt(appId, wx.getStorageSync('session_key'))
+            let pc = new WXBizDataCrypt(appId, wx.getStorageSync('session_key'))
             //获取手机号码数据包
-            var wx_result = pc.decryptData(e.detail.encryptedData, e.detail.iv)
+            let wx_result = pc.decryptData(e.detail.encryptedData, e.detail.iv)
             //获取手机号码
-            var mobile = wx_result.phoneNumber
+            let mobile = wx_result.phoneNumber
+            let store_id = 0
+            //当前定位的门店
+            let aty_store = user.methods.getAtyStore()
+            if (aty_store != null) {
+                store_id = aty_store.id
+            }
+
             //请求服务器
             api.post(api.api_104,
-                api.getSign({
-                    OpenID: userInfo.openid,
-                    Mobile: mobile
-                }),
+                api.getSign({ StoreId: store_id, OpenID: userInfo.openid, Mobile: mobile }),
                 function (app, res) {
                     if (res.data.Basis.State == api.state.state_200) {
                         userInfo = res.data.Result
                         user.methods.login(userInfo)
-                        wx.showToast({
-                            title: res.data.Basis.Msg,
-                            duration: 2000
-                        })
+                        appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 2000 })
                     } else {
-                        wx.showToast({
-                            title: res.data.Basis.Msg,
-                            icon: 'none',
-                            duration: 3000
-                        })
+                        appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 2000 })
                     }
                     func(res.data.Basis.State, userInfo)
                 })

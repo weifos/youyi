@@ -244,7 +244,8 @@ export default {
             appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           } else {
             user.methods.setOrderCourseAnswer(null)
-            uni.navigateTo({ url: '../user/activity?tid=' + that.orderInfo.type })
+            //授权订阅
+            //that.accreditSubscribeMsg()
           }
         })
       }
@@ -266,6 +267,26 @@ export default {
           that.api_338()
         }
       }
+    },
+    /**
+     * 授权订阅
+     * 推动活动报名信息
+     */
+    accreditSubscribeMsg: function () {
+      wx.requestSubscribeMessage({
+        tmplIds: ['pjXYFSyXlOOsGdCW8ZBl-guWI0YmFz4Bp7z2UNu54wE'],
+        //接口调用成功的回调函数
+        success(res) {
+
+        },//接口调用失败的回调函数
+        fail(res) {
+
+        },//接口调用结束的回调函数（调用成功、失败都会执行）
+        complete(res) {
+          console.log(res)
+          uni.navigateTo({ url: '../user/activity?tid=' + that.orderInfo.type })
+        }
+      })
     }
   }
 }

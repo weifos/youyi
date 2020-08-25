@@ -108,6 +108,7 @@ export default {
       userType: 1,//1:非会员 2:普通会员 3:高级会员
       isLogin: true,
       mobile: '',
+      aty_store: { id: 0 },
       //查询接受到的礼品卡
       acceptCount: 0,
       userInfo: {
@@ -120,6 +121,10 @@ export default {
     }
   },
   onLoad() {
+    this.aty_store = user.methods.getAtyStore()
+    if (this.aty_store == null) {
+      this.api_299()
+    }
   },
   onShow() {
     let that = this
@@ -207,6 +212,29 @@ export default {
             appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           }
         })
+    },
+    /**
+     * 定位最近的门店
+     */
+    api_299() {
+      let that = this
+      uni.getLocation({
+        type: 'wgs84',
+        success: function (res) {
+          //将小程序定位转换成百度位置的定位
+          let tmp = appG.util.map.qqMapTransBMap(res.longitude, res.latitude)
+          //查询最近门店
+          api.post(api.api_299, api.getSign({ LngLat: tmp.lng + '#' + tmp.lat }), function (app, res) {
+            if (res.data.Basis.State != api.state.state_200) {
+              uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+            } else {
+              that.aty_store = res.data.Result
+              user.methods.setAtyStore(that.aty_store)
+              uni.showToast({ title: '检查到您当前位置已推荐最近门店', icon: 'none', duration: 3000 })
+            }
+          })
+        }
+      })
     },
     /**
      * 加载赠送的数量

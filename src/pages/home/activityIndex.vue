@@ -57,12 +57,13 @@ export default {
     }
   },
   onLoad() {
-    this.api_205()
     this.api_207()
     //是否定位过门店
     this.aty_store = user.methods.getAtyStore()
     if (this.aty_store == null) {
       this.api_299()
+    } else {
+      this.api_205()
     }
   },
   components: {
@@ -103,6 +104,7 @@ export default {
         api.post(api.api_205, api.getSign({
           Type: 5,
           Size: that.pageSize,
+          StoreId: that.aty_store.id,
           Index: that.tabList[0].pageIndex
         }), function (app, res) {
 
@@ -208,6 +210,7 @@ export default {
               that.aty_store = res.data.Result
               user.methods.setAtyStore(that.aty_store)
               uni.showToast({ title: '检查到您当前位置已推荐最近门店', icon: 'none', duration: 3000 })
+              that.api_205()
             }
           })
         }

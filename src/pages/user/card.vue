@@ -41,7 +41,7 @@ export default {
     var that = this
     that.userInfo = user.methods.getUser()
     if (that.userInfo.card_no == '') {
-      that.userInfo.card_no = '未成为会员'
+      that.userInfo.card_no = '普通会员'
       that.api_362()
     }
   },

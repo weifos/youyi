@@ -64,7 +64,6 @@ export default {
         if (res.data.Basis.State == api.state.state_200) {
           res.data.Result.forEach((obj, i) => {
             let store = user.methods.getAtyStore()
-            debugger
             if (store != null && store.id == obj.id) {
               that.$set(obj, "checked", true)
             } else {

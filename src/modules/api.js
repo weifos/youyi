@@ -73,7 +73,7 @@ module.exports = {
     api_212: domain + "212",
     //加载课程活动报名
     api_213: domain + "213",
-    // 
+    //生成商品二维码海报
     api_214: domain + "214",
     //定位最近门店
     api_299: domain + "299",
@@ -189,6 +189,10 @@ module.exports = {
     api_361: domain + "361",
     //检测当前会员在老系统是否存在
     api_362: domain + "362",
+    //小程序重新支付
+    api_363: domain + "363",
+    //钱包重新支付
+    api_364: domain + "364",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()

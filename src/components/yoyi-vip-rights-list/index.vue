@@ -3,7 +3,7 @@
     <template v-if="type == 2">
       <view class="card-rights-list">
         <rightsItem type="money" text="95折畅购"></rightsItem>
-        <rightsItem type="drink" text="9折畅饮"></rightsItem>
+        <rightsItem type="drink" text="95折畅饮"></rightsItem>
         <rightsItem type="coin" text="消费积分"></rightsItem>
       </view>
       <view class="card-rights-list">
@@ -30,26 +30,26 @@
   </view>
 </template>
 <script>
-  import rightsItem from '@/components/yoyi-vip-rights-item/'
+import rightsItem from '@/components/yoyi-vip-rights-item/'
 
-  export default {
-    name: 'rightsList',
-    components: {rightsItem},
-    props: {
-      type: {
-        type: [String, Number],
-        default: '',
-      }, // 类型 2:普通会员 3:高级会员
-    },
-  }
+export default {
+  name: 'rightsList',
+  components: { rightsItem },
+  props: {
+    type: {
+      type: [String, Number],
+      default: '',
+    }, // 类型 2:普通会员 3:高级会员
+  },
+}
 </script>
 <style lang="scss">
-  .wrapper-card-rights{
-    margin:0 80px;
-    .card-rights-list{
-      display:flex;
-      justify-content:space-between;
-      margin-top:40px;
-    }
+.wrapper-card-rights {
+  margin: 0 80px;
+  .card-rights-list {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
   }
+}
 </style>

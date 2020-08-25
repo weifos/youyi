@@ -41,9 +41,9 @@
           <view class="icon-arrow dib vam ml10"></view>
         </view>
       </view>
-      <view class="price-item text-size-basic">
+      <view class="price-item text-size-basic" v-if="order.vip_dis_amount > 0">
         <text>会员折扣</text>
-        <text>-¥{{discount_amount}}</text>
+        <text>-¥{{order.vip_dis_amount}}</text>
       </view>
       <view class="price-item text-size-basic">
         <text>运费</text>
@@ -75,7 +75,7 @@
       <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" :text="'已优惠 ¥'+(productAmount * ((10-userInfo.mbr_dis_count) / 10)).toFixed(4)"></uni-notice-bar>
     </view>-->
     <view class="section-btns" @click="openPopup">
-      <operationButton :price="order.total_amount - discount_amount" buttonText="去支付"></operationButton>
+      <operationButton :price="(order.actual_amount).toFixed(2)" buttonText="去支付"></operationButton>
     </view>
     <!-- popup s -->
     <uniPopup ref="popup" type="bottom" class="pop-pay yoyi-pop">
@@ -87,9 +87,9 @@
               <radio :checked="order.pay_method == 31" color="#FFB825" value="31" />
               <text class="dib vam ml20">钱包支付</text>
             </view>
-            <view class="text-gray text-size-sm text-desc">钱包余额 ¥{{userInfo.balance}}，尚需 ¥{{order.actual_amount}}</view>
+            <view class="text-gray text-size-sm text-desc">钱包余额 ¥{{userInfo.balance}}，尚需 ¥{{(order.actual_amount).toFixed(2)}}</view>
             <view class="btns-bar mt20">
-              <button class="btn btn-round btn-size-full text-size-md btn-bg-main text-white" @click="api_331((order.actual_amount - userInfo.balance).toFixed(4))" v-if="order.actual_amount > userInfo.balance">立即充值 ¥{{(order.actual_amount - userInfo.balance).toFixed(4)}}</button>
+              <button class="btn btn-round btn-size-full text-size-md btn-bg-main text-white" @click="api_331((order.actual_amount - userInfo.balance).toFixed(2))" v-if="order.actual_amount > userInfo.balance">立即充值 ¥{{(order.actual_amount - userInfo.balance).toFixed(2)}}</button>
               <button class="btn btn-round btn-size-full btn-line-main text-size-md bg-white text-sub mt20" @click="goRecharge">其他充值优惠</button>
             </view>
           </view>
@@ -163,6 +163,8 @@ export default {
         details: [],
         //运费
         freight: 0,
+        //会员优惠金额
+        vip_dis_amount: 0,
         //订单详情
         store_details: []
       },
@@ -172,8 +174,6 @@ export default {
       mode_id: 0,
       //配送方式ID
       mode_id: 0,
-      //已优惠金额
-      discount_amount: 0,
       //当前页面路由
       currentPage: ''
     }
@@ -243,10 +243,6 @@ export default {
           user.methods.login(res.data.Result.user)
           //当前页面用户钱包
           that.userInfo = res.data.Result.user
-          //更新总金额
-          that.order.total_amount += that.order.freight
-          //更新实付金额
-          that.order.actual_amount += that.order.freight
           //设置默认支付方式
           if (that.order.balance > that.order.actual_amount) {
             that.order.pay_method = 31
@@ -254,7 +250,14 @@ export default {
             that.order.pay_method = 13
           }
 
-          that.discount_amount = appG.util.formatDecimal(that.productAmount * ((10 - that.userInfo.mbr_dis_count) / 10), 2)
+          if (that.userInfo.mbr_dis_count < 10) {
+            that.order.vip_dis_amount = appG.util.formatDecimal(that.productAmount * ((10 - that.userInfo.mbr_dis_count) / 10), 2)
+          }
+
+          //更新总金额
+          that.order.total_amount += that.order.freight
+          //更新实付金额
+          that.order.actual_amount += that.order.freight - that.order.vip_dis_amount
           that.notSetAddress = false
         } else {
           //未设置收货地址
@@ -307,6 +310,8 @@ export default {
      */
     api_336() {
       let that = this
+
+
       api.post(api.api_336, api.getSign({
         UserCouponId: 0,
         Order: that.order,

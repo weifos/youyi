@@ -73,7 +73,7 @@ export default {
     /**
      * 去付款
      */
-    goPay(value) {
+    goPay(item) {
       uni.navigateTo({ url: 'order-details?no=' + item.serial_no })
     },
     /**

@@ -3,7 +3,7 @@
     <vipBrand type="1"></vipBrand>
     <yoyiTitle title="开通会员" more="开通会员享更多好礼"></yoyiTitle>
     <view class="user-open-list">
-      <vipListItem v-for="(item,index) in rechargeList" :key="index" class="open-item" :title="item.name" :price="item.full_amount" :selected="selected == index" :disabled="false" @click="select(index)"></vipListItem>
+      <vipListItem v-for="(item,index) in rechargeList" :key="index" :class="'open-item'" :title="item.name" :price="item.full_amount" :selected="selected == index && item.dis_count < mbr_dis_count  || mbr_dis_count == 10 " :disabled="false" @click="select(index,item.dis_count)"></vipListItem>
     </view>
     <view class="user-agreement">
       <checkbox-group class="agreement-checkbox" @change="checkboxChange">
@@ -32,6 +32,8 @@ export default {
   components: { yoyiTitle, vipBrand, vipListItem, operationButton },
   data() {
     return {
+      //会员折扣
+      mbr_dis_count: 1,
       price: 0,
       selected: 0,
       checked: false,
@@ -42,6 +44,8 @@ export default {
   onLoad(options) {
   },
   onShow() {
+    let userInfo = user.methods.getUser()
+    this.mbr_dis_count = userInfo.mbr_dis_count
     this.api_346()
     this.api_345()
     // if (userInfo.card_no.length > 0) {
@@ -49,7 +53,10 @@ export default {
     // }
   },
   methods: {
-    select(value) {
+    select(value, dis_count) {
+      console.log(dis_count)
+      console.log(this.mbr_dis_count)
+
       this.selected = value
     },
     checkboxChange(e) {
@@ -117,9 +124,8 @@ export default {
         appG.dialog.showToast({ title: '请选择购买的会员卡', icon: 'none', duration: 3000 })
         return
       } else {
-        var userInfo = user.methods.getUser()
-        if (userInfo.mbr_dis_count == item.dis_count) {
-          appG.dialog.showToast({ title: '你已具备该会员权益', icon: 'none', duration: 3000 })
+        if (that.mbr_dis_count != 10 && that.mbr_dis_count <= item.dis_count) {
+          //appG.dialog.showToast({ title: '你已具备该会员权益', icon: 'none', duration: 3000 })
           return
         }
       }
