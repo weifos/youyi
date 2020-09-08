@@ -200,7 +200,7 @@ export default {
         codeName: "",
         codeNameMT: 20,
         tips: "长按/扫描识别查看商品",
-        posterBgUrl: 'http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/images/qr_core_bg.png'
+        posterBgUrl: 'https://res66.yoyibook.com:444/DefaultRes/Images/VUE/static/images/qr_core_bg.png'
       },
       posterSimpleData: {//简单版的海报
         marginLR: 40,
@@ -253,10 +253,17 @@ export default {
     }
   },
   onLoad(opt) {
-    this.api_203(opt.id)
-    //如果已登录
-    if (user.methods.isLogin()) {
-      this.api_341(opt.id)
+    //扫码海报
+    if (opt.scene) {
+      //解码一个由escape()函数编码的字符串
+      var scene = unescape(opt.scene)
+      this.api_203(scene.split('=')[1])
+    } else {
+      this.api_203(opt.id)
+      //如果已登录
+      if (user.methods.isLogin()) {
+        this.api_341(opt.id)
+      }
     }
   },
   methods: {
@@ -476,7 +483,9 @@ export default {
           //初始化海报
           that.posterObj = that.posterData
           //封面图片
-          that.posterObj.posterImgUrl = that.pResult.product.img_url
+          that.posterObj.posterImgUrl = that.pResult.product.img_url.replace('http:', 'https:').replace(':20181/', ':444/')
+          //海报主图
+          that.$refs.poster.canvasAttr.posterImgUrl = that.posterObj.posterImgUrl
           //标题
           that.posterObj.title = that.pResult.product.name
           //覔书店
@@ -516,9 +525,9 @@ export default {
         api.post(api.api_214, api.getSign({ ID: that.pResult.product.id }), function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
             //商品二维码地址
-            that.$refs.poster.canvasAttr.posterCodeUrl = that.pResult.product.field6
-            //商品二维码地址
             that.pResult.product.field6 = res.data.Result
+            //商品二维码地址
+            that.$refs.poster.canvasAttr.posterCodeUrl = res.data.Result.replace('http:', 'https:')
             that.$refs.poster.posterShow()
             that.deliveryFlag = false
           } else {
@@ -526,7 +535,8 @@ export default {
           }
         })
       } else {
-        that.$refs.poster.canvasAttr.posterCodeUrl = that.pResult.product.field6
+        //商品二维码地址
+        that.$refs.poster.canvasAttr.posterCodeUrl = that.pResult.product.field6.replace('http:', 'https:')
         that.$refs.poster.posterShow()
         that.deliveryFlag = false
       }

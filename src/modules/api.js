@@ -6,10 +6,10 @@ import md5 from 'blueimp-md5'
 let domain = "https://api66.yoyibook.com/"
 let res_domain = "http://res66.yoyibook.com:20182/"
 //测试环境
-if (process.env.NODE_ENV !== 'production') {
-    domain = "http://yy.api.youyi.com/"
-    res_domain = "http://yy.res.youyi.com/"
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     domain = "http://yy.api.youyi.com/"
+//     res_domain = "http://yy.res.youyi.com/"
+// }
 
 /// <summary>
 /// 全局配置类
