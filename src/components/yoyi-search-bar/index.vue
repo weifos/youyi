@@ -2,7 +2,7 @@
   <view class="search-bar">
     <!-- 选择门店搜索框 -->
     <view class="search-bar--location" v-if="type == 'location'">
-      <view class="location text-main search-item__text" @click="selectClick">
+      <view class="location text-main search-item__text" @click="selectShop">
         <text class="icon icon-location" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_location.png);"></text>
         <text class="location-text">{{city+" "+storeName}}</text>
         <text class="icon icon-select" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_select.png);"></text>
@@ -21,7 +21,7 @@
         <input type="text" maxlength="30" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @change="keyChange($event)" />
       </view>
       <view class="search-item__btns">
-        <button class="btn-noborder" @click="selectClick" style="margin-right:3px;">搜索</button>
+        <button class="btn-noborder" @click="search" style="margin-right:3px;">搜索</button>
         <button class="btn-noborder" @click="cancelClick">取消</button>
       </view>
     </view>
@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     //选择
-    selectClick() {
+    selectShop() {
       uni.navigateTo({
         url: "../activity/select-shop"
       })
@@ -81,6 +81,7 @@ export default {
     },
     //立即搜索
     search() {
+      if (this.keyword.length == 0) return
       this.$emit('search', this.keyword)
     },
     //输入改变事件

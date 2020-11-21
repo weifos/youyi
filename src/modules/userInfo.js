@@ -109,6 +109,18 @@ export default {
             }
             return null
         },
+        //设置选择设置门店品牌信息
+        setBrandStore(result) {
+            uni.setStorageSync('aty_brand_store', JSON.stringify(result))
+        },
+        //获取门店品牌
+        getBrandStore() {
+            let entity = uni.getStorageSync('aty_brand_store')
+            if (entity) {
+                return JSON.parse(entity)
+            }
+            return null
+        },
         //设置历史查询关键词
         setHistoryKeyWord(result) {
             if (result == undefined || result == '') return

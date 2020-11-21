@@ -82,7 +82,7 @@ export default {
         return
       }
 
-      if (appG.verifyStr.isMoblie(that.mobile)) {
+      if (!appG.verifyStr.isMoblie(that.mobile)) {
         appG.dialog.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
         return
       }

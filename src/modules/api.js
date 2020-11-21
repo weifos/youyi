@@ -6,10 +6,10 @@ import md5 from 'blueimp-md5'
 let domain = "https://api66.yoyibook.com/"
 let res_domain = "http://res66.yoyibook.com:20182/"
 //测试环境
-// if (process.env.NODE_ENV !== 'production') {
-//     domain = "http://yy.api.youyi.com/"
-//     res_domain = "http://yy.res.youyi.com/"
-// }
+if (process.env.NODE_ENV !== 'production') {
+    domain = "http://yy.api.youyi.com/"
+    res_domain = "http://yy.res.youyi.com/"
+}
 
 /// <summary>
 /// 全局配置类
@@ -75,6 +75,8 @@ module.exports = {
     api_213: domain + "213",
     //生成商品二维码海报
     api_214: domain + "214",
+    //加载运营品牌信息
+    api_215: domain + "215",
     //定位最近门店
     api_299: domain + "299",
     //

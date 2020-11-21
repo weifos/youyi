@@ -20,7 +20,8 @@
       </checkbox-group>
     </view>
 
-    <!-- <view class="sign-up-list mt20">
+    <!--
+    <view class="sign-up-list mt20">
       <view class="list-title">{{formData[1].type}}</view>
       <checkbox-group class="agreement-checkbox" @change="checkboxChange">
         <view class="list-item" v-for="sItem in formData[1].list" :key="sItem">
@@ -29,7 +30,9 @@
           <input v-if="sItem.type =='other'" class="yoyi-input-normal" :placeholder="sItem.text" placeholder-class="input-placeholder" />
         </view>
       </checkbox-group>
-    </view>-->
+    </view>
+    -->
+
     <view class="btns-bar">
       <operationButton buttonText="确定" @click="api_359"></operationButton>
     </view>

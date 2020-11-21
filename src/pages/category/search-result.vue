@@ -8,7 +8,7 @@
         <text @click.stop="orderByDefault">默认</text>
         <filter>价格</filter>
       </view>
-      <view class="list__item" v-for="(item,index) in productList" :key="item">
+      <view class="list__item" v-for="(item,index) in productList" :key="item" @click="orderByPrice">
         <view class="item-img">
           <image :src="item.img_url" />
         </view>
@@ -23,8 +23,8 @@
 </template>
 
 <script>
+
 import api from '@/modules/api'
-import appG from '@/modules/appGlobal'
 import searchBar from "@/components/yoyi-search-bar"
 import filter from "@/components/yoyi-filter"
 export default {
@@ -191,6 +191,7 @@ export default {
     .item-img image {
       width: 2 * 100px;
       height: 2 * 100px;
+      margin-right: 20rpx;
     }
     .item-title {
       margin-top: 10px;

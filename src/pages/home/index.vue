@@ -1,5 +1,6 @@
 <template>
   <view class="content page-index">
+    <searchBrand type="location" :brandName="'d'"></searchBrand>
     <view class="section-banner">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
         <swiper-item v-for="item in banners" :key="item">
@@ -21,10 +22,15 @@
 </template>
 
 <script>
+
 import api from '@/modules/api'
 import appG from '@/modules/appGlobal'
+import searchBrand from "@/components/select-brand"
 
 export default {
+  components: {
+    searchBrand,
+  },
   data() {
     return {
       title: 'hello world!',
