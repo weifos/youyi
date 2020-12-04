@@ -55,15 +55,9 @@ export default {
       listTouchStart: 0,
       listTouchDirection: null,
       checked: false,
-      //对应的门店信息
-      store_id: 0,
+      //运营品牌
+      storeBrand: null,
       loading: false,
-      //订单信息
-      order: {
-        store_id: 0,
-        remarks: '',
-        details: []
-      },
       //购物车列表
       result: [],
       //总计
@@ -71,13 +65,15 @@ export default {
     }
   },
   onLoad(opt) {
+    //运营品牌
+    this.storeBrand = appG.getCurBrandStore()
     this.api_302()
   },
   methods: {
     //加载购物车
     api_302() {
       let that = this
-      api.post(api.api_302, api.getSign(), function (vue, res) {
+      api.post(api.api_302, api.getSign({ StoreId: that.storeBrand.id }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
           res.data.Result.forEach((ele, index) => {
             that.$set(ele, "checked", false)

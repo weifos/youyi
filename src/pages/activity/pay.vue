@@ -102,6 +102,7 @@ export default {
     uniNumberBox
   },
   onLoad(opt) {
+
     //优惠券
     if (opt.cid != undefined && opt.cname != undefined && opt.tname != undefined) {
       this.cid = opt.cid
@@ -244,8 +245,8 @@ export default {
             appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           } else {
             user.methods.setOrderCourseAnswer(null)
-            //授权订阅
-            //that.accreditSubscribeMsg()
+            //跳转到报名列表
+            uni.navigateTo({ url: '/pages/user/activity' })
           }
         })
       }

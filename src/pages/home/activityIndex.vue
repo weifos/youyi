@@ -1,8 +1,14 @@
 <template>
   <view class="content page-activity">
     <searchBar type="location" :storeName="aty_store.name"></searchBar>
-    <view class="banner align-center">
-      <image v-for="(item, key) in banners" class="img" :key="key" :src="item.imgurl" @click="bannerSelect(item)" />
+    <!-- <view class="banner align-center"> -->
+    <view class="align-center">
+      <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
+        <swiper-item v-for="item in banners" :key="item">
+          <image :src="item.imgurl" />
+        </swiper-item>
+      </swiper>
+      <!-- <image v-for="(item, key) in banners" class="img" :key="key" :src="item.imgurl" @click="bannerSelect(item)" /> -->
     </view>
     <sun-tab :value.sync="index" activeColor="#0056B2" :tabList="tabList" :rangeKey="'title'"></sun-tab>
     <view class="tab-con">
@@ -35,11 +41,16 @@ export default {
   data() {
     return {
       title: '活动',
+      indicatorDots: true,
+      autoplay: true,
+      interval: 2001,
+      duration: 500,
       aty_store: { id: 0 },
       index: 0,
       tabCur: 0,
       pageSize: 6,
       banners: [],
+      storeBrand: null,
       tabList: [{
         title: "活动报名",
         loading: false,
@@ -57,6 +68,9 @@ export default {
     }
   },
   onLoad() {
+    //获取当前品牌门店
+    this.storeBrand = appG.getCurBrandStore()
+
     this.api_207()
     //是否定位过门店
     this.aty_store = user.methods.getAtyStore()
@@ -104,6 +118,7 @@ export default {
         api.post(api.api_205, api.getSign({
           Type: 5,
           Size: that.pageSize,
+          BrandStoreId: that.storeBrand.id,
           StoreId: that.aty_store.id,
           Index: that.tabList[0].pageIndex
         }), function (app, res) {

@@ -3,12 +3,12 @@
     <!-- 选择门店搜索框 -->
     <view class="search-bar--location" v-if="type == 'location'">
       <view class="location text-main search-item__text" @click="selectShop">
-        <text class="icon icon-location" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_location.png);"></text>
+        <text class="icon icon-location" style="background-image: url(https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/icon/icon_location.png);"></text>
         <text class="location-text">{{city+" "+storeName}}</text>
-        <text class="icon icon-select" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_select.png);"></text>
+        <text class="icon icon-select" style="background-image: url(https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/icon/icon_select.png);"></text>
       </view>
       <view class="search-item__input">
-        <text class="icon icon-search" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_search.png);"></text>
+        <text class="icon icon-search" style="background-image: url(https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/icon/icon_search.png);"></text>
         <input type="text" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" />
       </view>
       <view class="search-item__btns">
@@ -17,7 +17,7 @@
     </view>
     <view class="search-bar--buttons" v-else-if="type == 'buttons'">
       <view class="search-item__input">
-        <text class="icon icon-search" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_search.png);" @click="search"></text>
+        <text class="icon icon-search" style="background-image: url(https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/icon/icon_search.png);" @click="search"></text>
         <input type="text" maxlength="30" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @change="keyChange($event)" />
       </view>
       <view class="search-item__btns">
@@ -27,7 +27,7 @@
     </view>
     <view class="search-bar--normal" v-else>
       <view class="search-item__input">
-        <text class="icon icon-search" style="background-image: url(http://res66.yoyibook.com:20181/DefaultRes/Images/VUE/static/icon/icon_search.png);"></text>
+        <text class="icon icon-search" style="background-image: url(https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/icon/icon_search.png);"></text>
         <input type="text" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @click="goSearch" />
       </view>
     </view>

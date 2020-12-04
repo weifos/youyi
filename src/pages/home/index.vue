@@ -1,6 +1,6 @@
 <template>
   <view class="content page-index">
-    <searchBrand type="location" :brandName="'d'"></searchBrand>
+    <selectBrand type="location" :brandName="''" ref="sBrand"></selectBrand>
     <view class="section-banner">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
         <swiper-item v-for="item in banners" :key="item">
@@ -25,11 +25,11 @@
 
 import api from '@/modules/api'
 import appG from '@/modules/appGlobal'
-import searchBrand from "@/components/select-brand"
+import selectBrand from "@/components/select-brand"
 
 export default {
   components: {
-    searchBrand,
+    selectBrand,
   },
   data() {
     return {
@@ -43,12 +43,24 @@ export default {
     }
   },
   onLoad() {
-    this.api_200()
+    let that = this
+    //that.api_200()
+    that.storeBrand = appG.getCurBrandStore()
+    if (that.storeBrand == null) {
+      that.$refs.sBrand.api_215(() => {
+        that.storeBrand = appG.getCurBrandStore()
+        that.api_200()
+      })
+    } else {
+      that.api_200()
+    }
   },
   methods: {
     api_200() {
       let that = this
-      api.post(api.api_200, api.getSign(), function (ele, res) {
+      api.post(api.api_200, api.getSign({
+        StoreId: that.storeBrand.id
+      }), function (ele, res) {
         if (res.data.Basis.State == api.state.state_200) {
           that.banners = res.data.Result.banners
           that.banners0 = res.data.Result.banners0

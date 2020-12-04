@@ -13,7 +13,7 @@
     <view class="section-order-info bg-white">
       <view class="section-title">商品信息</view>
       <view class="order-list">
-        <view class="list-item hidden" v-for="item in order.details" :key="item">
+        <view class="list-item hidden" v-for="item in order.store_details" :key="item">
           <view class="img-bar image-size-sm fl">
             <image :src="item.img_url" />
           </view>
@@ -152,7 +152,7 @@ export default {
         //线上商品订单
         type: 5,
         //支付方式 13微信小程序支付 31电子钱包支付
-        pay_method: 1,
+        pay_method: 13,
         //总金额
         total_amount: 0,
         //实付金额
@@ -160,7 +160,7 @@ export default {
         //优惠券ID
         user_coupon_id: 0,
         //订单详情
-        details: [],
+        //details: [],
         //运费
         freight: 0,
         //会员优惠金额
@@ -181,6 +181,11 @@ export default {
   onLoad(opt) {
     let that = this
     that.currentPage = appG.route.getCurPath()
+    //运营品牌
+    that.storeBrand = appG.getCurBrandStore()
+    //订单所属门店
+    that.order.store_id = that.storeBrand.id
+
     if (!user.methods.isLogin()) {
       uni.setStorageSync('returl', "/" + that.currentPage)
       uni.switchTab({ url: '/pages/home/userIndex' })
@@ -192,13 +197,12 @@ export default {
 
       let items = user.methods.getBuyNow()
       items.forEach((item, i) => {
-        that.order.details.push(item)
+        that.order.store_details.push(item)
       })
 
-      that.order.store_details = that.order.details
-
+      //that.order.details = that.order.store_details
       //计算商品金额
-      that.order.details.forEach(function (ele, index, arr) {
+      that.order.store_details.forEach(function (ele, index, arr) {
         that.productAmount += ele.unit_price * ele.count
       })
 
@@ -289,6 +293,7 @@ export default {
             signType: res.data.Result.wechatpay.signType,
             paySign: res.data.Result.wechatpay.paySign,
             success: function (res) {
+              //   that.api_366()
               console.log('success:' + JSON.stringify(res))
               uni.navigateTo({ url: '../mine/order-list' })
             },
@@ -373,6 +378,32 @@ export default {
               }
             })
           }
+        }
+      })
+    },
+    /**
+     * 订单支付回调
+     */
+    api_366() {
+      let that = this
+
+      api.post(api.api_364, api.getSign({
+        OrderNo: that.order.serial_no,
+        UserCouponId: 0
+      }), function (vue, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          //更新用户信息
+          user.methods.login(res.data.Result)
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
+          setTimeout(function () {
+            uni.navigateTo({ url: '../mine/order-list' })
+          }, 1000)
+        } else {
+          setTimeout(function () {
+            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+          }, 50)
+          setTimeout(function () { uni.hideToast() }, 3000)
+          that.isPaying = false
         }
       })
     },

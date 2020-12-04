@@ -10,6 +10,7 @@
         <view class="mt10 text-size-sm text-gray">{{result.start_date +"至"+result.end_date}}</view>
         <view class="text-size-sm text-gray">嘉宾：{{result.teacher_name}}</view>
         <view class="text-size-sm text-gray">地点：{{result.address}}</view>
+        <view @tap="api_216" style="display: inline-block;width: 60px;margin-right:0px;color:#004EA2;">分享海报</view>
       </view>
       <view class="section-detail">
         <jyf-parser :html="result.details"></jyf-parser>
@@ -83,6 +84,8 @@
         <button class="btn btn-bg-main text-white btn-size-full text-size-lg btn-sure" style="margin-bottom:0px" @click="buyNow">确定购买</button>
       </uniPopup>
       <!-- popup e -->
+
+      <poster ref="poster" @cancel="canvasCancel" :posterImgUrl="pResult.product.img_url" :simpleFlag="simpleFlag" :posterBgFlag="posterBgFlag" :canvasAttr.sync="posterObj" />
     </view>
   </view>
 </template>
@@ -91,7 +94,7 @@
 
 import api from '@/modules/api'
 import appG from '@/modules/appGlobal'
-import user from '@/modules/userInfo'
+import poster from "@/components/poster/poster"
 import { uniPopup, uniNumberBox } from "@dcloudio/uni-ui"
 
 export default {
@@ -111,6 +114,8 @@ export default {
       totalPrice: 0,
       ladder_prices: [],
       isOverdue: false,
+      //当前运营的品牌
+      curBrand: null,
       store_name: "",
       result: {
         title: "",
@@ -123,13 +128,56 @@ export default {
       },
       collected: 0,
       show: false,
+      //主板版海报
+      posterData: {
+        marginLR: 40,
+        marginTB: 40,
+        radius: 0.03,
+        innerLR: 20,
+        innerTB: 20,
+        posterRatio: 1.3,
+        posterImgUrl: "",
+        title: "",
+        titleFontSize: 16,
+        titleLineHeight: 25,
+        posterCodeUrl: "",
+        codeWidth: 0.3,
+        codeRatio: 1,
+        codeRadius: 0.5,
+        codeMT: 20,
+        codeName: "",
+        codeNameMT: 20,
+        tips: "长按/扫描识别查看商品",
+        posterBgUrl: 'https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/images/qr_core_bg.png'
+      },
+      posterSimpleData: {//简单版的海报
+        marginLR: 40,
+        marginTB: 40,
+        radius: 0.05,
+        title: ["-", "-"],
+        titleFontSize: 16,
+        titleLineHeight: 25,
+        posterCodeUrl: "",
+        codeWidth: 0.2,
+        codeRatio: 1,
+        codeRadius: 0.5,
+        codeMT: 50,
+        posterBgUrl: '',
+        codeML: 140,
+        desTextMT: 70,
+        desTextML: 240,
+      },
+      posterObj: {}
     }
   },
   components: {
+    poster,
     uniPopup,
     uniNumberBox
   },
   onLoad(opt) {
+    //运营品牌
+    this.curBrand = appG.getCurBrand()
     this.api_206(opt)
   },
   methods: {
@@ -213,14 +261,21 @@ export default {
         id = appG.util.getRequestId(scene, "id")
       }
 
-      api.post(api.api_206, api.getSign({
-        ID: id
-      }), function (app, res) {
+      api.post(api.api_206, api.getSign({ ID: id }), function (app, res) {
         if (res.data.Basis.State != api.state.state_200) {
           uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
         } else {
           //封面图
-          that.imgurl = res.data.Result.imgurl
+          that.imgurl = res.data.Result.imgurl.replace('http://res66', 'https://res67').replace(':20181/', '20185/')
+          //封面图片
+          that.posterObj.posterImgUrl = that.imgurl
+          //海报主图
+          that.$refs.poster.canvasAttr.posterImgUrl = that.posterObj.posterImgUrl
+          //标题
+          that.posterObj.title = that.result.name
+          //运营平品牌
+          that.posterObj.codeName = that.curBrand.name
+
           //是否过期
           let dateNow = appG.util.date.getDateTimeNow()
 
@@ -231,6 +286,7 @@ export default {
           that.reg_num = res.data.Result.reg_num
           res.data.Result.course.start_date = appG.util.date.dateFormat(res.data.Result.course.start_date, 'yyyy-MM-dd hh:mm')
           res.data.Result.course.end_date = appG.util.date.dateFormat(res.data.Result.course.end_date, 'yyyy-MM-dd hh:mm')
+          //活动实体对象
           that.result = res.data.Result.course
           that.store_name = res.data.Result.store_name
           //阶梯价
@@ -243,6 +299,30 @@ export default {
           that.totalPrice = res.data.Result.course.sale_price
         }
       })
+    },
+    /**
+     * 生成课堂海报二维码
+     */
+    api_216: function () {
+      var that = this
+      //如果没有生成过二维码
+      if (that.result.qr_code_url == "" || that.result.qr_code_url == null) {
+        api.post(api.api_216, api.getSign({ ID: that.result.id }), function (app, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            //二维码地址
+            that.$refs.poster.canvasAttr.posterCodeUrl = that.result.qr_code_url.replace('http://res66', 'https://res67').replace(':20181', ':20185')
+            that.$refs.poster.posterShow()
+            that.deliveryFlag = false
+          } else {
+            wx.showToast({ title: '生成海报二维码失败', icon: 'none', duration: 3000 })
+          }
+        })
+      } else {
+        //二维码地址
+        that.$refs.poster.canvasAttr.posterCodeUrl = that.result.qr_code_url.replace('http://res66', 'https://res67').replace(':20181', ':20185')
+        that.$refs.poster.posterShow()
+        that.deliveryFlag = false
+      }
     },
     /**
      * 提交课程订单
@@ -306,6 +386,57 @@ export default {
 
         setTimeout(() => { that.requestIng = false }, 1000)
       })
+    },
+    /**生成海报方法*/
+    /**
+    * @description: 生成海报
+    * @param {type} 
+    * @return {type} 
+    * @author: hch
+    */
+    handleShowPoster() {
+      let that = this
+      if (that.pResult.product.field6 == null) {
+        that.api_214()
+      }
+
+      // this.canvasFlag = false
+      this.$refs.poster.posterShow()
+      this.deliveryFlag = false
+    },
+    /**
+     * @description: 分享弹窗
+     * @param {type} 
+     * @return {type} 
+     * @author: hch
+     */
+    shareEvn(type) {
+      if (type === 'simple') {
+        this.simpleFlag = true
+        this.posterObj = this.posterSimpleData
+      } else {
+        this.simpleFlag = false
+        this.posterObj = this.posterData
+      }
+      this.deliveryFlag = true
+    },
+    /**
+     * @description: 关闭分享弹窗
+     * @param {type} 
+     * @return {type} 
+     * @author: hch
+     */
+    closeShareEvn() {
+      this.deliveryFlag = false
+    },
+    /**
+     * @description: 取消海报
+     * @param {type} 
+     * @return {type} 
+     * @author: hch
+     */
+    canvasCancel(val) {
+      //this.canvasFlag = val
     }
 
   }
@@ -415,5 +546,130 @@ export default {
 }
 .uni-popup .uni-popup__wrapper.uni-custom .uni-popup__wrapper-box {
   padding: 0;
+}
+
+/*生成小程序海报scss */
+/*生成小程序海报scss */
+/*生成小程序海报scss */
+
+/* 按钮去掉边框 */
+button::after {
+  border: none;
+}
+button {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+  line-height: 1;
+  color: #1c1c1c;
+  font-size: 28rpx;
+  background: none;
+}
+.button-hover {
+  color: #1c1c1c;
+  background: none;
+}
+.poster-img {
+  width: 40%;
+}
+/*每个页面公共css */
+.content {
+  //text-align: center;
+  height: 100%;
+}
+.share-btn {
+  padding: 30rpx 60rpx;
+  background-color: #ffb825;
+  color: $uni-text-color-inverse;
+}
+.share-pro {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: column;
+  z-index: 5;
+  line-height: 1;
+  box-sizing: border-box;
+  .share-pro-mask {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .share-pro-dialog {
+    width: 750rpx;
+    height: 310rpx;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 24rpx 24rpx 0px 0px;
+    position: relative;
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 0;
+    .close-btn {
+      padding: 20rpx 15rpx;
+      position: absolute;
+      top: 0rpx;
+      right: 29rpx;
+    }
+    .share-pro-title {
+      font-size: 28rpx;
+      color: #1c1c1c;
+      padding: 28rpx 41rpx;
+      background-color: #f7f7f7;
+    }
+
+    .share-pro-body {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      font-size: 28rpx;
+      color: #1c1c1c;
+      .share-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        justify-content: space-around;
+        .share-icon {
+          text-align: center;
+          font-size: 70rpx;
+          margin-top: 39rpx;
+          margin-bottom: 16rpx;
+          color: #42ae3c;
+        }
+        &:nth-child(2) {
+          .share-icon {
+            color: #ff5f33;
+          }
+        }
+      }
+    }
+  }
+
+  /* 显示或关闭内容时动画 */
+
+  .open {
+    transition: all 0.3s ease-out;
+    transform: translateY(0);
+  }
+
+  .close {
+    transition: all 0.3s ease-out;
+    transform: translateY(310rpx);
+  }
+}
+.canvas {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 10;
 }
 </style>

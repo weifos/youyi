@@ -49,7 +49,7 @@ export default {
         codeName: "",
         codeNameMT: 20,
         tips: "长按/扫描识别查看商品",
-        posterBgUrl: 'https://res66.yoyibook.com:444/DefaultRes/Images/VUE/static/images/qr_core_bg.png',
+        posterBgUrl: 'https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/images/qr_core_bg.png',
         codeML: 140,
         desTextMT: 70,
         desTextML: 240,

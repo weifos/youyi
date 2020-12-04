@@ -49,7 +49,9 @@ export default {
       //当前类别索引
       curIndex: 0,
       //类别集合
-      cateInfo: []
+      cateInfo: [],
+      //当前品牌门店
+      storeBrand: null
       //    name: "",
       //   loading: false,
       //   firstLoad: true,
@@ -64,6 +66,7 @@ export default {
     filter
   },
   onLoad() {
+    this.storeBrand = appG.getCurBrandStore()
     this.api_201()
   },
   methods: {
@@ -71,15 +74,13 @@ export default {
       this.curIndex = index
       let catg = this.cateInfo[index]
       this.api_202(catg)
-
-      if (!catg.firstLoad) {
-      }
     },
     //获取商品列表
     api_201() {
       let that = this
       //请求数据
       api.post(api.api_201, api.getSign({
+        StoreId: that.storeBrand.id,
         Size: that.pageSize
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
@@ -114,16 +115,17 @@ export default {
       })
     },
     //获取商品列表
-    api_202(catg) {
+    api_202(catg, is_order_by) {
       let that = this
       //是否加载中
-      if (!catg.loading && !catg.loadComplete) {
+      if (!catg.loading && !catg.loadComplete || is_order_by) {
         catg.loading = true
         //请求数据
         api.post(api.api_202, api.getSign({
           Size: that.pageSize,
           ByPrice: that.byPrice,
           Index: catg.pageIndex,
+          StoreId: that.storeBrand.id,
           CatgID: catg.id
         }), function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
@@ -174,7 +176,7 @@ export default {
       let catg = this.cateInfo[this.curIndex]
       catg.list = []
       catg.pageIndex = 0
-      this.api_202(catg)
+      this.api_202(catg, true)
     },
     //根据价格排序
     orderByPrice() {
@@ -191,7 +193,7 @@ export default {
       catg.list = []
       catg.pageIndex = 0
       //下拉到指定位置
-      this.api_202(catg)
+      this.api_202(catg, true)
 
     },
     //去搜索

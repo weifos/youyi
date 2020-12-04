@@ -13,7 +13,7 @@
     <view class="section-order-info bg-white">
       <view class="section-title">商品信息</view>
       <view class="order-list">
-        <view class="list-item hidden" v-for="item in order.details" :key="item">
+        <view class="list-item hidden" v-for="item in order.store_details" :key="item">
           <view class="img-bar image-size-sm fl">
             <image :src="item.img_url" />
           </view>
@@ -160,7 +160,7 @@ export default {
         //优惠券ID
         user_coupon_id: 0,
         //订单详情
-        details: [],
+        //details: [],
         //运费
         freight: 0,
         //订单详情
@@ -196,12 +196,12 @@ export default {
         //当前购买的商品信息
         let item = user.methods.getBuyNow()
         //临时订单
-        that.order.details.push(item)
-        that.order.store_details = that.order.details
+        that.order.store_details.push(item)
+        that.order.store_details = that.order.store_details
       }
 
       //计算商品金额
-      that.order.details.forEach(function (ele, index, arr) {
+      that.order.store_details.forEach(function (ele, index, arr) {
         that.productAmount += ele.sale_price * ele.count
       })
 
@@ -272,6 +272,7 @@ export default {
      */
     api_314(provider) {
       let that = this
+      debugger
       api.post(api.api_314, api.getSign({
         Order: that.order,
         IsShoppingCart: that.isShoppingCart,

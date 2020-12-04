@@ -5,6 +5,38 @@
 /// @date     2014-05-23         
 /// </summary>
 export default {
+    //设置选择设置门店品牌信息
+    setBrandStore(result) {
+        uni.setStorageSync('aty_brand_store', JSON.stringify(result))
+    },
+    //获取运营品牌
+    getBrandStore() {
+        let entity = uni.getStorageSync('aty_brand_store')
+        if (entity) {
+            return JSON.parse(entity)
+        }
+        return null
+    },
+    //获取当前所选运营品牌
+    getCurBrand() {
+        let that = this
+        let entitys = uni.getStorageSync('aty_brand_store')
+        if (entitys) {
+            return JSON.parse(entitys).filter(item => item.selected)[0]
+        }
+        that.dialog.showToast({ title: '未检测到运营品牌', icon: 'success', duration: 3000 })
+        return null
+    },
+    //获取运营品牌对应的线上门店
+    getCurBrandStore() {
+        let that = this
+        let entitys = uni.getStorageSync('aty_brand_store')
+        if (entitys) {
+            return JSON.parse(entitys).filter(item => item.selected)[0].store
+        }
+        that.dialog.showToast({ title: '未检测到运营品牌对应门店', icon: 'success', duration: 3000 })
+        return null
+    },
     config: {
         domain: function () {
             var dms = window.location.host.split(".")

@@ -3,13 +3,13 @@ import user from '@/modules/userInfo'
 import md5 from 'blueimp-md5'
 
 //正式环境配置
-let domain = "https://api66.yoyibook.com/"
-let res_domain = "http://res66.yoyibook.com:20182/"
+let domain = "https://api66.yoyibook.com:443/"
+let res_domain = "https://res67.yoyibook.com:20185/"
 //测试环境
-if (process.env.NODE_ENV !== 'production') {
-    domain = "http://yy.api.youyi.com/"
-    res_domain = "http://yy.res.youyi.com/"
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     domain = "http://yy.api.youyi.com/"
+//     res_domain = "http://yy.res.youyi.com/"
+// }
 
 /// <summary>
 /// 全局配置类
@@ -77,6 +77,8 @@ module.exports = {
     api_214: domain + "214",
     //加载运营品牌信息
     api_215: domain + "215",
+    //生成活动二维码
+    api_216: domain + "216",
     //定位最近门店
     api_299: domain + "299",
     //
@@ -195,6 +197,8 @@ module.exports = {
     api_363: domain + "363",
     //钱包重新支付
     api_364: domain + "364",
+    //订单支付回调
+    api_366: domain + "366",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()

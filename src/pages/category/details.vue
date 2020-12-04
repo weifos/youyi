@@ -10,12 +10,13 @@
     <view class="product-info-bar section">
       <view class="product-price text-sub">￥{{pResult.product.sale_price}}</view>
       <view class="product-title mt15 text-size-lg bold">{{pResult.product.name}}</view>
+      <view class="product-info text-size-sm mt15">商品编码：{{pResult.product.no}}</view>
       <view class="product-intro text-gray text-size-sm mt15 ellipsis2">{{pResult.product.introduction}}</view>
-      <view class="product-info text-size-sm mt15">
-        {{pResult.product.field1==null?'':pResult.product.field1}} 著/
+      <view class="product-info text-size-sm">
+        <!-- {{pResult.product.field1==null?'':pResult.product.field1}} 著/
         {{pResult.product.field2==null?'':pResult.product.field2}} /
-        {{pResult.product.field3==null?'':pResult.product.field3}}
-        <view @tap="api_214" style="display: inline-block;width: 60px;margin-right:0px;color:#004EA2;">生成海报</view>
+        {{pResult.product.field3==null?'':pResult.product.field3}}-->
+        <view @tap="api_214" style="display: inline-block;width: 60px;margin-right:0px;color:#004EA2;">分享海报</view>
       </view>
     </view>
     <!-- <view class="product-discount-bar section" v-if="discountInfo.length > 0">
@@ -151,6 +152,10 @@ export default {
       unitPrice: 0,
       //总计
       totalPrice: 0,
+      //当前运营的品牌
+      curBrand: null,
+      //当前品牌门店
+      storeBrand: null,
       //商品详情
       pResult: {
         product: {
@@ -166,8 +171,7 @@ export default {
       discountInfo: [{
         type: "优惠购",
         name: "现在购买享受 ¥ 27.50，限购10件…"
-      }
-      ],
+      }],
       html: '<div></div>',
       //小图封面
       coverUrl: '',
@@ -200,7 +204,7 @@ export default {
         codeName: "",
         codeNameMT: 20,
         tips: "长按/扫描识别查看商品",
-        posterBgUrl: 'https://res66.yoyibook.com:444/DefaultRes/Images/VUE/static/images/qr_core_bg.png'
+        posterBgUrl: 'https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/images/qr_core_bg.png'
       },
       posterSimpleData: {//简单版的海报
         marginLR: 40,
@@ -253,11 +257,18 @@ export default {
     }
   },
   onLoad(opt) {
+    //运营品牌对应的线上门店
+    this.storeBrand = appG.getCurBrandStore()
+    //运营品牌
+    this.curBrand = appG.getCurBrand()
     //扫码海报
     if (opt.scene) {
       //解码一个由escape()函数编码的字符串
-      var scene = unescape(opt.scene)
-      this.api_203(scene.split('=')[1])
+      let scene = unescape(opt.scene)
+      let id = appG.util.getRequestId(scene, "id")
+      let store_id = appG.util.getRequestId(scene, "store_id")
+
+      this.api_203(id, store_id)
     } else {
       this.api_203(opt.id)
       //如果已登录
@@ -418,11 +429,13 @@ export default {
       tmp.img_url = this.pResult.product.img_url
       if (tmp != null) {
         //门店商品ID
-        //tmp.sto_product_id = this.selectSku.product.id
+        tmp.sto_product_id = this.selectSku.sto_product_id
         //平台商品ID
         tmp.product_id = this.selectSku.product_id
         //加入购物车的数量
         tmp.count = this.buyCount
+        //冗余
+        tmp.whse_stocks = []
         //加入购物车
         if (this.isAddToCart) {
           that.api_306()
@@ -468,9 +481,15 @@ export default {
     /**
      * 加载商品详情
      */
-    api_203(id) {
+    api_203(id, store_id) {
       let that = this
+      let sid = that.storeBrand.id
+      if (store_id != undefined) {
+        sid = store_id
+      }
+
       api.post(api.api_203, api.getSign({
+        StoreId: sid,
         ID: id
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
@@ -479,17 +498,26 @@ export default {
             that.$set(obj, "is_enable", false)
           })
 
+          //临时过渡写法
+          res.data.Result.skus.forEach((obj, i) => {
+            that.$set(obj, "stock_num", 100)
+          })
+
           that.pResult = res.data.Result
           //初始化海报
           that.posterObj = that.posterData
+          if (that.pResult.product.img_url == undefined) {
+            that.pResult.product.img_url = 'https://res67.yoyibook.com:20185/DefaultRes/Images/no_photo.png'
+          }
+
           //封面图片
-          that.posterObj.posterImgUrl = that.pResult.product.img_url.replace('http:', 'https:').replace(':20181/', ':444/')
+          that.posterObj.posterImgUrl = that.pResult.product.img_url.replace('http:', 'https:').replace(':20181/', '20185/')
           //海报主图
           that.$refs.poster.canvasAttr.posterImgUrl = that.posterObj.posterImgUrl
           //标题
           that.posterObj.title = that.pResult.product.name
-          //覔书店
-          that.posterObj.codeName = '覔书店'
+          //运营平品牌
+          that.posterObj.codeName = that.curBrand.name
 
           if (that.pResult.product.is_open_spec) {
             if (that.pResult.specNames.length == 0) return
@@ -522,12 +550,15 @@ export default {
       var that = this
       //如果没有生成过二维码
       if (that.pResult.product.field6 == "" || that.pResult.product.field6 == undefined || that.pResult.product.field6 == null) {
-        api.post(api.api_214, api.getSign({ ID: that.pResult.product.id }), function (app, res) {
+        api.post(api.api_214, api.getSign({
+          ID: that.pResult.product.id,
+          StoreId: that.storeBrand.id
+        }), function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
             //商品二维码地址
             that.pResult.product.field6 = res.data.Result
             //商品二维码地址
-            that.$refs.poster.canvasAttr.posterCodeUrl = res.data.Result.replace('http:', 'https:')
+            that.$refs.poster.canvasAttr.posterCodeUrl = res.data.Result.replace('http://res66', 'https://res67').replace(':20181', ':20185')
             that.$refs.poster.posterShow()
             that.deliveryFlag = false
           } else {
@@ -536,7 +567,7 @@ export default {
         })
       } else {
         //商品二维码地址
-        that.$refs.poster.canvasAttr.posterCodeUrl = that.pResult.product.field6.replace('http:', 'https:')
+        that.$refs.poster.canvasAttr.posterCodeUrl = that.pResult.product.field6.replace('http://res66', 'https://res67').replace(':20181', ':20185')
         that.$refs.poster.posterShow()
         that.deliveryFlag = false
       }
@@ -545,8 +576,8 @@ export default {
      * 提交订单
      */
     api_314: function () {
-      var that = this;
-      api.post(api.api_314, api.getSign({}), function (app, res) {
+      var that = this
+      api.post(api.api_314, api.getSign({ StoreId: that.storeBrand.id }), function (app, res) {
         if (res.data.Basis.State != api.state.state_200) {
           wx.showToast({
             title: res.data.Basis.Msg,
@@ -563,28 +594,26 @@ export default {
      */
     api_306(e) {
       let that = this
-      api.post(api.api_306,
-        api.getSign({
-          ProductID: that.selectSku.product_id,
-          SpecSet: that.selectSku.specset,
-          Count: that.buyCount
-        }),
-        function (vue, res) {
-          if (res.data.Basis.State == api.state.state_200) {
-            //关闭弹框
-            that.$refs.popup.close()
-          } else {
-            appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
-          }
+      api.post(api.api_306, api.getSign({
+        StoreId: that.storeBrand.id,
+        ProductID: that.selectSku.product_id,
+        SpecSet: that.selectSku.specset,
+        Count: that.buyCount
+      }), function (vue, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          //关闭弹框
+          that.$refs.popup.close()
+        } else {
+          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000, icon: "none" })
         }
-      )
+      })
     },
     /**
      * 是否收藏
      */
     api_341(id) {
       let that = this
-      api.post(api.api_341, api.getSign({ StoreID: 0, BizID: id, BizType: 0 }),
+      api.post(api.api_341, api.getSign({ StoreId: 0, BizID: id, BizType: 0 }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
             that.collected = res.data.Result > 0
@@ -600,7 +629,7 @@ export default {
      */
     api_342() {
       let that = this
-      api.post(api.api_342, api.getSign({ StoreID: 0, BizID: that.pResult.product.id, BizType: 0 }),
+      api.post(api.api_342, api.getSign({ StoreId: 0, BizID: that.pResult.product.id, BizType: 0 }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
             appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
@@ -646,7 +675,6 @@ export default {
       })
     },
 
-
     /**生成海报方法*/
     /**
     * @description: 生成海报
@@ -665,11 +693,11 @@ export default {
       this.deliveryFlag = false
     },
     /**
-       * @description: 分享弹窗
-       * @param {type} 
-       * @return {type} 
-       * @author: hch
-       */
+     * @description: 分享弹窗
+     * @param {type} 
+     * @return {type} 
+     * @author: hch
+     */
     shareEvn(type) {
       if (type === 'simple') {
         this.simpleFlag = true
@@ -680,7 +708,7 @@ export default {
       }
       this.deliveryFlag = true
     },
-		/**
+    /**
      * @description: 关闭分享弹窗
      * @param {type} 
      * @return {type} 
@@ -689,14 +717,14 @@ export default {
     closeShareEvn() {
       this.deliveryFlag = false
     },
-		/**
-     * @description: 取消海报
-     * @param {type} 
-     * @return {type} 
-     * @author: hch
-     */
+    /**
+       * @description: 取消海报
+       * @param {type} 
+       * @return {type} 
+       * @author: hch
+       */
     canvasCancel(val) {
-      // this.canvasFlag = val
+      //this.canvasFlag = val
     }
   }
 }
