@@ -1,12 +1,18 @@
 <template>
   <view class="check-ticket-user">
     <view class="user-address-content" v-if="entity.id != null">
+      <view style="text-align: center;" v-if="entity.used_time == null">
+        <image src="https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/images/success.png" style="max-width:120rpx;max-height:120rpx;" />
+      </view>
+      <view class="text-size-md mt20" style="text-align:center" v-if="entity.used_time == null">扫码通过，当前票据校验成功</view>
+    </view>
+    <view class="line"></view>
+    <view class="user-address-content" v-if="entity.id != null">
       <view class="text-size-md bold" v-if="entity.is_used" style="color:red;">已使用</view>
-      <view class="text-size-md bold" v-if="!entity.is_used">未使用</view>
+      <!-- <view class="text-size-md bold" v-if="!entity.is_used">未使用</view> -->
       <view class="text-size-sm mt20">{{entity.course_name}}</view>
       <view class="text-size-sm mt20">票据金额：{{entity.amount}}</view>
       <view class="text-size-sm mt20" v-if="entity.used_time != null">使用时间：{{entity.used_time}}</view>
-      <view class="text-size-sm mt20" v-if="entity.used_time == null">当前验核成功，扫码后该票据已被使用</view>
       <view class="text-size-sm mt20" v-if="entity.is_refund">已退款</view>
     </view>
     <view class="btn-add-address" @click="verifyTicket">验核课程票据</view>
@@ -44,8 +50,6 @@ export default {
         }
       })
     }
-
-
   }
 }
 </script>
@@ -56,7 +60,6 @@ export default {
   min-height: 100%;
   padding: 10px * 2;
   box-sizing: border-box;
-
   .user-address-content {
     padding: 26px * 2 15px * 2;
     background-color: #fff;
@@ -84,5 +87,13 @@ export default {
   .section-status {
     box-shadow: 0 4px 8px #ededed;
   }
+}
+
+.line {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1rpx;
+  //   border-top: 1px #989898 solid;
 }
 </style>

@@ -22,7 +22,8 @@
           <view class="item-text1">0</view>
           <view class="item-text2">优惠券</view>
         </navigator>
-        <navigator class="info-item" hover-class url="/pages/wallet/index">
+        <!-- <navigator class="info-item" hover-class url="/pages/wallet/index"> -->
+        <navigator class="info-item" hover-class>
           <view class="item-text1">{{userInfo.balance}}</view>
           <view class="item-text2">钱包</view>
         </navigator>
@@ -35,10 +36,10 @@
         <image class="item-icon" src="/static/images/user/user-cart.png" mode="aspectFit" />
         <view class="item-text">购物车</view>
       </view>
-      <view class="my-item" @click="goUrl('/pages/wallet/gift-buy?count='+acceptCount)">
+      <!-- <view class="my-item" @click="goUrl('/pages/wallet/gift-buy?count='+acceptCount)">
         <image class="item-icon" src="/static/images/user/user-gift.png" mode="aspectFit" />
         <view class="item-text">礼品卡</view>
-      </view>
+      </view>-->
       <view class="my-item" @click="goUrl('/pages/user/collectProduct')">
         <image class="item-icon" src="/static/images/user/user-favor.png" mode="aspectFit" />
         <view class="item-text">商品收藏</view>
@@ -49,14 +50,15 @@
       </view>
     </view>
     <view class="user-index-navigation">
-      <navigator class="navigation-item" hover-class url="/pages/user/card-transfer">
+      <!--/pages/user/card-transfer-->
+      <navigator class="navigation-item" hover-class url="/pages/user/card">
         <view class="item-info">
           <image class="item-icon" src="/static/images/user/user-vip.png" mode="aspectFit" />
-          <view class="item-name">会员卡迁移</view>
+          <view class="item-name">我的会员卡</view>
         </view>
         <view class="item-nav">
-          <view class="item-nav1">旧会员卡</view>
-          <view class="item-nav2">绑定更新</view>
+          <view class="item-nav1">会员优惠</view>
+          <view class="item-nav2">会员权益</view>
         </view>
       </navigator>
       <navigator class="navigation-item" hover-class url="/pages/user/activity">
@@ -226,11 +228,11 @@ export default {
           //查询最近门店
           api.post(api.api_299, api.getSign({ LngLat: tmp.lng + '#' + tmp.lat }), function (app, res) {
             if (res.data.Basis.State != api.state.state_200) {
-              uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+              appG.dialog.showToast({ title: res.data.Basis.Msg })
             } else {
               that.aty_store = res.data.Result
               user.methods.setAtyStore(that.aty_store)
-              uni.showToast({ title: '检查到您当前位置已推荐最近门店', icon: 'none', duration: 3000 })
+              appG.dialog.showToast('检查到您当前位置已推荐最近门店')
             }
           })
         }

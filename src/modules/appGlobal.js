@@ -9,7 +9,7 @@ export default {
     setBrandStore(result) {
         uni.setStorageSync('aty_brand_store', JSON.stringify(result))
     },
-    //获取运营品牌
+    //获取运营品牌门店
     getBrandStore() {
         let entity = uni.getStorageSync('aty_brand_store')
         if (entity) {
@@ -758,10 +758,11 @@ export default {
             return null;
         },
         //获取页面请求参数中的ID
-        getRequestId: function (name) {
-            let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-            r = window.location.search.substr(1).match(reg);
-            if (r != null) return unescape(decodeURI(r[2])); return 0;
+        getRequestId: function (url, name) {
+            let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)")
+            let r = url.match(reg)
+            if (r != null) return unescape(decodeURI(r[2]))
+            return 0;
         },
         //获取Html前缀参数
         getHtmlId: function () {
@@ -838,8 +839,17 @@ export default {
     },
     route: {
         getCurPath() {
-            let pages = getCurrentPages()
-            return (pages[pages.length - 1]).route
+            const pages = getCurrentPages()
+            const currentPage = pages[pages.length - 1]
+            const url = currentPage.route
+            const options = currentPage.options
+            let urlWithArgs = `/${url}?`
+            for (let key in options) {
+                const value = options[key]
+                urlWithArgs += `${key}=${value}&`
+            }
+            urlWithArgs = urlWithArgs.substring(0, urlWithArgs.length - 1)
+            return urlWithArgs
         }
     }
 }

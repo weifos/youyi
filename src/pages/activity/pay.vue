@@ -43,7 +43,7 @@
       <view class="cu-bar tabbar">
         <view class="bg-darkGray info">
           共计￥{{orderInfo.actual_amount}}
-          <text class="discounts" v-if="orderInfo.total_amount-orderInfo.actual_amount>0">| 优惠{{orderInfo.total_amount-orderInfo.actual_amount}}元</text>
+          <text class="discounts" v-if="orderInfo.total_amount-orderInfo.actual_amount>0">| 优惠{{(orderInfo.total_amount-orderInfo.actual_amount).toFixed(2)}}元</text>
         </view>
         <view class="bg-lightYellow submit text-white" @click="goPay">支付</view>
       </view>
@@ -102,14 +102,12 @@ export default {
     uniNumberBox
   },
   onLoad(opt) {
-
     //优惠券
     if (opt.cid != undefined && opt.cname != undefined && opt.tname != undefined) {
       this.cid = opt.cid
       this.cname = opt.cname
       this.tname = opt.tname
     }
-
     this.api_327(opt.no)
   },
   methods: {
@@ -173,10 +171,26 @@ export default {
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
             user.methods.login(res.data.Result)
-            that.api_359()
+            uni.navigateTo({ url: '/pages/user/activity' })
           } else {
             wx.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
             that.isPayIng = false
+          }
+        }
+      )
+    },
+    /**
+     * 课程完成支付
+     */
+    api_368() {
+      let that = this
+      api.post(api.api_368,
+        api.getSign({ SerialNo: that.orderInfo.serial_no }),
+        function (vue, res) {
+          if (res.data.Basis.State == api.state.state_200) {
+            uni.navigateTo({ url: '/pages/user/activity' })
+          } else {
+            wx.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           }
         }
       )
@@ -193,7 +207,6 @@ export default {
         }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
-
             wx.requestPayment({
               appId: res.data.Result.wechatpay.appId,
               timeStamp: res.data.Result.wechatpay.timeStamp,
@@ -203,7 +216,7 @@ export default {
               paySign: res.data.Result.wechatpay.paySign,
               success: function (res) {
                 if (res.errMsg = "requestPayment:ok") {
-                  that.api_359()
+                  that.api_368()
                 }
               },
               //失败执行
@@ -227,38 +240,12 @@ export default {
       )
     },
     /**
-     * 提交调查问卷
-     */
-    api_359: function () {
-      var that = this
-      let courseAnswer = user.methods.getOrderCourseAnswer()
-
-      if (courseAnswer != null) {
-        courseAnswer.forEach((o, i) => {
-          o.order_id = that.orderInfo.id
-        })
-
-        api.post(api.api_359, api.getSign({
-          CourseAnswers: courseAnswer
-        }), function (app, res) {
-          if (res.data.Basis.State != api.state.state_200) {
-            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
-          } else {
-            user.methods.setOrderCourseAnswer(null)
-            //跳转到报名列表
-            uni.navigateTo({ url: '/pages/user/activity' })
-          }
-        })
-      }
-
-    },
-    /**
      * 立即支付
      */
     goPay: function () {
       let that = this
-
       if (!that.isPayIng) {
+
         //是否支付中
         that.isPayIng = true
         //电子钱包支付

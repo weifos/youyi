@@ -18,6 +18,9 @@
         </view>
       </view>
     </view>
+
+    <!-- 小程序引导关注 -->
+    <official-account></official-account>
   </view>
 </template>
 

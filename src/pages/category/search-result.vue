@@ -25,6 +25,7 @@
 <script>
 
 import api from '@/modules/api'
+import appG from '@/modules/appGlobal'
 import searchBar from "@/components/yoyi-search-bar"
 import filter from "@/components/yoyi-filter"
 export default {
@@ -42,6 +43,8 @@ export default {
       totalPage: false,
       //是否加载完成
       loadComplete: false,
+      //当前品牌门店
+      curBrandStore: null,
       //查询关键词
       keyWord: '',
       //结果集合
@@ -50,6 +53,8 @@ export default {
   },
   components: { searchBar, filter },
   onLoad(opt) {
+    let that = this
+    that.curBrandStore = appG.getCurBrandStore()
     this.keyWord = opt.k
     this.api_212()
   },
@@ -91,6 +96,7 @@ export default {
         that.selectKey(that.keyWord)
         //请求数据
         api.post(api.api_212, api.getSign({
+          StoreId: that.curBrandStore.id,
           ByPrice: that.byPrice,
           Size: that.pageSize,
           Index: that.pageIndex,

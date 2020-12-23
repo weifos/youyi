@@ -45,9 +45,17 @@
         <text>会员折扣</text>
         <text>-¥{{order.vip_dis_amount}}</text>
       </view>
+      <!-- 未达到包邮情况 -->
       <view class="price-item text-size-basic">
         <text>运费</text>
-        <text>¥ {{order.freight}}</text>
+        <text v-if="!isPostage">¥ {{order.freight}}</text>
+        <text v-if="isPostage">已包邮</text>
+      </view>
+      <view class="price-item text-size-basic" v-if="freightRemark.id > 0">
+        <text>运费说明</text>
+      </view>
+      <view class="price-item text-size-basic" v-if="freightRemark.id > 0">
+        <text>{{freightRemark.remarks}}</text>
       </view>
     </view>
 
@@ -74,7 +82,9 @@
     <!-- <view class="notice-bar">
       <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" :text="'已优惠 ¥'+(productAmount * ((10-userInfo.mbr_dis_count) / 10)).toFixed(4)"></uni-notice-bar>
     </view>-->
-    <view class="section-btns" @click="openPopup">
+
+    <!-- <view class="section-btns" @click="openPopup"> -->
+    <view class="section-btns" @click="buyNow">
       <operationButton :price="(order.actual_amount).toFixed(2)" buttonText="去支付"></operationButton>
     </view>
     <!-- popup s -->
@@ -145,6 +155,8 @@ export default {
         contact: "",
         mobile: ""
       },
+      //是否达到包邮
+      isPostage: false,
       //临时订单
       order: {
         //门店ID
@@ -168,10 +180,14 @@ export default {
         //订单详情
         store_details: []
       },
+      //运费包邮模板说明
+      freightRemark: {
+        id: 0,
+        remark: "",
+        amount: 0
+      },
       //商品金额
       productAmount: 0,
-      //配送方式ID
-      mode_id: 0,
       //配送方式ID
       mode_id: 0,
       //当前页面路由
@@ -240,8 +256,13 @@ export default {
         Order: that.order
       }), function (vue, res) {
         if (res.data.Basis.State == api.state.state_200) {
+          //更新包邮运费模板
+          that.freightRemark = res.data.Result.freight_remark
+          //收货地址
           that.addr = res.data.Result.data.address
+          //判断是否包邮
           that.order.freight = res.data.Result.data.freight
+          //配送方式
           that.mode_id = res.data.Result.data.mode_id
           //登录
           user.methods.login(res.data.Result.user)
@@ -258,10 +279,17 @@ export default {
             that.order.vip_dis_amount = appG.util.formatDecimal(that.productAmount * ((10 - that.userInfo.mbr_dis_count) / 10), 2)
           }
 
-          //更新总金额
-          that.order.total_amount += that.order.freight
+          //不包邮
+          if (that.freightRemark.amount > 0 && that.order.actual_amount < that.freightRemark.amount) {
+            that.order.total_amount += that.order.freight
+            that.order.actual_amount += that.order.freight
+          } else {
+            that.isPostage = true
+            that.order.freight = 0
+          }
+
           //更新实付金额
-          that.order.actual_amount += that.order.freight - that.order.vip_dis_amount
+          that.order.actual_amount -= that.order.vip_dis_amount
           that.notSetAddress = false
         } else {
           //未设置收货地址
@@ -277,6 +305,7 @@ export default {
      */
     api_314(provider) {
       let that = this
+
       api.post(api.api_314, api.getSign({
         Order: that.order,
         IsShoppingCart: that.isShoppingCart,

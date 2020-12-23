@@ -20,8 +20,8 @@
       </view>
     </view>
     <view class="item-btns mt10 align-right">
-      <button class="btn btn-line-yellow text-sub btn-size-sm" v-if="isPay" @click.stop="handleClick('button')">{{buttonText}}</button>
-      <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" v-if="!isPay" @click.stop="handleClick('goPay')">去支付</button>
+      <button class="btn btn-line-yellow text-sub btn-size-sm" v-if="isPay || type==1" @click.stop="handleClick('button')">{{buttonText}}</button>
+      <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" v-if="!isPay && type==5" @click.stop="handleClick('goPay')">去支付</button>
     </view>
   </view>
 </template>
@@ -61,7 +61,11 @@ export default {
     isPay: {
       type: Boolean,
       default: false
-    },
+    }, // 课程、活动
+    type: {
+      type: Number,
+      default: 1
+    }
   },
   computed: {
     buttonText() {
@@ -81,7 +85,7 @@ export default {
           break;
       }
       return text
-    },
+    }
   },
   methods: {
     handleClick(value) {
@@ -110,8 +114,9 @@ export default {
     margin-right: 2 * 10px;
   }
   .item-img image {
-    width: 2 * 136px;
-    height: 2 * 86px;
+    // width: 2 * 136px;
+    max-width: 2 * 86px;
+    max-height: 2 * 86px;
   }
   .item-title {
     height: 2 * 42px;

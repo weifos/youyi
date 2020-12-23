@@ -34,7 +34,7 @@
     -->
 
     <view class="btns-bar">
-      <operationButton buttonText="确定" @click="api_359"></operationButton>
+      <operationButton buttonText="确定" @click="api_326"></operationButton>
     </view>
   </view>
 </template>
@@ -52,6 +52,10 @@ export default {
       no: '',
       //结果
       result: [],
+      //订单信息
+      orderInfo: { id: 0 },
+      //请求中
+      requestIng: false,
       //用户调查问卷
       questionnaire: []
     }
@@ -66,19 +70,6 @@ export default {
     operationButton
   },
   methods: {
-    /**
-     * 加载课堂调查问卷
-     */
-    api_213: function (id) {
-      var that = this
-      api.post(api.api_213, api.getSign({ Id: id }), function (app, res) {
-        if (res.data.Basis.State != api.state.state_200) {
-          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
-        } else {
-          that.result = res.data.Result
-        }
-      })
-    },
     /**
      * 加载课堂调查问卷
      */
@@ -141,10 +132,59 @@ export default {
       }
     },
     /**
+     * 加载课堂调查问卷
+     */
+    api_213: function (id) {
+      var that = this
+      api.post(api.api_213, api.getSign({ Id: id }), function (app, res) {
+        if (res.data.Basis.State != api.state.state_200) {
+          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+        } else {
+          that.result = res.data.Result
+          if (that.result.length == 0) {
+            that.api_326()
+          }
+        }
+      })
+    },
+    /**
+     * 提交课程订单
+     */
+    api_326: function () {
+      let that = this
+      //是否请求中
+      if (that.requestIng) { return }
+      that.requestIng = true
+
+      var order = {
+        course_id: that.id,
+        details: [{ num: 1 }]
+      }
+
+      for (let i = 0; i < that.num; i++) {
+        order.details.push({
+          id: 0
+        })
+      }
+
+      api.post(api.api_326, api.getSign({ Order: order }), function (app, res) {
+        if (res.data.Basis.State != api.state.state_200) {
+          appG.dialog.showToast({ title: res.data.Basis.Msg })
+        } else {
+          //订单ID
+          that.orderInfo = res.data.Result
+          //提交调查问卷
+          that.api_359()
+        }
+
+        setTimeout(() => { that.requestIng = false }, 1000)
+      })
+    },
+    /**
      * 提交调查问卷
      */
-    api_359: function (id) {
-      var that = this
+    api_359: function () {
+      let that = this
       let q_count = 0
       let course_answers = []
       that.result.forEach((o, i) => {
@@ -170,8 +210,30 @@ export default {
       }
 
       //写入本地缓存
-      user.methods.setOrderCourseAnswer(course_answers)
-      uni.navigateTo({ url: 'pay?no=' + that.no })
+      course_answers.forEach((o, i) => {
+        o.order_id = that.orderInfo.id
+      })
+
+      api.post(api.api_359, api.getSign({
+        CourseAnswers: course_answers
+      }), function (app, res) {
+        if (res.data.Basis.State != api.state.state_200) {
+          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+        } else {
+          //活动
+          if (that.orderInfo.type == 1) {
+            appG.dialog.showToast({ title: '报名成功', icon: 'none', duration: 3000 })
+            setTimeout(() => {
+              uni.navigateTo({ url: '/pages/user/activity' })
+            }, 1000)
+            //课程
+          } else {
+            uni.navigateTo({ url: 'pay?no=' + that.orderInfo.serial_no })
+          }
+        }
+      })
+
+
     }
   }
 }

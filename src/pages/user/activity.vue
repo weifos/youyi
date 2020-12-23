@@ -8,7 +8,7 @@
         <text>快去参加报名吧</text>
       </view>
       <view class="activity-item" v-else v-for="(item, key) in orderData[0].list" :key="key">
-        <activityItem :isPay="item.is_pay" :src="item.img_url" :title="item.course_name" :guest="item.teacher_name" :time="item.time" :address="item.address" :price="item.price" :status="2" @click="itemClick(item)" @buttonClick="itemButtonClick(item)" @goPay="goPay(item)"></activityItem>
+        <activityItem :type="item.type" :isPay="item.is_pay" :src="item.img_url" :title="item.course_name" :guest="item.teacher_name" :time="item.time" :address="item.address" :price="item.price" :status="2" @click="itemClick(item)" @buttonClick="itemButtonClick(item)" @goPay="goPay(item)"></activityItem>
       </view>
     </view>
     <view class="user-activity-list" v-show="index == 1">
@@ -18,12 +18,12 @@
         <text>快去参加报名吧</text>
       </view>
       <view class="activity-item" v-else v-for="(item, key) in orderData[1].list" :key="key">
-        <activityItem :isPay="item.is_pay" :src="item.img_url" :title="item.course_name" :guest="item.teacher_name" :time="item.time" :address="item.address" :price="item.price" :status="2" @click="itemClick(item)" @buttonClick="itemButtonClick(item)" @goPay="goPay(item)"></activityItem>
+        <activityItem :type="item.type" :isPay="item.is_pay" :src="item.img_url" :title="item.course_name" :guest="item.teacher_name" :time="item.time" :address="item.address" :price="item.price" :status="2" @click="itemClick(item)" @buttonClick="itemButtonClick(item)" @goPay="goPay(item)"></activityItem>
       </view>
     </view>
     <view class="user-activity-list" v-show="index == 2">
       <view class="activity-item" v-for="(item, key) in orderData[2].list" :key="key">
-        <activityItem :isPay="item.is_pay" :src="item.img_url" :title="item.course_name" :guest="item.teacher_name" :time="item.time" :address="item.address" :price="item.price" :status="4" @click="itemClick(item)" @buttonClick="itemButtonClick(item)" @goPay="goPay(item)"></activityItem>
+        <activityItem :type="item.type" :isPay="item.is_pay" :src="item.img_url" :title="item.course_name" :guest="item.teacher_name" :time="item.time" :address="item.address" :price="item.price" :status="4" @click="itemClick(item)" @buttonClick="itemButtonClick(item)" @goPay="goPay(item)"></activityItem>
       </view>
     </view>
   </view>
@@ -125,9 +125,11 @@ export default {
             curItem.loading = false
             curItem.pageIndex = curItem.pageIndex + 1
             res.data.Result.forEach(function (o, i) {
-              let s_time = appG.util.date.dateFormat(o.start_date, 'MM/dd')
-              let e_time = appG.util.date.dateFormat(o.end_date, 'MM/dd')
-              o.time = s_time + ' ' + e_time
+              //   let s_time = appG.util.date.dateFormat(o.start_date, 'MM/dd')
+              //   let e_time = appG.util.date.dateFormat(o.end_date, 'MM/dd')
+              //   o.time = s_time + ' ' + e_time
+              let s_time = appG.util.date.dateFormat(o.start_date, 'yyyy/MM/dd hh:mm')
+              o.time = '开始时间：' + s_time
               curItem.list.push(o)
             })
             that.orderData[index] = curItem

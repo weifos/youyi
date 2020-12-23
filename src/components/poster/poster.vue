@@ -339,7 +339,11 @@ export default {
             const imgAttr = res//海报展示图片信息
             let sale = res.width / (_this.system.w - 2 * canvasAttr.marginLR - 2 * canvasAttr.innerLR)
             _this.roundRect(ctx, canvasAttr.marginLR + canvasAttr.innerLR, canvasAttr.marginTB + canvasAttr.innerLR, _this.system.w - 2 * canvasAttr.marginLR - 2 * canvasAttr.innerLR, (_this.system.w - 2 * canvasAttr.marginLR - 2 * canvasAttr.innerLR) / canvasAttr.posterRatio, (_this.system.w - 2 * canvasAttr.marginLR) * canvasAttr.radius);
-            ctx.drawImage(res.path, canvasAttr.marginLR + canvasAttr.innerLR, canvasAttr.marginTB + canvasAttr.innerLR, _this.system.w - 2 * canvasAttr.marginLR - 2 * canvasAttr.innerLR, (_this.system.w - 2 * canvasAttr.marginLR - 2 * canvasAttr.innerLR) / canvasAttr.posterRatio)
+            let width = (_this.system.w - 2 * canvasAttr.marginLR - 2 * canvasAttr.innerLR) / canvasAttr.posterRatio
+            let height = (_this.system.w - 2 * canvasAttr.marginTB - 2 * canvasAttr.innerTB) / canvasAttr.posterRatio
+
+            ctx.drawImage(res.path, canvasAttr.marginLR + canvasAttr.innerLR * 2.5, canvasAttr.marginTB + canvasAttr.innerLR, width, height)
+            //ctx.drawImage(res.path, canvasAttr.marginLR + canvasAttr.innerLR, canvasAttr.marginTB + canvasAttr.innerLR, 150, 300 / canvasAttr.posterRatio)
             ctx.restore()
             ctx.draw(true)
             resolve({ imgAttr, sale })

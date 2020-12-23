@@ -7,6 +7,11 @@
     <view class="ticket__discountInfo tac dib vat">
       <view class="ticket__discount" data-item="ticketInfo" v-if="!ticketInfo.is_used" @click="handleClick('used')">点击使用</view>
       <view class="ticket__discount" data-item="ticketInfo" wx:else>已使用</view>
+      <view class="ticket__quota ticket__tk" data-item="ticketInfo" v-if="ticketInfo.is_used" style="margin-top:5px;">{{ticketInfo.used_time}}</view>
+      <view class="ticket__quota ticket__tk" v-if="!ticketInfo.is_used && !ticketInfo.is_refund && ticketInfo.type == 5 && ticketInfo.refund_status == 0" @click="api_367" :data-no="ticketInfo.serial_no" data-item="ticketInfo" style="margin-top:5px;">申请退款</view>
+      <view class="ticket__quota ticket__tk" v-if="!ticketInfo.is_used && !ticketInfo.is_refund && ticketInfo.type == 5 && ticketInfo.refund_status == 2" data-item="ticketInfo" style="margin-top:5px;">申请退款中</view>
+      <view class="ticket__quota ticket__tk" v-if="!ticketInfo.is_used && !ticketInfo.is_refund && ticketInfo.type == 5 && ticketInfo.refund_status == 10" data-item="ticketInfo" style="margin-top:5px;">退款完成</view>
+
       <!-- <view class="ticket__discount" data-item="ticketInfo" v-if="!ticketInfo.is_used">点击使用</view>
            <view class="ticket__quota ticket__tk" v-if="!ticketInfo.is_used && !ticketInfo.is_refund" bindtap="appRefund" data-item="ticketInfo" style="margin-top:5px;">申请退款</view>
       -->
@@ -60,6 +65,36 @@ export default {
   methods: {
     handleClick(value) {
       this.$emit('useClick')
+    },
+    /**
+     * 申请退款
+     */
+    api_367(e) {
+      var that = this
+      uni.showModal({
+        title: '提示',
+        content: '确认申请退款吗？',
+        success: function (res) {
+          if (res.confirm) {
+            let serial_no = e.currentTarget.dataset.no
+            //请求接口数据
+            api.post(api.api_367, api.getSign({ SerialNo: serial_no }), function (app, res) {
+              if (res.data.Basis.State != api.state.state_200) {
+                appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+              } else {
+                appG.dialog.showToast({ title: "申请成功", icon: 'none', duration: 3000 })
+                //that.$set(that.ticketInfo, "refund_status", 2)
+                setTimeout(() => {
+                  uni.navigateTo({
+                    url: '/pages/user/activity',
+                  })
+                }, 1000)
+              }
+            })
+          }
+        }
+      })
+
     }
   }
 }
@@ -87,7 +122,7 @@ export default {
   text-align: left;
 }
 .ticket__discountInfo {
-  width: 205rpx;
+  width: 240rpx;
   height: 153rpx;
   border-radius: 18rpx;
   background-color: #9bbaff;

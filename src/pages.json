@@ -332,12 +332,12 @@
                 "selectedIconPath": "static/icon/activity_a.png",
                 "text": "活动"
             },
-            {
-                "pagePath": "pages/home/cardIndex",
-                "iconPath": "static/icon/gift.png",
-                "selectedIconPath": "static/icon/gift_a.png",
-                "text": "礼品卡"
-            },
+            // {
+            //     "pagePath": "pages/home/cardIndex",
+            //     "iconPath": "static/icon/gift.png",
+            //     "selectedIconPath": "static/icon/gift_a.png",
+            //     "text": "礼品卡"
+            // },
             {
                 "pagePath": "pages/home/userIndex",
                 "iconPath": "static/icon/mine.png",

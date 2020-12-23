@@ -272,7 +272,6 @@ export default {
      */
     api_314(provider) {
       let that = this
-      debugger
       api.post(api.api_314, api.getSign({
         Order: that.order,
         IsShoppingCart: that.isShoppingCart,

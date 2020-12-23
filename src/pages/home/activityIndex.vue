@@ -15,14 +15,14 @@
       <view class="tab-c" v-if="index == 0">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[0].list" :key="key">
-            <activityItem :isPay="true" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
+            <activityItem :isPay="item.is_pay" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
       <view class="tab-c" v-if="index == 1">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[1].list" :key="key">
-            <activityItem :isPay="true" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
+            <activityItem :isPay="item.is_pay" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
@@ -147,9 +147,11 @@ export default {
             curItem.loading = false
             curItem.pageIndex = curItem.pageIndex + 1
             res.data.Result.course.forEach(function (o, i) {
-              let s_time = appG.util.date.dateFormat(o.start_date, 'MM/dd hh:mm')
-              let e_time = appG.util.date.dateFormat(o.end_date, 'MM/dd hh:mm')
-              o.time = s_time + '至' + e_time
+              //   let s_time = appG.util.date.dateFormat(o.start_date, 'MM/dd hh:mm')
+              //   let e_time = appG.util.date.dateFormat(o.end_date, 'MM/dd hh:mm')
+              //   o.time = s_time + '至' + e_time
+              let s_time = appG.util.date.dateFormat(o.start_date, 'yyyy/MM/dd hh:mm')
+              o.time = '开始日期' + s_time
               curItem.list.push(o)
             })
 

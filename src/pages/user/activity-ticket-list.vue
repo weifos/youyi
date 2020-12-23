@@ -12,7 +12,6 @@
 </template>
 
 <script>
-
 import api from '@/modules/api'
 import appG from '@/modules/appGlobal'
 import ticketItem from '@/components/yoyi-ticket/'
@@ -35,28 +34,29 @@ export default {
     api_329(id) {
       let that = this
       //请求接口数据
-      api.post(api.api_329, api.getSign({
-        ID: id
-      }), function (app, res) {
+      api.post(api.api_329, api.getSign({ ID: id }), function (app, res) {
         if (res.data.Basis.State != api.state.state_200) {
-          uni.showToast({
-            title: res.data.Basis.Msg,
-            icon: 'none',
-            duration: 3000
-          })
+          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
         } else {
+
           //课程信息
           let course = res.data.Result.orderCourse
           res.data.Result.tickets.forEach(function (o, i) {
             that.result.push({
               id: o.id,
+              serial_no: course.serial_no,
               name: course.course_name,
+              type: course.type,
               is_used: o.is_used,
+              refund_status: course.refund_status,
+              used_time: appG.util.date.dateFormat(o.used_time, 'yyyy-MM-dd hh:mm'),
               startTime: appG.util.date.dateFormat(course.start_date, 'yyyy-MM-dd hh:mm'),
               endTime: appG.util.date.dateFormat(course.end_date, 'yyyy-MM-dd hh:mm')
             })
           })
+
         }
+
       })
     },
     /**

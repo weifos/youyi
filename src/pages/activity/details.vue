@@ -17,7 +17,7 @@
       </view>
     </view>
     <view class="side-bar" v-if="!isOverdue">
-      <button class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="api_326">立即报名</button>
+      <button class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="toSignUp">立即报名</button>
       <!-- <view>
         <image src="/static/icon/home.png" class="icon" />
         <text class="db">首页</text>
@@ -56,6 +56,8 @@
           </view>
         </view>
       </uniPopup>
+
+      <!-- <official-account></official-account> -->
 
       <!-- popup s -->
       <uniPopup ref="popupPay" type="bottom" class="pop-pay yoyi-pop">
@@ -114,7 +116,7 @@ export default {
       totalPrice: 0,
       ladder_prices: [],
       isOverdue: false,
-      //当前运营的品牌
+      //当前运营的门店
       curBrand: null,
       store_name: "",
       result: {
@@ -178,6 +180,7 @@ export default {
   onLoad(opt) {
     //运营品牌
     this.curBrand = appG.getCurBrand()
+    //加载数据
     this.api_206(opt)
   },
   methods: {
@@ -272,10 +275,9 @@ export default {
           //海报主图
           that.$refs.poster.canvasAttr.posterImgUrl = that.posterObj.posterImgUrl
           //标题
-          that.posterObj.title = that.result.name
+          that.posterObj.title = res.data.Result.course.name
           //运营平品牌
           that.posterObj.codeName = that.curBrand.name
-
           //是否过期
           let dateNow = appG.util.date.getDateTimeNow()
 
@@ -325,66 +327,23 @@ export default {
       }
     },
     /**
-     * 提交课程订单
+     * 去报名
      */
-    api_326: function () {
-
+    toSignUp: function () {
+      var that = this
       //剩余可报名人数
       let residue_num = this.result.up_limit - this.reg_num
       if (this.num - residue_num > 0) {
         return
       }
 
-      var that = this
-      var order = {
-        course_id: that.result.id,
-        details: []
-      }
-
-      for (let i = 0; i < that.num; i++) {
-        order.details.push({
-          id: 0
-        })
-      }
-
       if (that.num > that.result.single_limit) {
-        uni.showToast({
-          title: '每人报名人数不能超过' + that.result.single_limit,
-          icon: 'none',
-          duration: 3000
-        })
+        appG.dialog.showToast({ title: '每人报名人数不能超过' + that.result.single_limit })
         return
       }
 
-      if (that.requestIng) { return }
-      that.requestIng = true
-
-      api.post(api.api_326, api.getSign({
-        Order: order
-      }), function (app, res) {
-        if (res.data.Basis.State != api.state.state_200) {
-          uni.showToast({
-            title: res.data.Basis.Msg,
-            icon: 'none',
-            duration: 3000
-          })
-        } else {
-          let param = '?no=' + res.data.Result.serial_no + '&store_id=' + res.data.Result.store_id
-          if (that.result.type == 1) {
-            uni.navigateTo({
-              url: '../user/activity' + param
-            })
-          } else {
-            uni.navigateTo({
-              url: 'sign-up' + param + "&tid=" + that.result.type + "&id=" + that.result.id
-            })
-            // uni.navigateTo({
-            //   url: 'pay' + param + "&tid=" + that.result.type
-            // })
-          }
-        }
-
-        setTimeout(() => { that.requestIng = false }, 1000)
+      uni.navigateTo({
+        url: 'sign-up?store_id=' + that.result.store_id + "&tid=" + that.result.type + "&id=" + that.result.id
       })
     },
     /**生成海报方法*/

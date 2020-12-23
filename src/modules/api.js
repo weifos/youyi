@@ -199,6 +199,12 @@ module.exports = {
     api_364: domain + "364",
     //订单支付回调
     api_366: domain + "366",
+    //课程活动申请退款
+    api_367: domain + "367",
+    //课程完成支付
+    api_368: domain + "368",
+    //订单商品申请退款
+    api_369: domain + "369",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()
@@ -279,8 +285,9 @@ module.exports = {
                     uni.showToast({ title: res.data.Basis.Msg, duration: 2000 })
                     //当前页面路径
                     let returl = appG.route.getCurPath()
+                    console.log(returl)
                     //存储到缓存
-                    uni.setStorage({ key: 'returl', data: "/" + returl, success: function () { } })
+                    uni.setStorage({ key: 'returl', data: returl, success: function () { } })
                     //重新跳转到用户中心
                     uni.reLaunch({
                         url: "/pages/home/userIndex"

@@ -790,7 +790,12 @@ export default {
     align-items: center;
   }
   image {
-    width: 100%;
+    // width: 90%;
+    // height: 90%;
+    width: 80%;
+    height: 80%;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 .product-side-bar {

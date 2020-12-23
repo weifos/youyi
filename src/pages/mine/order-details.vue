@@ -67,7 +67,7 @@
                 </view>
               </view>
             </view>
-            <view class="operation-bar align-right mt20" v-if="orderInfo.type == 3">
+            <view class="operation-bar align-right mt20" v-if="item.refund_count < item.count">
               <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">申请售后</button>
             </view>
           </view>
@@ -117,7 +117,8 @@
       </view>
     </view>
 
-    <view class="section-btns" @click="openPopup" v-if="!order.is_pay">
+    <!-- <view class="section-btns" @click="openPopup" v-if="!order.is_pay"> -->
+    <view class="section-btns" @click="buyNow" v-if="!order.is_pay">
       <operationButton :price="(order.actual_amount).toFixed(2)" buttonText="去支付"></operationButton>
     </view>
 
@@ -244,6 +245,35 @@ export default {
           setTimeout(() => { that.isPaying = false }, 500)
         }
       })
+    },
+    /**
+     * 申请退款
+     */
+    api_369() {
+      var that = this
+      uni.showModal({
+        title: '提示',
+        content: '确认申请退款吗？',
+        success: function (res) {
+          if (res.confirm) {
+            //请求接口数据
+            api.post(api.api_369, api.getSign({ SerialNo: that.order.serial_no }), function (app, res) {
+              if (res.data.Basis.State != api.state.state_200) {
+                appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+              } else {
+                appG.dialog.showToast({ title: "申请成功", icon: 'none', duration: 3000 })
+
+                setTimeout(() => {
+                  uni.navigateTo({
+                    url: '/pages/user/activity',
+                  })
+                }, 1000)
+              }
+            })
+          }
+        }
+      })
+
     },
     /**
      * 电子钱包支付

@@ -15,15 +15,15 @@
         <text class="btn-clear" @click="clearKeywords">清除</text>
       </view>
       <view class="search-list">
-        <view class="list-item" v-for="item in nearList" :key="item">{{item}}</view>
+        <view class="list-item" v-for="item in nearList" :key="item" @click="selectKey(item)">{{item}}</view>
       </view>
     </view>
   </view>
 </template>
 
 <script>
+
 import api from '@/modules/api'
-import appG from '@/modules/appGlobal'
 import user from '@/modules/userInfo'
 import { uniTag } from "@dcloudio/uni-ui"
 import searchBar from "@/components/yoyi-search-bar"

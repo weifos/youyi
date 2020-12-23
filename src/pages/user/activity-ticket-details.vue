@@ -8,7 +8,7 @@
         <view class="activity-ticket-address">地点：{{result.address}}</view>
       </view>
       <view class="activity-ticket-content-2">
-        <view class="activity-ticket-sub-title">扫码验核票券码</view>
+        <view class="activity-ticket-sub-title">到场后向工作人员出示二维码即可入场</view>
         <view class="activity-ticket-code">
           <canvas class="code-image" canvas-id="myQrcode" style="background:#fff;width: 180px;height: 180px;margin:0 auto;" />
         </view>
@@ -95,15 +95,15 @@ export default {
   }
   .activity-ticket-content-1 {
     position: relative;
-    overflow: hidden;
-    height: 306px;
+    // overflow: hidden;
+    height: 400rpx;
   }
   .activity-ticket-content-2 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    padding-top: 64px;
+    padding-top: 140rpx;
   }
   .activity-ticket-title {
     width: 630px;
@@ -135,9 +135,9 @@ export default {
     line-height: 44px;
   }
   .activity-ticket-code {
-    margin: 30px auto;
-    width: 380px;
-    height: 380px;
+    margin: 50rpx auto;
+    width: 480rpx;
+    height: 480rpx;
     image {
       width: 100%;
       height: 100%;
