@@ -3,7 +3,7 @@
     <selectBrand type="location" :brandName="''" ref="sBrand"></selectBrand>
     <view class="section-banner">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
-        <swiper-item v-for="item in banners" :key="item">
+        <swiper-item v-for="item in banners" :key="item" @click="bannerSelect(item)">
           <image :src="item.imgurl" />
         </swiper-item>
       </swiper>
