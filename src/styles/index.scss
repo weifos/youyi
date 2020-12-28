@@ -321,6 +321,14 @@ image{
   box-sizing: border-box;
   padding: 0 10px;
 }
+//默认输入框
+.yoyi-area-normal{
+  height: 4*38px; 
+  border:1px solid #B2B2B2;
+  border-radius: 2*6px;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
 radio{
   transform:scale(0.7);
   margin-right:-20px;

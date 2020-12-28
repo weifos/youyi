@@ -182,11 +182,14 @@ export default {
         let details = []
         tmps.forEach((item, i) => {
           item.shopping_cart_id = item.id
+          //金额
+          item.total_amount = item.unit_price * item.count
           details.push(item)
         })
+
         //加入本地存取立即购买
         user.methods.setBuyNow(details)
-        uni.navigateTo({ url: '/pages/user/confirm-order' })
+        uni.navigateTo({ url: '/pages/user/confirm-order?isShoppingCart=true' })
       }
     },
     // ListTouch触摸开始

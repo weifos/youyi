@@ -29,6 +29,12 @@
     </view>
 
     <view class="section-order-price-bar bg-white">
+      <!-- <view class="section-order-info bg-white">
+        <view class="price-item text-size-basic">
+          <text>订单编号</text>
+          <text>20192323123212343</text>
+        </view>
+      </view>-->
       <view class="price-item text-size-basic">
         <text>商品原价</text>
         <text>¥ {{productAmount}}</text>
@@ -59,29 +65,9 @@
       </view>
     </view>
 
-    <!-- <view class="section-order-info bg-white">
-      <view class="section-title">订单信息</view>
-      <view class="price-item text-size-basic">
-        <text>订单编号</text>
-        <text>20192323123212343</text>
-      </view>
-      <view class="price-item text-size-basic">
-        <text>下单时间</text>
-        <view class="text-size-basic">
-          <text class="dib vam text-gray">0张优惠券</text>
-          <view class="icon-arrow dib vam ml10"></view>
-        </view>
-      </view>
-      <view class="price-item text-size-basic">
-        <text>运费</text>
-        <text>¥ 10</text>
-      </view>
-    </view>-->
-
-    <!-- <view class="notice-bar" v-if="discount_amount>0"> -->
-    <!-- <view class="notice-bar">
-      <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" :text="'已优惠 ¥'+(productAmount * ((10-userInfo.mbr_dis_count) / 10)).toFixed(4)"></uni-notice-bar>
-    </view>-->
+    <view class="notice-bar" v-if="order.total_amount - order.actual_amount>0">
+      <uni-notice-bar background-color="#F7E9CB" color="#FF5600" single="true" :text="'已优惠 ¥'+(order.total_amount - order.actual_amount).toFixed(2)"></uni-notice-bar>
+    </view>
 
     <!-- <view class="section-btns" @click="openPopup"> -->
     <view class="section-btns" @click="buyNow">
@@ -202,6 +188,10 @@ export default {
     //订单所属门店
     that.order.store_id = that.storeBrand.id
 
+    if (opt.isShoppingCart) {
+      that.isShoppingCart = true
+    }
+
     if (!user.methods.isLogin()) {
       uni.setStorageSync('returl', "/" + that.currentPage)
       uni.switchTab({ url: '/pages/home/userIndex' })
@@ -262,6 +252,8 @@ export default {
           that.addr = res.data.Result.data.address
           //判断是否包邮
           that.order.freight = res.data.Result.data.freight
+          //获取最新订单金额
+          that.order.actual_amount = res.data.Result.order.actual_amount
           //配送方式
           that.mode_id = res.data.Result.data.mode_id
           //登录
@@ -305,7 +297,6 @@ export default {
      */
     api_314(provider) {
       let that = this
-
       api.post(api.api_314, api.getSign({
         Order: that.order,
         IsShoppingCart: that.isShoppingCart,
@@ -327,10 +318,12 @@ export default {
               uni.navigateTo({ url: '../mine/order-list' })
             },
             fail: function (err) {
-              setTimeout(() => { that.isPaying = false }, 500)
+              //setTimeout(() => { that.isPaying = false }, 500)
+              uni.navigateTo({ url: '../mine/order-list' })
             },
             complete: () => {
-              setTimeout(() => { that.isPaying = false }, 500)
+              uni.navigateTo({ url: '../mine/order-list' })
+              //setTimeout(() => { that.isPaying = false }, 500)
             }
           })
         } else {
@@ -344,8 +337,6 @@ export default {
      */
     api_336() {
       let that = this
-
-
       api.post(api.api_336, api.getSign({
         UserCouponId: 0,
         Order: that.order,
@@ -531,7 +522,7 @@ page {
   }
 
   .price-item {
-    padding: 0 4vw 0 4vw;
+    //padding: 0 4vw 0 4vw;
     display: flex;
     height: 60px;
     justify-content: space-between;

@@ -20,7 +20,8 @@
           <checkbox :checked="list[1].checked" :value="list[1].value" color="#202020" />
           <text>钱包支付（余额{{userInfo.balance}}）</text>
         </checkbox-group>
-        <navigator class="agreement-link" hover-class url="/pages/wallet/index">去充值 &gt;</navigator>
+        <navigator class="agreement-link" hover-class>去充值 &gt;</navigator>
+        <!-- <navigator class="agreement-link" hover-class url="/pages/wallet/index">去充值 &gt;</navigator> -->
       </view>
     </view>
     <view class="pay-code">

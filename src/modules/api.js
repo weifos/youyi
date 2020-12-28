@@ -79,6 +79,8 @@ module.exports = {
     api_215: domain + "215",
     //生成活动二维码
     api_216: domain + "216",
+    //加载促销商品
+    api_217: domain + "217",
     //定位最近门店
     api_299: domain + "299",
     //

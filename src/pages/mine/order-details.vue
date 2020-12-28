@@ -62,8 +62,9 @@
               <view class="text-bar">
                 <view class="ellipsis">{{item.product_name}}</view>
                 <view class="side-bar">
-                  <text class="text-size-basic">￥{{item.actual_amount}}</text>
-                  <text class="text-no">x {{item.count}}</text>
+                  <text class="text-size-basic">单价￥{{item.unit_price}} x{{item.count}}</text>
+                  <text class="text-size-basic" v-if="item.total_amount - item.actual_amount > 0">优惠：-￥{{item.total_amount - item.actual_amount}}</text>
+                  <text class="text-no">￥{{item.actual_amount}}</text>
                 </view>
               </view>
             </view>
@@ -96,7 +97,7 @@
           <text class="text-sub text-size-md bold">¥ {{order.actual_amount}}</text>
         </view>
       </view>
-      <view class="section-order mt20 mb20 text-gray rel">
+      <view class="section-order mt20 mb20 text-gray rel" style="margin-bottom:90rpx;">
         <!-- <button class="btn btn-size-sm btn-line-gray text-gray btn-round-ss btn-copy">复制</button> -->
         <view class="order-list">
           <view class="order-item">订单编号：{{order.serial_no}}</view>

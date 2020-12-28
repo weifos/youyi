@@ -434,6 +434,8 @@ export default {
         tmp.product_id = this.selectSku.product_id
         //加入购物车的数量
         tmp.count = this.buyCount
+        //金额
+        tmp.total_amount = tmp.sale_price * tmp.count
         //冗余
         tmp.whse_stocks = []
         //加入购物车

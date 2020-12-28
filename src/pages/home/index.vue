@@ -12,7 +12,7 @@
       <view class="section-title mt10">热门精选</view>
       <view class="section-content mt10">
         <view class="list">
-          <view class="list-item" v-for="item in banners0" :key="item" @click="openPopup">
+          <view class="list-item" v-for="item in banners0" :key="item">
             <image :src="item.imgurl" @click="bannerSelect(item)" />
           </view>
         </view>
@@ -78,7 +78,10 @@ export default {
       //商品列表
       if (item.content_type == 2) {
         url = '../category/index?id=' + item.content_value
-        //商品详情
+        //促销活动
+      } else if (item.content_type == 3) {
+        url = '../home/atyProductList?id=' + item.content_value
+        //课程活动详情
       } else if (item.content_type == 5) {
         url = '../category/details?id=' + item.content_value
         //课程活动详情

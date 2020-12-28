@@ -3,6 +3,7 @@
     <view class="sign-up-list" v-for="(item,index) in result">
       <view v-if="item.type===0" class="list-title">{{item.title+'（单选）'}}</view>
       <view v-if="item.type===1" class="list-title">{{item.title+'（多选）'}}</view>
+      <view v-if="item.type===2" class="list-title">{{item.title+'（填写）'}}</view>
 
       <radio-group v-if="item.type===0" class="agreement-checkbox" :data-questId="item.id" @change="checkedChange">
         <view class="list-item" v-for="(sItem,i) in item.answer_list" :key="i">
@@ -16,6 +17,12 @@
           <checkbox :checked="sItem.is_checked" :value="sItem.id+'_䨻_'+sItem.answer_val" :id="sItem.id" color="#FFB825" />
           <text>{{sItem.answer_val}}</text>
           <!-- <input class="yoyi-input-normal" v-if="i === item.answer_list.length-1" :placeholder="'请补充'" placeholder-class="input-placeholder" /> -->
+        </view>
+      </checkbox-group>
+
+      <checkbox-group v-if="item.type===2" class="agreement-checkbox" :data-questId="item.id">
+        <view class="list-item" :key="i">
+          <textarea class="yoyi-area-normal" :placeholder="'请补充'" :data-questId="item.id" placeholder-class="input-placeholder" maxlength="300" @input="inputChange" />
         </view>
       </checkbox-group>
     </view>
@@ -71,7 +78,7 @@ export default {
   },
   methods: {
     /**
-     * 加载课堂调查问卷
+     * 选择答案事件
      */
     checkedChange: function (e) {
       let that = this
@@ -132,6 +139,18 @@ export default {
       }
     },
     /**
+     * 输入答案事件
+     */
+    inputChange: function (e) {
+      let that = this
+      //问题ID
+      var questId = e.currentTarget.dataset.questid
+      //重置当前问题选项
+      that.result.filter(ele => ele.type === 2 && ele.id == questId).forEach((ele, i) => {
+        ele.answer_list = e.detail.value
+      })
+    },
+    /**
      * 加载课堂调查问卷
      */
     api_213: function (id) {
@@ -143,6 +162,13 @@ export default {
           that.result = res.data.Result
           if (that.result.length == 0) {
             that.api_326()
+          } else {
+            //当为用户输入答案，默认为空字符串
+            that.result.forEach((o, i) => {
+              if (o.type == 2) {
+                o.answer_list = ''
+              }
+            })
           }
         }
       })
@@ -189,22 +215,36 @@ export default {
       let course_answers = []
       that.result.forEach((o, i) => {
         let exist = false
-        o.answer_list.forEach((oo, ii) => {
-          if (oo.is_checked) {
-            exist = true
-            let item = {
-              answer_id: oo.id,
-              title: o.title,
-              question_id: oo.quest_id,
-              answer_val: oo.answer_val
+        //此处只需要处理非文本输入的场景
+        //不为用户输入答案，必须勾选答案
+        if (o.type != 2) {
+          o.answer_list.forEach((oo, ii) => {
+            if (oo.is_checked) {
+              exist = true
+              let item = {
+                answer_id: oo.id,
+                title: o.title,
+                question_id: oo.quest_id,
+                answer_val: oo.answer_val
+              }
+              course_answers.push(item)
             }
-            course_answers.push(item)
+          })
+        } else {
+          let item = {
+            answer_id: 0,
+            title: o.title,
+            question_id: o.id,
+            answer_val: o.answer_list
           }
-        })
+          course_answers.push(item)
+        }
+
         if (exist) { q_count++ }
       })
 
-      if (q_count < that.result.length) {
+      //排除用户自定义输入
+      if (q_count < that.result.filter(ele => ele.type !== 2).length) {
         appG.dialog.showToast({ title: '存在未选中的问题', icon: 'none', duration: 3000 })
         return
       }
@@ -261,6 +301,10 @@ export default {
   .yoyi-input-normal {
     width: 2 * 291px;
     margin-left: 50px;
+  }
+  .yoyi-area-normal {
+    width: 2 * 291px;
+    height: 200rpx;
   }
 }
 </style>

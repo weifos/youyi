@@ -275,6 +275,12 @@
             }
         },
         {
+            "path": "pages/home/atyProductList",
+            "style": {
+                "navigationBarTitleText": "促销活动"
+            }
+        },
+        {
             "path": "pages/activity/details",
             "style": {
                 "navigationBarTitleText": "活动详情"
