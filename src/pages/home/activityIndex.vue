@@ -1,6 +1,6 @@
 <template>
   <view class="content page-activity">
-    <searchBar type="location" :storeName="aty_store.name"></searchBar>
+    <searchBar type="location" :storeName="aty_store.name" placeholderText="搜索您想要的活动"></searchBar>
     <!-- <view class="banner align-center"> -->
     <view class="align-center">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
@@ -249,6 +249,13 @@ export default {
         url = '../activity/details?id=' + item.content_value
       }
       uni.navigateTo({ url: url })
+    },
+    /**
+     * 通过子组件触发查询事件
+     */
+    search() {
+      debugger
+      console.log('')
     }
   }
 }

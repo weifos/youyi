@@ -2,9 +2,12 @@ import appG from '@/modules/appGlobal'
 import user from '@/modules/userInfo'
 import md5 from 'blueimp-md5'
 
+//测试环境配置
+// let domain = "https://api66.yoyibook.com:443/"
+// let res_domain = "https://res67.yoyibook.com:20185/"
 //正式环境配置
-let domain = "https://api66.yoyibook.com:443/"
-let res_domain = "https://res67.yoyibook.com:20185/"
+let domain = "https://api66.yoyi100.cn:21143/"
+let res_domain = "https://res67.yoyi100.cn:21144/"
 //测试环境
 // if (process.env.NODE_ENV !== 'production') {
 //     domain = "http://yy.api.youyi.com/"

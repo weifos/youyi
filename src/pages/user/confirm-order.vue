@@ -47,7 +47,8 @@
           <view class="icon-arrow dib vam ml10"></view>
         </view>
       </view>
-      <view class="price-item text-size-basic" v-if="order.vip_dis_amount > 0">
+      <!-- 会员折扣最优 -->
+      <view class="price-item text-size-basic" v-if=" order.vip_dis_amount>order.coupon_amount && order.vip_dis_amount>order.mkt_dis_amount">
         <text>会员折扣</text>
         <text>-¥{{order.vip_dis_amount}}</text>
       </view>
@@ -253,7 +254,12 @@ export default {
           //判断是否包邮
           that.order.freight = res.data.Result.data.freight
           //获取最新订单金额
+          //that.order = res.data.Result.order
+          that.order.vip_dis_amount = res.data.Result.order.vip_dis_amount
           that.order.actual_amount = res.data.Result.order.actual_amount
+          that.order.coupon_amount = res.data.Result.order.coupon_amount
+          that.order.mkt_dis_amount = res.data.Result.order.mkt_dis_amount
+
           //配送方式
           that.mode_id = res.data.Result.data.mode_id
           //登录
@@ -267,10 +273,6 @@ export default {
             that.order.pay_method = 13
           }
 
-          if (that.userInfo.mbr_dis_count < 10) {
-            that.order.vip_dis_amount = appG.util.formatDecimal(that.productAmount * ((10 - that.userInfo.mbr_dis_count) / 10), 2)
-          }
-
           //不包邮
           if (that.freightRemark.amount > 0 && that.order.actual_amount < that.freightRemark.amount) {
             that.order.total_amount += that.order.freight
@@ -281,7 +283,7 @@ export default {
           }
 
           //更新实付金额
-          that.order.actual_amount -= that.order.vip_dis_amount
+          //that.order.actual_amount -= that.order.vip_dis_amount
           that.notSetAddress = false
         } else {
           //未设置收货地址

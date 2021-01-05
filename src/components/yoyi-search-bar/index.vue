@@ -12,7 +12,7 @@
         <input type="text" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" />
       </view>
       <view class="search-item__btns">
-        <button class="btn-noborder">搜索</button>
+        <button class="btn-noborder" @click="search">搜索</button>
       </view>
     </view>
     <view class="search-bar--buttons" v-else-if="type == 'buttons'">

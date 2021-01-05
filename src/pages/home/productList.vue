@@ -159,9 +159,9 @@ export default {
     //局部上拉滚动
     scroll(e) {
       let that = this
-      //console.log(e.detail.scrollHeight - e.detail.scrollTop)
+      console.log(e.detail.scrollHeight - e.detail.scrollTop)
       //下拉
-      if (e.detail.scrollTop > 0 && e.detail.scrollTop - that.scrollTop > 0 && (e.detail.scrollHeight - e.detail.scrollTop) < 505) {
+      if (e.detail.scrollTop > 0 && e.detail.scrollTop - that.scrollTop > 0 && (e.detail.scrollHeight - e.detail.scrollTop) < 900) {
         //当前加载数据的分类
         let catg = this.cateInfo[this.curIndex]
         that.api_202(catg)

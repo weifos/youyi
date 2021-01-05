@@ -211,7 +211,7 @@ export default {
               that.isLogin = false
             }
           } else {
-            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
+            //appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           }
         })
     },
@@ -232,7 +232,7 @@ export default {
             } else {
               that.aty_store = res.data.Result
               user.methods.setAtyStore(that.aty_store)
-              appG.dialog.showToast('检查到您当前位置已推荐最近门店')
+              appG.dialog.showToast({ title: '检查到您当前位置已推荐最近门店' })
             }
           })
         }

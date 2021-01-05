@@ -310,7 +310,8 @@
     ],
     "globalStyle": {
         "navigationBarTextStyle": "black",
-        "navigationBarTitleText": "友谊书城",
+        // "navigationBarTitleText": "友谊书城",
+        "navigationBarTitleText": "",
         "navigationBarBackgroundColor": "#fff",
         "backgroundColor": "#EDEDED"
     },

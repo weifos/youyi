@@ -62,13 +62,15 @@
               <view class="text-bar">
                 <view class="ellipsis">{{item.product_name}}</view>
                 <view class="side-bar">
-                  <text class="text-size-basic">单价￥{{item.unit_price}} x{{item.count}}</text>
-                  <text class="text-size-basic" v-if="item.total_amount - item.actual_amount > 0">优惠：-￥{{item.total_amount - item.actual_amount}}</text>
-                  <text class="text-no">￥{{item.actual_amount}}</text>
+                  <text class="text-size-basic">单价￥{{item.unit_price}}</text>
+                  <text class="text-no">数量{{item.count}}</text>
+                </view>
+                <view class="side-bar" v-if="item.total_amount - item.actual_amount > 0">
+                  <text class="text-size-basic">优惠：-￥{{(item.total_amount - item.actual_amount).toFixed(2)}}</text>
                 </view>
               </view>
             </view>
-            <view class="operation-bar align-right mt20" v-if="item.refund_count < item.count">
+            <view class="operation-bar align-right mt20" v-if="item.refund_count < item.count && orderInfo.is_pay">
               <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">申请售后</button>
             </view>
           </view>
@@ -77,19 +79,19 @@
       <view class="section-price mt20">
         <view class="price-item bold">
           <text>商品原价</text>
-          <text>￥{{order.total_amount - order.freight}}</text>
+          <text>￥{{order.total_amount.toFixed(2)}}</text>
         </view>
         <view class="price-item mt20" v-if="order.order > 0">
           <text>使用优惠券</text>
-          <text>-￥{{order.coupon_amount}}</text>
+          <text>-￥{{order.coupon_amount.toFixed(2)}}</text>
         </view>
         <view class="price-item mt20">
-          <text>折扣</text>
-          <text>-￥{{order.max_dis_amount}}</text>
+          <text>优惠</text>
+          <text>-￥{{order.max_dis_amount.toFixed(2)}}</text>
         </view>
         <view class="price-item mt20">
           <text>运费</text>
-          <text>+￥{{order.freight}}</text>
+          <text>+￥{{order.freight.toFixed(2)}}</text>
         </view>
         <view class="total-bar mt20">
           <text v-if="order.total_amount - order.freight - order.actual_amount >0">已优惠¥{{(order.total_amount-order.actual_amount).toFixed(2)}}</text>
@@ -391,7 +393,8 @@ page {
     padding-top: 15px;
   }
   .side-bar {
-    padding-top: 2 * 30px;
+    // padding-top: 2 * 30px;
+    padding-top: 2 * 8px;
     display: flex;
     justify-content: space-between;
   }

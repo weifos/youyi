@@ -1,7 +1,7 @@
 <template>
   <view class="page-select-shop">
     <!-- <yoyiLocation v-on:updateSelect="selectByCity"></yoyiLocation> -->
-    <view class="list list-address">
+    <view class="list list-address" style="margin-bottom:80rpx;">
       <view class="list-item" v-for="(item,index) in stores" :key="item" @click="selectAddress(index)">
         <view class="item__title">{{item.name}}</view>
         <view class="item__address text-gray text-size-sm mt10">{{item.province+item.city+item.area+item.address}}</view>
@@ -19,7 +19,6 @@
 
 import api from '@/modules/api'
 import user from '@/modules/userInfo'
-import appG from '@/modules/appGlobal'
 import yoyiLocation from "@/components/yoyi-location";
 import operationButton from '@/components/yoyi-operation-button/'
 
@@ -71,6 +70,8 @@ export default {
             }
           })
 
+          //查询所有门店
+          res.data.Result.push({ id: 0, name: '所有门店', province: '', city: '', area: '', address: '' })
           that.stores = res.data.Result
           user.methods.setStores(that.stores)
           //默认第一个为活动门店

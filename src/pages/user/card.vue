@@ -1,7 +1,8 @@
 <template>
   <view class="wrapper-user-card">
-    <vipCard :title="userInfo.card_name" :avatar="userInfo.headimgurl" :phone="userInfo.login_name" :number="'NO.'+userInfo.card_no" :startDate="userInfo.mbr_s_date" :endDate="userInfo.mbr_e_date"></vipCard>
-    <yoyiTitle title="我的权益" more="权益详情" url="/pages/user/rights"></yoyiTitle>
+    <vipCard :title="userInfo.card_name +' '+(userInfo.mbr_dis_count == 10 ? '无折扣':userInfo.mbr_dis_count+'折') " :avatar="userInfo.headimgurl" :phone="userInfo.login_name" :number="'NO.'+userInfo.card_no" :startDate="userInfo.mbr_s_date" :endDate="userInfo.mbr_e_date"></vipCard>
+    <!-- <yoyiTitle title="升级会员享受以下会员福利" more="权益详情" url="/pages/user/rights"></yoyiTitle> -->
+    <yoyiTitle title="升级会员享受以下会员福利"></yoyiTitle>
     <template v-if="userType == 2">
       <rightsList :type="2"></rightsList>
     </template>

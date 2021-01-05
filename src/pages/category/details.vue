@@ -12,11 +12,14 @@
       <view class="product-title mt15 text-size-lg bold">{{pResult.product.name}}</view>
       <view class="product-info text-size-sm mt15">商品编码：{{pResult.product.no}}</view>
       <view class="product-intro text-gray text-size-sm mt15 ellipsis2">{{pResult.product.introduction}}</view>
-      <view class="product-info text-size-sm">
+      <view class="product-info text-size-sm" style="text-align: right;">
         <!-- {{pResult.product.field1==null?'':pResult.product.field1}} 著/
         {{pResult.product.field2==null?'':pResult.product.field2}} /
         {{pResult.product.field3==null?'':pResult.product.field3}}-->
-        <view @tap="api_214" style="display: inline-block;width: 60px;margin-right:0px;color:#004EA2;">分享海报</view>
+        <view @tap="api_214" style="display: inline-block;color:#004EA2;float:left;">分享海报</view>
+        <!-- <button open-type="contact" session-from style="display: inline-block;margin-right:0px;color:#004EA2;">联系客服</button> -->
+        <button open-type="contact" :send-message-title="pResult.product.no +' '+ pResult.product.name" :send-message-path="curPath" :send-message-img="posterObj.posterImgUrl" show-message-card="true" style="display: inline-block;margin-right:0px;color:#004EA2;">联系客服</button>
+        <!-- <view style="display: inline-block;margin-right:0px;color:#004EA2;">联系客服</view> -->
       </view>
     </view>
     <!-- <view class="product-discount-bar section" v-if="discountInfo.length > 0">
@@ -136,6 +139,8 @@ export default {
     return {
       imgUrl: '',
       collect_id: 0,
+      //当期页面路径
+      curPath: '',
       isShow: false,
       //是否能够购买
       isCanSubmit: false,
@@ -257,6 +262,7 @@ export default {
     }
   },
   onLoad(opt) {
+    this.curPath = appG.route.getCurPath()
     //运营品牌对应的线上门店
     this.storeBrand = appG.getCurBrandStore()
     //运营品牌
