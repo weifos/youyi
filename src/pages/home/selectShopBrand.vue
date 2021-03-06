@@ -15,6 +15,7 @@
 </template>
 <script>
 
+import api from '@/modules/api'
 import appG from '@/modules/appGlobal'
 import yoyiLocation from "@/components/yoyi-location";
 import operationButton from '@/components/yoyi-operation-button/'
@@ -32,8 +33,14 @@ export default {
     yoyiLocation
   },
   onLoad() {
+    let that = this
     //门店列表
-    this.storeBrands = appG.getBrandStore()
+    let sBrands = appG.getBrandStore()
+    if (sBrands == null) {
+      that.api_215()
+    } else {
+      that.storeBrands = sBrands
+    }
   },
   methods: {
     /**
@@ -63,7 +70,34 @@ export default {
         }
       })
       appG.setBrandStore(that.storeBrands)
-      uni.reLaunch({ url: "/pages/home/index" })
+
+      let returl = uni.getStorageSync('returl')
+      if (returl) {
+        uni.removeStorage({ key: 'returl', success: function (res) { } })
+        //重定向
+        uni.navigateTo({ url: returl })
+      } else {
+        uni.reLaunch({ url: "/pages/home/index" })
+      }
+    },
+    //加载运营品牌信息
+    api_215() {
+      let that = this
+      api.post(api.api_215, api.getSign(), function (ele, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          res.data.Result.forEach((o, i) => {
+            if (i == 0) {
+              that.$set(o, "selected", true)
+            } else {
+              that.$set(o, "selected", false)
+            }
+          })
+          //运营品牌写入缓存
+          appG.setBrandStore(res.data.Result)
+          that.storeBrands = res.data.Result
+          that.name = res.data.Result.filter(item => item.selected)[0].name
+        }
+      })
     }
   }
 }

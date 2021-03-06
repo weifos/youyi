@@ -1,9 +1,10 @@
 <template>
   <view class="wrapper-user-card">
-    <vipCard :title="userInfo.card_name +' '+(userInfo.mbr_dis_count == 10 ? '无折扣':userInfo.mbr_dis_count+'折') " :avatar="userInfo.headimgurl" :phone="userInfo.login_name" :number="'NO.'+userInfo.card_no" :startDate="userInfo.mbr_s_date" :endDate="userInfo.mbr_e_date"></vipCard>
+    <vipCard :bgurl="m_bgurl" :title="userInfo.card_name +' '+(userInfo.mbr_dis_count == 10 ? '无折扣':userInfo.mbr_dis_count+'折') " :avatar="userInfo.headimgurl" :phone="userInfo.login_name" :number="'NO.'+userInfo.card_no" :startDate="userInfo.mbr_s_date" :endDate="userInfo.mbr_e_date"></vipCard>
     <!-- <yoyiTitle title="升级会员享受以下会员福利" more="权益详情" url="/pages/user/rights"></yoyiTitle> -->
     <yoyiTitle title="升级会员享受以下会员福利"></yoyiTitle>
-    <template v-if="userType == 2">
+    <view class="wrapper-card-rights" :style="mr_bgurl==''?'':'background-image: url('+mr_bgurl+');background-repeat: no-repeat;background-size: 100%;height: 260px;'"></view>
+    <template v-if="userType == 21">
       <rightsList :type="2"></rightsList>
     </template>
     <template v-if="userType == 3">
@@ -27,6 +28,10 @@ export default {
   components: { yoyiTitle, vipCard, rightsList, operationButton },
   data() {
     return {
+      //会员卡封面背景图
+      m_bgurl: '',
+      //会员卡权益背景图
+      mr_bgurl: '',
       userType: 2,
       btn_text: "立即升级",
       userInfo: {
@@ -41,6 +46,9 @@ export default {
   onLoad(options) {
     var that = this
     that.userInfo = user.methods.getUser()
+    that.m_bgurl = that.userInfo.card_img
+    that.mr_bgurl = that.userInfo.rights_img
+
     if (that.userInfo.card_no == '') {
       that.userInfo.card_no = '普通会员'
       that.api_362()

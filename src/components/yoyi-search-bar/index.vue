@@ -15,20 +15,21 @@
         <button class="btn-noborder" @click="search">搜索</button>
       </view>
     </view>
+    <!-- 搜索商品 -->
     <view class="search-bar--buttons" v-else-if="type == 'buttons'">
       <view class="search-item__input">
         <text class="icon icon-search" style="background-image: url(https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/icon/icon_search.png);" @click="search"></text>
-        <input type="text" maxlength="30" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @change="keyChange($event)" />
+        <input type="text" maxlength="30" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @change="keyChange($event)" @confirm="search" />
       </view>
       <view class="search-item__btns">
-        <button class="btn-noborder" @click="search" style="margin-right:3px;">搜索</button>
+        <!-- <button class="btn-noborder" @click="search" style="margin-right:3px;">搜索</button> -->
         <button class="btn-noborder" @click="cancelClick">取消</button>
       </view>
     </view>
     <view class="search-bar--normal" v-else>
       <view class="search-item__input">
         <text class="icon icon-search" style="background-image: url(https://res67.yoyibook.com:20185/DefaultRes/Images/VUE/static/icon/icon_search.png);"></text>
-        <input type="text" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @click="goSearch" />
+        <input type="text" placeholder-class="input-placeholder" :placeholder="placeholderText" v-model="keyword" @click="goSearch" @confirm="search" />
       </view>
     </view>
   </view>
@@ -81,7 +82,7 @@ export default {
     },
     //立即搜索
     search() {
-      if (this.keyword.length == 0) return
+      //if (this.keyword.length == 0) return
       this.$emit('search', this.keyword)
     },
     //输入改变事件

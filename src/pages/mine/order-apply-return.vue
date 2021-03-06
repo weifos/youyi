@@ -6,6 +6,41 @@
       <view class="status-title" v-if="order.status == 10">已发货</view>
       <view class="status-title" v-if="order.status == 18">退货完成</view>
 
+      <!-- 退回的商品信息 -->
+      <view class="section-proudct bg-white mt20">
+        <!-- <view :class="['order-list',orderInfo.type == 3 ? 'order-list-2' : '']"> -->
+        <view :class="'order-list'">
+          <view class="list-item hidden">
+            <view class="hidden">
+              <view class="img-bar image-size-sm fl">
+                <image :src="retDetails.img_url" />
+              </view>
+              <view class="text-bar">
+                <view class="ellipsis">{{retDetails.product_name}}</view>
+                <view class="side-bar">
+                  <text class="text-size-basic">￥{{retDetails.actual_amount}}</text>
+                  <text class="text-no">x {{retDetails.count}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="con-no mt20">
+              <text>退货数量</text>
+              <view>
+                <uni-number-box class="number-box-skin-1" :value="retNum" :min="1" :max="retDetails.num" @change="updateNum"></uni-number-box>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 退货信息 -->
+      <view class="section-address mt20">
+        <view class="text-gray">物流单号</view>
+        <view class="mt5">
+          <input class="form-input" placeholder-class="form-input-placeholder" v-model="info.contact" placeholder="填写物流单号" />
+        </view>
+      </view>
+
       <view class="section-status mt20" v-if="order.status == 10">
         <view class="text-size-md bold">商品已发货，请您确认收货</view>
         <view class="text-size-sm mt20">物流单号：{{delivery.tracking_no}}</view>
@@ -13,12 +48,20 @@
           <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20" @click="goLogistics">查看物流</button>
         </view>
       </view>
+
       <view class="section-status mt20" v-if="orderInfo.type == 111">
         <text class="icon-arrow2 dib vat"></text>
-        <!-- <view  class="ml20 dib vat">
-                <view class="text-size-md bold"><text>商家同意退货，请及时退货</text></view>
-                <view class="text-size-sm mt20">剩<text class="text-red">6</text>天<text class="text-red">6</text>时<text class="text-red">6</text>分</view>
-        </view>-->
+        <view class="ml20 dib vat">
+          <view class="text-size-md bold">
+            <text>商家同意退货，请及时退货</text>
+          </view>
+          <view class="text-size-sm mt20">
+            剩
+            <text class="text-red">6</text>天
+            <text class="text-red">6</text>时
+            <text class="text-red">6</text>分
+          </view>
+        </view>
         <view class="ml20 dib vat">
           <view class="text-size-md bold">
             <text>退款成功</text>
@@ -32,80 +75,17 @@
       </view>
 
       <view class="section-address mt20">
-        <view class="text-gray">收货地址</view>
+        <view class="text-gray">退货信息</view>
         <view class="mt5">{{delivery.province + delivery.city+ delivery.area}}{{delivery.address}}</view>
         <view class="mt5">
-          <text>{{order.delivery.contact}}</text>
-          <text class="ml20">{{order.delivery.mobile}}</text>
-        </view>
-      </view>
-      <view class="section-proudct bg-white mt20">
-        <view :class="['order-list',orderInfo.type == 3 ? 'order-list-2' : '']">
-          <view class="list-item hidden" v-for="item in order.details" :key="item">
-            <view class="hidden">
-              <view class="img-bar image-size-sm fl">
-                <image :src="item.img_url" />
-              </view>
-              <view class="text-bar">
-                <view class="ellipsis">{{item.product_name}}</view>
-                <view class="side-bar">
-                  <text class="text-size-basic">￥{{item.actual_amount}}</text>
-                  <text class="text-no">x {{item.count}}</text>
-                </view>
-              </view>
-            </view>
-            <view class="operation-bar align-right mt20" v-if="item.refund_count < item.count">
-              <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" @click="api_369" data-id="item.id">申请售后</button>
-            </view>
-          </view>
-        </view>
-      </view>
-      <view class="section-price mt20">
-        <view class="price-item bold">
-          <text>商品原价</text>
-          <text>￥{{order.total_amount - order.freight}}</text>
-        </view>
-        <view class="price-item mt20" v-if="order.order > 0">
-          <text>使用优惠券</text>
-          <text>-￥{{order.coupon_amount}}</text>
-        </view>
-        <view class="price-item mt20">
-          <text>折扣</text>
-          <text>-￥{{order.max_dis_amount}}</text>
-        </view>
-        <view class="price-item mt20">
-          <text>运费</text>
-          <text>+￥{{order.freight}}</text>
-        </view>
-        <view class="total-bar mt20">
-          <text v-if="order.total_amount - order.freight - order.actual_amount >0">已优惠¥{{(order.total_amount-order.actual_amount).toFixed(2)}}</text>
-          <text class="ml20">实付款：</text>
-          <text class="text-sub text-size-md bold">¥ {{order.actual_amount}}</text>
-        </view>
-      </view>
-      <view class="section-order mt20 mb20 text-gray rel">
-        <!-- <button class="btn btn-size-sm btn-line-gray text-gray btn-round-ss btn-copy">复制</button> -->
-        <view class="order-list">
-          <view class="order-item">订单编号：{{order.serial_no}}</view>
-          <view class="order-item mt20" v-if="order.pay_method== 11">支付方式：微信付款码支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 13">支付方式：微信小程序支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 14">支付方式：微信扫码支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 21">支付方式：支付宝支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 31">支付方式：电子钱包支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 41">支付方式：储值卡支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 51">支付方式：现金支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 61">支付方式：刷卡支付</view>
-          <view class="order-item mt20" v-if="order.pay_method== 100">支付方式：混合支付</view>
-          <view class="order-item mt20" v-if="orderInfo.formInfo.timePay">下单时间：{{order.created_date}}</view>
-          <!--  <view class="order-item mt20" v-if="orderInfo.formInfo.timeDeliver">发货时间：{{orderInfo.formInfo.timeDeliver}}</view>
-          <view class="order-item mt20" v-if="orderInfo.formInfo.express">快递方式：{{orderInfo.formInfo.express}}</view>
-          <view class="order-item mt20" v-if="orderInfo.formInfo.expressNo">运单编号：{{orderInfo.formInfo.expressNo}}</view>-->
+          <text>联系人：{{delivery.contact}}</text>
+          <text class="ml20">联系电话：{{delivery.mobile}}</text>
         </view>
       </view>
     </view>
 
-    <view class="section-btns" @click="openPopup" v-if="!order.is_pay">
-      <operationButton :price="(order.actual_amount).toFixed(2)" buttonText="去支付"></operationButton>
+    <view class="section-btns">
+      <operationButton buttonText="提交"></operationButton>
     </view>
   </view>
 </template>
@@ -114,13 +94,16 @@
 import api from '@/modules/api'
 import user from '@/modules/userInfo'
 import appG from '@/modules/appGlobal'
-import { uniPopup } from "@dcloudio/uni-ui"
+import { uniPopup, uniNumberBox } from "@dcloudio/uni-ui"
 import operationButton from '@/components/yoyi-operation-button/'
 
 export default {
-  components: { operationButton, uniPopup },
+  components: { uniNumberBox, operationButton, uniPopup },
   data() {
     return {
+      order: {
+        status: 0
+      },
       //收货地址
       delivery: {
         province: '',
@@ -133,84 +116,33 @@ export default {
         balance: 0,
         mbr_dis_count: 1
       },
-      order: {
-        is_pay: false,
-        freight: 0,
-        actual_amount: 0,
-        total_amount: 0,
-        details: []
-      }
+      retDetails: {
+        name: '',
+        unit_price: '',
+        img_url: '',
+        num: 1
+      },
+      //退货数量
+      retNum: 1
     }
   },
-  onLoad(opt) {
+  onLoad() {
     //用户信息
     this.userInfo = user.methods.getUser()
-    this.api_319(opt.no)
+    //订单明细
+    this.retDetails = user.methods.getRetDetails()
+    //加载退货地址信息
+    this.api_370()
   },
   methods: {
-    openPopup() {
-      this.$refs.popup.open()
-    },//更改支付方式
-    changePay(e) {
-      this.order.pay_method = e.detail.value
-    },
-    /**
-     * 加载订单数据
-     */
-    api_319(no) {
-      let that = this
-      //请求接口数据
-      api.post(api.api_319, api.getSign({ OrderNo: no }), function (app, res) {
-        if (res.data.Basis.State != api.state.state_200) {
-          uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
-        } else {
-          that.delivery = res.data.Result.delivery
-          that.order = res.data.Result.order
-        }
-      })
-    },
-    /**
-     * 微信小程序预支付订单
-     */
-    api_363(provider) {
-      let that = this
-
-      api.post(api.api_363, api.getSign({
-        OrderNo: that.order.serial_no,
-        UserCouponId: 0
-      }), function (vue, res) {
-        if (res.data.Basis.State == api.state.state_200) {
-          //通过uni-app吊起支付
-          uni.requestPayment({
-            provider: provider,
-            appId: res.data.Result.wechatpay.appId,
-            timeStamp: res.data.Result.wechatpay.timeStamp,
-            nonceStr: res.data.Result.wechatpay.nonceStr,
-            package: res.data.Result.wechatpay.package,
-            signType: res.data.Result.wechatpay.signType,
-            paySign: res.data.Result.wechatpay.paySign,
-            success: function (res) {
-              console.log('success:' + JSON.stringify(res))
-              uni.navigateTo({ url: '../mine/order-list' })
-            },
-            fail: function (err) {
-              setTimeout(() => { that.isPaying = false }, 500)
-            },
-            complete: () => {
-              setTimeout(() => { that.isPaying = false }, 500)
-            }
-          })
-        } else {
-          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
-          setTimeout(() => { that.isPaying = false }, 500)
-        }
-      })
-    },
     /**
      * 申请退款
      */
     api_369() {
       var that = this
+      //退货数量不能为0
+      if (retNum == 0) return
+
       uni.showModal({
         title: '提示',
         content: '确认申请退款吗？',
@@ -218,7 +150,8 @@ export default {
           if (res.confirm) {
             //请求接口数据
             api.post(api.api_369, api.getSign({
-              SerialNo: that.order.serial_no, DetailsId: that.order.serial_no
+              returnNum: that.retDetails.num,
+              orderDetails: that.retDetails
             }), function (app, res) {
               if (res.data.Basis.State != api.state.state_200) {
                 appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
@@ -235,31 +168,21 @@ export default {
           }
         }
       })
-
     },
     /**
-     * 电子钱包支付
+     * 加载门店退货地址
      */
-    api_364() {
-      let that = this
-
-      api.post(api.api_364, api.getSign({
-        OrderNo: that.order.serial_no,
-        UserCouponId: 0
-      }), function (vue, res) {
+    api_370() {
+      var that = this
+      //请求接口数据
+      api.post(api.api_370, api.getSign({
+        StoreId: that.retDetails.store_id
+      }), function (app, res) {
         if (res.data.Basis.State == api.state.state_200) {
-          //更新用户信息
-          user.methods.login(res.data.Result)
-          appG.dialog.showToast({ title: res.data.Basis.Msg, duration: 2000 })
-          setTimeout(function () {
-            uni.navigateTo({ url: '../mine/order-list' })
-          }, 1000)
+          console.log(res.data)
+          that.delivery = res.data.Result
         } else {
-          setTimeout(function () {
-            appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
-          }, 50)
-          setTimeout(function () { uni.hideToast() }, 3000)
-          that.isPaying = false
+          appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
         }
       })
     },
@@ -275,41 +198,11 @@ export default {
       })
     },
     /**
-     * 立即购买
-     */
-    buyNow() {
-      let that = this
-      //是否在支付中
-      if (that.isPaying) return
-      //设置支付中
-      that.isPaying = true
-      //是否设置收货地址
-      if (that.notSetAddress) {
-        appG.dialog.showToast({ title: '未设置收货地址', duration: 2000 })
-        return
-      }
-
-      //微信支付
-      if (this.order.pay_method == 13) {
-        //获取uni-app服务提供商
-        uni.getProvider({
-          service: 'payment', success: (res) => {
-            //微信支付
-            if (~res.provider.indexOf('wxpay')) {
-              //生成订单吊起支付
-              that.api_363(res.provider[0])
-            }
-          }
-        })
-
-        //钱包支付
-      } else if (this.order.pay_method == 31) {
-        if (that.order.actual_amount - that.userInfo.balance > 0) {
-          appG.dialog.showToast({ title: '钱包余额不足', icon: 'none', duration: 2000 })
-          return
-        }
-        that.api_364()
-      }
+      * 数量更新
+      */
+    updateNum(value) {
+      if (parseInt(value) > this.retDetails.num) return
+      this.retNum = this.retDetails.count
     }
   }
 }
@@ -383,5 +276,9 @@ page {
     right: 20px;
     top: 20px;
   }
+}
+.con-no {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

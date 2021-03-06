@@ -57,8 +57,6 @@
         </view>
       </uniPopup>
 
-      <!-- <official-account></official-account> -->
-
       <!-- popup s -->
       <uniPopup ref="popupPay" type="bottom" class="pop-pay yoyi-pop">
         <view class="pop-title text-size-md align-center">支付方式</view>
@@ -184,6 +182,30 @@ export default {
     this.api_206(opt)
   },
   methods: {
+    //分享给朋友
+    onShareAppMessage: function (res) {
+      let that = this
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+
+      return {
+        title: that.result.name,
+        path: appG.route.getCurPath()
+      }
+    },
+    //分享朋友圈
+    onShareTimeline: function (res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: that.result.name,
+        path: appG.route.getCurPath()
+      }
+    },
     openPopup() {
       this.$refs.popup.open()
     },

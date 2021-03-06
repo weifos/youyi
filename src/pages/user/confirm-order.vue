@@ -61,8 +61,29 @@
       <view class="price-item text-size-basic" v-if="freightRemark.id > 0">
         <text>运费说明</text>
       </view>
-      <view class="price-item text-size-basic" v-if="freightRemark.id > 0">
+      <view class="price-item text-size-basic" style="height:auto;" v-if="freightRemark.id > 0">
         <text>{{freightRemark.remarks}}</text>
+      </view>
+    </view>
+
+    <view class="section-order-price-bar bg-white">
+      <view class="price-item text-size-basic" @click="chooseInvoice">
+        <text>选择发票</text>
+        <view class="text-size-basic">
+          <view class="icon-arrow dib vam ml10"></view>
+        </view>
+      </view>
+      <view class="section-order-info bg-white" v-if="order.invoice != ''">
+        <view class="price-item text-size-basic">
+          <text>抬头名称</text>
+          <text>{{order.invoice}}</text>
+        </view>
+      </view>
+      <view class="section-order-info bg-white" v-if="order.tax_number != ''">
+        <view class="price-item text-size-basic">
+          <text>抬头税号</text>
+          <text>{{order.tax_number}}</text>
+        </view>
       </view>
     </view>
 
@@ -164,6 +185,10 @@ export default {
         freight: 0,
         //会员优惠金额
         vip_dis_amount: 0,
+        //税号
+        tax_number: '',
+        //发票抬头
+        invoice: '',
         //订单详情
         store_details: []
       },
@@ -234,6 +259,20 @@ export default {
     selectAddress() {
       uni.navigateTo({
         url: "address/manage?isSelect=1"
+      })
+    },
+    /**
+     * 选择发票
+     */
+    chooseInvoice() {
+      let that = this
+      wx.chooseInvoiceTitle({
+        success(res) {
+          if (res.errMsg == "chooseInvoiceTitle:ok") {
+            that.order.invoice = res.title
+            that.order.tax_number = res.taxNumber
+          }
+        }
       })
     },
     /**

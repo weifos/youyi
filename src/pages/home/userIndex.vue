@@ -221,12 +221,18 @@ export default {
     api_299() {
       let that = this
       uni.getLocation({
+        //wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
         type: 'wgs84',
         success: function (res) {
           //将小程序定位转换成百度位置的定位
           let tmp = appG.util.map.qqMapTransBMap(res.longitude, res.latitude)
+          //let tmp = appG.util.map.wgs84togcj02(res.longitude, res.latitude)
+
+          tmp.lng = tmp.lng + 0.005137
+          tmp.lat = tmp.lat - 0.003237
           //查询最近门店
           api.post(api.api_299, api.getSign({ LngLat: tmp.lng + '#' + tmp.lat }), function (app, res) {
+            //api.post(api.api_299, api.getSign({ LngLat: tmp[0] + '#' + tmp[1] }), function (app, res) {
             if (res.data.Basis.State != api.state.state_200) {
               appG.dialog.showToast({ title: res.data.Basis.Msg })
             } else {
@@ -325,7 +331,8 @@ export default {
         .user-vip {
           height: 32px;
           padding: 6px 20px;
-          background: rgba(0, 67, 139, 1);
+          background: #648176;
+          //background: rgba(0, 67, 139, 1);
           border-radius: 22px;
           font-size: 22px;
           font-weight: 400;
@@ -405,7 +412,8 @@ export default {
       padding: 24px 40px 16px 40px;
       background: rgba(255, 255, 255, 1);
       border-radius: 20px;
-      border: 2px solid rgba(0, 78, 162, 0.3);
+      border: 2px solid #80a999;
+      //border: 2px solid rgba(0, 78, 162, 0.3)
       .item-info {
         display: flex;
         flex-direction: row;
@@ -418,7 +426,8 @@ export default {
           height: 48px;
           font-size: 30px;
           font-weight: 500;
-          color: rgba(0, 86, 178, 1);
+          color: #80a999;
+          //color: rgba(0, 86, 178, 1);
           line-height: 48px;
         }
       }
@@ -429,7 +438,8 @@ export default {
         justify-content: space-around;
         font-size: 24px;
         font-weight: 400;
-        color: rgba(0, 78, 162, 0.6);
+        color: #80a999;
+        //color: rgba(0, 78, 162, 0.6);
       }
     }
   }

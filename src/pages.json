@@ -32,6 +32,12 @@
             }
         },
         {
+            "path": "pages/mine/order-apply-return",
+            "style": {
+                "navigationBarTitleText": "申请退款"
+            }
+        },
+        {
             "path": "pages/home/cardIndex",
             "style": {
                 "navigationBarTitleText": "大客户领取礼品卡"
@@ -65,7 +71,7 @@
             "path": "pages/home/userIndex",
             "style": {
                 "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#004EA2"
+                "navigationBarBackgroundColor": "#80A999"
             }
         },
         {
@@ -73,7 +79,7 @@
             "style": {
                 "navigationBarTitleText": "我的钱包",
                 "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#004EA2"
+                "navigationBarBackgroundColor": "#80A999"
             }
         },
         {
@@ -99,7 +105,7 @@
             "style": {
                 "navigationBarTitleText": "我的积分",
                 "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#004EA2"
+                "navigationBarBackgroundColor": "#80A999"
             }
         },
         {
@@ -119,7 +125,7 @@
             "style": {
                 "navigationBarTitleText": "积分兑换",
                 "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#004EA2"
+                "navigationBarBackgroundColor": "#80A999"
             }
         },
         {
@@ -127,7 +133,7 @@
             "style": {
                 "navigationBarTitleText": "积分明细",
                 "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#004EA2"
+                "navigationBarBackgroundColor": "#80A999"
             }
         },
         {
@@ -303,6 +309,12 @@
             "style": {
                 "navigationBarTitleText": "活动报名支付"
             }
+        },
+        {
+            "path": "pages/user/m-s-agreement",
+            "style": {
+                "navigationBarTitleText": "会员服务协议"
+            }
         }
     ],
     "navigateToMiniProgramAppIdList": [
@@ -317,7 +329,7 @@
     },
     "tabBar": {
         "color": "#4F4F4F",
-        "selectedColor": "#0056B2",
+        "selectedColor": "#80A999",
         "borderStyle": "black",
         "backgroundColor": "#ffffff",
         "list": [

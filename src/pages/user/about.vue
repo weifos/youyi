@@ -1,16 +1,49 @@
 <template>
   <view class="wrapper-user-about">
     <view class="user-about-content">
-      <view class="user-about-code">
+      <!-- <view class="user-about-code">
         <image />
+      </view>-->
+      <view class="user-about-tips">
+        <jyf-parser :html="entity.context"></jyf-parser>
       </view>
-      <view class="user-about-tips">关注友谊书城公众号</view>
     </view>
   </view>
 </template>
 
 <script>
-export default {}
+
+import api from '@/modules/api'
+import appG from '@/modules/appGlobal'
+
+export default {
+  components: {
+  },
+  data() {
+    return {
+      entity: {
+        context: ''
+      },
+    }
+  },
+  onLoad() {
+    this.api_218()
+  },
+  methods: {
+    api_218() {
+      let that = this
+      api.post(api.api_218, api.getSign({
+        Type: "AboutUs"
+      }), function (ele, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          if (res.data.Result != null) {
+            that.entity = res.data.Result
+          }
+        }
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss">

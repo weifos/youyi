@@ -70,6 +70,30 @@ export default {
     this.api_201()
   },
   methods: {
+    //分享给朋友
+    onShareAppMessage: function (res) {
+      let that = this
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+
+      return {
+        title: "商品分类页",
+        path: appG.route.getCurPath()
+      }
+    },
+    //分享朋友圈
+    onShareTimeline: function (res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: "商品分类页",
+        path: appG.route.getCurPath()
+      }
+    },
     onCateItemClick(index) {
       this.curIndex = index
       let catg = this.cateInfo[index]

@@ -84,6 +84,10 @@ module.exports = {
     api_216: domain + "216",
     //加载促销商品
     api_217: domain + "217",
+    //加载关于书城、会员服务
+    api_218: domain + "218",
+    //根据门店加载品牌
+    api_219: domain + "219",
     //定位最近门店
     api_299: domain + "299",
     //
@@ -210,6 +214,10 @@ module.exports = {
     api_368: domain + "368",
     //订单商品申请退款
     api_369: domain + "369",
+    //加载门店退货地址
+    api_370: domain + "370",
+    //加载门店详情、经纬度
+    api_371: domain + "371",
     //获取签名
     getSign(obj = {}) {
         let { token } = user.methods.getUser()

@@ -1,6 +1,6 @@
 <template>
   <view class="wrapper-vip-card">
-    <view class="vip-card">
+    <view class="vip-card bgimg" :style="bgurl==''?'':'background-image: url('+bgurl+'); background-repeat: no-repeat;background-size: 100%;'">
       <view class="card-profile">
         <image class="card-avatar" :src="avatar" />
         <view class="card-user">
@@ -21,6 +21,10 @@
 <script>
 export default {
   props: {
+    bgurl: {
+      type: String,
+      default: '',
+    }, // 背景图地址
     title: {
       type: String,
       default: '',

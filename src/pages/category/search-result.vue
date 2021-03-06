@@ -1,14 +1,14 @@
 <template>
   <view class="page-category">
     <view class="top-bar">
-      <searchBar ref="searchBar"></searchBar>
+      <searchBar ref="searchBar" @search="search"></searchBar>
     </view>
     <scroll-view scroll-y="true" class="list-bar scrolling" @scroll="scroll">
       <view class="filter-bar hidden" @click="orderByPrice">
         <text @click.stop="orderByDefault">默认</text>
         <filter>价格</filter>
       </view>
-      <view class="list__item" v-for="(item,index) in productList" :key="item" @click="orderByPrice">
+      <view class="list__item" v-for="(item,index) in productList" :key="item" @click="goDetails(item)">
         <view class="item-img">
           <image :src="item.img_url" />
         </view>
@@ -24,6 +24,7 @@
 
 <script>
 
+//@click="orderByPrice"
 import api from '@/modules/api'
 import appG from '@/modules/appGlobal'
 import searchBar from "@/components/yoyi-search-bar"
@@ -88,6 +89,13 @@ export default {
       //下拉到指定位置
       this.api_202(catg)
     },
+    //回车查询
+    search(e) {
+      this.loadComplete = false
+      this.productList = []
+      this.keyWord = e
+      this.api_212()
+    },
     //根据关键词查询
     api_212() {
       let that = this
@@ -119,6 +127,12 @@ export default {
         })
       }
 
+    },
+    //查询详情
+    goDetails(item) {
+      uni.navigateTo({
+        url: '../category/details?id=' + item.id
+      })
     },
     //根据价格设置
     orderByDefault() {

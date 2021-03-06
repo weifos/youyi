@@ -262,28 +262,70 @@ export default {
     }
   },
   onLoad(opt) {
-    this.curPath = appG.route.getCurPath()
+    var that = this
+    that.curPath = appG.route.getCurPath()
     //运营品牌对应的线上门店
-    this.storeBrand = appG.getCurBrandStore()
-    //运营品牌
-    this.curBrand = appG.getCurBrand()
-    //扫码海报
-    if (opt.scene) {
-      //解码一个由escape()函数编码的字符串
-      let scene = unescape(opt.scene)
-      let id = appG.util.getRequestId(scene, "id")
-      let store_id = appG.util.getRequestId(scene, "store_id")
-
-      this.api_203(id, store_id)
+    that.storeBrand = appG.getCurBrandStore(false)
+    if (that.storeBrand == null && opt.store_id) {
+      that.api_219(opt.store_id, () => {
+        //运营品牌
+        //that.curBrand = appG.getCurBrand()
+        that.loadData(opt)
+      })
     } else {
-      this.api_203(opt.id)
-      //如果已登录
-      if (user.methods.isLogin()) {
-        this.api_341(opt.id)
-      }
+      that.loadData(opt)
     }
   },
   methods: {
+    loadData(opt) {
+      let that = this
+      //运营品牌
+      that.curBrand = appG.getCurBrand()
+      //通过连接打开
+      if (opt.store_id && opt.id) {
+        that.api_203(opt.id, opt.store_id)
+      } else {
+        //扫码海报
+        if (opt.scene) {
+          //解码一个由escape()函数编码的字符串
+          let scene = unescape(opt.scene)
+          let id = appG.util.getRequestId(scene, "id")
+          let store_id = appG.util.getRequestId(scene, "store_id")
+
+          that.api_203(id, store_id)
+        } else {
+          that.api_203(opt.id)
+          //如果已登录
+          if (user.methods.isLogin()) {
+            that.api_341(opt.id)
+          }
+        }
+      }
+    },
+    //分享给朋友
+    onShareAppMessage: function (res) {
+      let that = this
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+
+      return {
+        title: that.pResult.product.name,
+        path: appG.route.getCurPath()
+      }
+    },
+    //分享朋友圈
+    onShareTimeline: function (res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: that.pResult.product.name,
+        path: appG.route.getCurPath()
+      }
+    },
     //收藏商品
     onClickCollect() {
       //如果没有收藏
@@ -579,6 +621,23 @@ export default {
         that.$refs.poster.posterShow()
         that.deliveryFlag = false
       }
+    },
+    //加载运营品牌信息
+    api_219(sid, cb) {
+      let that = this
+      api.post(api.api_219, api.getSign({
+        StoreId: sid
+      }), function (ele, res) {
+        if (res.data.Basis.State == api.state.state_200) {
+          //运营品牌写入缓存
+          appG.setBrandStore(res.data.Result)
+          //重新设置当前品牌门店
+          that.storeBrand = appG.getCurBrandStore()
+          if (cb != undefined) {
+            cb()
+          }
+        }
+      })
     },
     /**
      * 提交订单

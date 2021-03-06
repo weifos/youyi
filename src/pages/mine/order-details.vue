@@ -70,8 +70,8 @@
                 </view>
               </view>
             </view>
-            <view class="operation-bar align-right mt20" v-if="item.refund_count < item.count && orderInfo.is_pay">
-              <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">申请售后</button>
+            <view class="operation-bar align-right mt20" v-if="item.refund_count < item.count && order.is_pay">
+              <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" @click="goApplyReturn(item)">申请售后</button>
             </view>
           </view>
         </view>
@@ -87,7 +87,7 @@
         </view>
         <view class="price-item mt20">
           <text>优惠</text>
-          <text>-￥{{order.max_dis_amount.toFixed(2)}}</text>
+          <text>-￥{{order.max_dis_amount}}</text>
         </view>
         <view class="price-item mt20">
           <text>运费</text>
@@ -112,7 +112,7 @@
           <view class="order-item mt20" v-if="order.pay_method== 51">支付方式：现金支付</view>
           <view class="order-item mt20" v-if="order.pay_method== 61">支付方式：刷卡支付</view>
           <view class="order-item mt20" v-if="order.pay_method== 100">支付方式：混合支付</view>
-          <view class="order-item mt20" v-if="orderInfo.formInfo.timePay">下单时间：{{order.created_date}}</view>
+          <view class="order-item mt20">下单时间：{{order.created_date}}</view>
           <!--  <view class="order-item mt20" v-if="orderInfo.formInfo.timeDeliver">发货时间：{{orderInfo.formInfo.timeDeliver}}</view>
           <view class="order-item mt20" v-if="orderInfo.formInfo.express">快递方式：{{orderInfo.formInfo.express}}</view>
           <view class="order-item mt20" v-if="orderInfo.formInfo.expressNo">运单编号：{{orderInfo.formInfo.expressNo}}</view>-->
@@ -120,12 +120,13 @@
       </view>
     </view>
 
-    <!-- <view class="section-btns" @click="openPopup" v-if="!order.is_pay"> -->
+    <!-- <view class="section-btns" @click="openPopupPay" v-if="!order.is_pay"> -->
     <view class="section-btns" @click="buyNow" v-if="!order.is_pay">
       <operationButton :price="(order.actual_amount).toFixed(2)" buttonText="去支付"></operationButton>
     </view>
 
-    <uniPopup ref="popup" type="bottom" class="pop-pay yoyi-pop">
+    <!-- 弹出支付框 -->
+    <uniPopup ref="popupPay" type="bottom" class="pop-pay yoyi-pop">
       <view class="pop-title text-size-md align-center">支付方式</view>
       <view class="pop-content">
         <radio-group class="agreement-checkbox" @change="changePay">
@@ -191,8 +192,13 @@ export default {
     this.api_319(opt.no)
   },
   methods: {
-    openPopup() {
-      this.$refs.popup.open()
+    //弹出售后框
+    openPopupRet() {
+      this.$refs.popupRet.open()
+    },
+    //弹出支付框
+    openPopupPay() {
+      this.$refs.popupPay.open()
     },//更改支付方式
     changePay(e) {
       this.order.pay_method = e.detail.value
@@ -252,7 +258,7 @@ export default {
     /**
      * 申请退款
      */
-    api_369() {
+    api_369(e) {
       var that = this
       uni.showModal({
         title: '提示',
@@ -260,7 +266,10 @@ export default {
         success: function (res) {
           if (res.confirm) {
             //请求接口数据
-            api.post(api.api_369, api.getSign({ SerialNo: that.order.serial_no }), function (app, res) {
+            api.post(api.api_369, api.getSign({
+              returnNum: that.order.serial_no,
+              orderDetails: that.order.serial_no,
+            }), function (app, res) {
               if (res.data.Basis.State != api.state.state_200) {
                 appG.dialog.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
               } else {
@@ -271,6 +280,7 @@ export default {
                     url: '/pages/user/activity',
                   })
                 }, 1000)
+
               }
             })
           }
@@ -351,6 +361,14 @@ export default {
         }
         that.api_364()
       }
+    },
+    /**
+     * 申请售后
+     */
+    goApplyReturn(item) {
+      //设置退货明细
+      user.methods.setRetDetails(item)
+      uni.navigateTo({ url: '/pages/mine/order-apply-return' })
     }
   }
 }
@@ -381,7 +399,6 @@ page {
   .list-item {
     padding: 40px;
     border-bottom: 1px solid $yoyi-bg-color-grey;
-
     &:last-child {
       border: none;
     }

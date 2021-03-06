@@ -1,6 +1,6 @@
 <template>
   <view class="content page-activity">
-    <searchBar type="location" :storeName="aty_store.name" placeholderText="搜索您想要的活动"></searchBar>
+    <searchBar type="location" :storeName="aty_store.name" placeholderText="搜索您想要的活动" @search="search"></searchBar>
     <!-- <view class="banner align-center"> -->
     <view class="align-center">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
@@ -10,19 +10,19 @@
       </swiper>
       <!-- <image v-for="(item, key) in banners" class="img" :key="key" :src="item.imgurl" @click="bannerSelect(item)" /> -->
     </view>
-    <sun-tab :value.sync="index" activeColor="#0056B2" :tabList="tabList" :rangeKey="'title'"></sun-tab>
+    <sun-tab :value.sync="index" activeColor="#80a999" :tabList="tabList" :rangeKey="'title'" @change="change"></sun-tab>
     <view class="tab-con">
       <view class="tab-c" v-if="index == 0">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[0].list" :key="key">
-            <activityItem :isPay="item.is_pay" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
+            <activityItem :isPay="item.is_pay" :src="item.img_url" :storeId="item.store_id" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="1" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
       <view class="tab-c" v-if="index == 1">
         <view class="activity-list">
           <view class="activity-item" v-for="(item, key) in tabList[1].list" :key="key">
-            <activityItem :isPay="item.is_pay" :src="item.img_url" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @click="goDetails(item)" @buttonClick="goDetails(item)"></activityItem>
+            <activityItem :isPay="item.is_pay" :src="item.img_url" :storeId="item.store_id" :title="item.name" :guest="item.teacher_name" :time="item.time" :address="item.store_name" :price="item.sale_price" :status="4" @buttonClick="goDetails(item)"></activityItem>
           </view>
         </view>
       </view>
@@ -43,11 +43,11 @@ export default {
       title: '活动',
       indicatorDots: true,
       autoplay: true,
+      loadBanner: true,
       interval: 2001,
       duration: 500,
       aty_store: { id: 0 },
       index: 0,
-      tabCur: 0,
       pageSize: 6,
       banners: [],
       storeBrand: null,
@@ -70,8 +70,6 @@ export default {
   onLoad() {
     //获取当前品牌门店
     this.storeBrand = appG.getCurBrandStore()
-
-    this.api_207()
     //是否定位过门店
     this.aty_store = user.methods.getAtyStore()
     if (this.aty_store == null) {
@@ -79,6 +77,8 @@ export default {
     } else {
       this.api_205()
     }
+
+    this.api_207('')
   },
   components: {
     searchBar,
@@ -86,6 +86,30 @@ export default {
     activityItem,
   },
   methods: {
+    //分享给朋友
+    onShareAppMessage: function (res) {
+      let that = this
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+
+      return {
+        title: "活动列表页",
+        path: appG.route.getCurPath()
+      }
+    },
+    //分享朋友圈
+    onShareTimeline: function (res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: "活动列表页",
+        path: appG.route.getCurPath()
+      }
+    },
     //查看详情
     goDetails(item) {
       uni.navigateTo({
@@ -99,13 +123,37 @@ export default {
         url: "../activity/sign-up?id=" + item.id
       })
     },
+    //去报名
+    search(e) {
+      var that = this
+      //当前选中索引
+      let index = that.index
+      //当前选中项
+      let curItem = that.tabList[index]
+      //当前页
+      that.tabList[index].pageIndex = 0
+      //是否加载中
+      curItem.loading = false
+      //是否加载完成
+      curItem.loadComplete = false
+      //清空数据
+      curItem.list = []
+
+      //查询数据
+      if (index == 0) {
+        that.api_205(e)
+      } else {
+        that.api_207(e)
+      }
+
+    },
     /**
      * 加载课堂页数据
      */
-    api_205: function () {
+    api_205: function (keywory) {
       var that = this
       //当前选中索引
-      let index = this.tabCur
+      let index = this.index
       //当前选中项
       let curItem = this.tabList[index]
 
@@ -118,11 +166,14 @@ export default {
         api.post(api.api_205, api.getSign({
           Type: 5,
           Size: that.pageSize,
+          LoadBanner: that.loadBanner,
           BrandStoreId: that.storeBrand.id,
           StoreId: that.aty_store.id,
-          Index: that.tabList[0].pageIndex
+          keyword: keywory,
+          Index: that.tabList[index].pageIndex
         }), function (app, res) {
-
+          //标记已加载
+          that.loadBanner = false
           if (res.data.Basis.State != api.state.state_200) {
             wx.showToast({
               title: res.data.Basis.Msg,
@@ -132,7 +183,7 @@ export default {
           } else {
 
             //banner数据
-            if (that.tabCur == 0 && curItem.pageIndex == 0) {
+            if (that.banners.length == 0) {
               res.data.Result.banners.map(function (obj, index, arr) {
                 obj.type = "image"
                 obj.url = obj.imgurl
@@ -141,7 +192,9 @@ export default {
               for (let item of res.data.Result.banners) {
                 that.banners.push(item)
               }
-              that.banners = that.banners
+
+              //设置banner图
+              that.banners = res.data.Result.banners
             }
 
             curItem.loading = false
@@ -154,8 +207,6 @@ export default {
               o.time = '开始日期' + s_time
               curItem.list.push(o)
             })
-
-            that.banners = res.data.Result.banners
 
             that.tabList[index] = curItem
             //是否全部加载完毕
@@ -172,7 +223,7 @@ export default {
     /**
      * 加载课程历史数据
      */
-    api_207: function () {
+    api_207: function (keywory) {
       var that = this
       //当前选中索引
       let index = this.index
@@ -181,8 +232,10 @@ export default {
       //如果没加载过
       if (!curItem.loadComplete) {
         api.post(api.api_207, api.getSign({
-          Type: 5,
-          Month: index + 1
+          Size: that.pageSize,
+          Index: that.tabList[index].pageIndex,
+          StoreId: that.aty_store.id,
+          Keyword: keywory
         }), function (app, res) {
           if (res.data.Basis.State != api.state.state_200) {
             uni.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
@@ -250,12 +303,8 @@ export default {
       }
       uni.navigateTo({ url: url })
     },
-    /**
-     * 通过子组件触发查询事件
-     */
-    search() {
-      debugger
-      console.log('')
+    change(e) {
+      console.log(this.index)
     }
   }
 }

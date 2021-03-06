@@ -1,5 +1,8 @@
 <template>
+  <!-- 小程序引导关注 -->
   <view class="content page-index">
+    <official-account></official-account>
+
     <selectBrand type="location" :brandName="''" ref="sBrand"></selectBrand>
     <view class="section-banner">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
@@ -18,9 +21,6 @@
         </view>
       </view>
     </view>
-
-    <!-- 小程序引导关注 -->
-    <official-account></official-account>
   </view>
 </template>
 
@@ -59,6 +59,30 @@ export default {
     }
   },
   methods: {
+    //分享给朋友
+    onShareAppMessage: function (res) {
+      let that = this
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+
+      return {
+        title: "首页",
+        path: appG.route.getCurPath()
+      }
+    },
+    //分享朋友圈
+    onShareTimeline: function (res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: "首页",
+        path: appG.route.getCurPath()
+      }
+    },
     api_200() {
       let that = this
       api.post(api.api_200, api.getSign({
@@ -87,7 +111,11 @@ export default {
         //课程活动详情
       } else if (item.content_type == 10) {
         url = '../activity/details?id=' + item.content_value
+        //会员升级页
+      } else if (item.content_type == 15) {
+        url = '../user/open?id=' + item.content_value
       }
+
       uni.navigateTo({ url: url })
     }
   }

@@ -83,6 +83,18 @@ export default {
                 return JSON.parse(entity)
             }
             return null
+        },//设置退货明细
+        setRetDetails(result) {
+            this.buyNowOrder = result
+            //同步设置提交立即购买
+            uni.setStorageSync('retDetails', JSON.stringify(result))
+        },//获取退货明细
+        getRetDetails(result) {
+            let entity = uni.getStorageSync('retDetails')
+            if (entity) {
+                return JSON.parse(entity)
+            }
+            return null
         },
         //设置门店列表在本地缓存
         setStores(result) {
