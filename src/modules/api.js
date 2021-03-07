@@ -9,10 +9,10 @@ import md5 from 'blueimp-md5'
 let domain = "https://api66.yoyi100.cn:21143/"
 let res_domain = "https://res67.yoyi100.cn:21144/"
 //测试环境
-// if (process.env.NODE_ENV !== 'production') {
-//     domain = "http://yy.api.youyi.com/"
-//     res_domain = "http://yy.res.youyi.com/"
-// }
+if (process.env.NODE_ENV !== 'production') {
+    domain = "http://yy.api.youyi.com/"
+    res_domain = "http://yy.res.youyi.com/"
+}
 
 /// <summary>
 /// 全局配置类

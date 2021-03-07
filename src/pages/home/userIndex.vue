@@ -232,7 +232,6 @@ export default {
           tmp.lat = tmp.lat - 0.003237
           //查询最近门店
           api.post(api.api_299, api.getSign({ LngLat: tmp.lng + '#' + tmp.lat }), function (app, res) {
-            //api.post(api.api_299, api.getSign({ LngLat: tmp[0] + '#' + tmp[1] }), function (app, res) {
             if (res.data.Basis.State != api.state.state_200) {
               appG.dialog.showToast({ title: res.data.Basis.Msg })
             } else {

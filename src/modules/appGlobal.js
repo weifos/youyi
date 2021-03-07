@@ -543,15 +543,13 @@ export default {
                     lat: lats
                 }
             },
-            //地图定位精确方法
-
             /**
-           * WGS84转GCj02
-           * @param lng
-           * @param lat
-           * @returns {*[]}
-           */
-
+             * 地图定位精确方法
+             * WGS84转GCj02
+             * @param lng
+             * @param lat
+             * @returns {*[]}
+             */
             wgs84togcj02: function (lng, lat) {
                 var that = this
 
@@ -606,7 +604,6 @@ export default {
                 ret += (160.0 * Math.sin(lat / 12.0 * PI) + 320 * Math.sin(lat * PI / 30.0)) * 2.0 / 3.0;
                 return ret
             },
-
             transformlng: function (lng, lat) {
                 var x_PI = 3.14159265358979324 * 3000.0 / 180.0;
                 var PI = 3.1415926535897932384626;
@@ -618,7 +615,6 @@ export default {
                 ret += (150.0 * Math.sin(lng / 12.0 * PI) + 300.0 * Math.sin(lng / 30.0 * PI)) * 2.0 / 3.0;
                 return ret
             },
-
             /**
              * 判断是否在国内，不在国内则不做偏移
              * @param lng
