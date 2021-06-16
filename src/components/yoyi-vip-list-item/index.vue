@@ -22,7 +22,8 @@ export default {
     }, // 价格
     unit: {
       type: String,
-      default: '元/3年',
+      //default: '元/3年',
+      default: '元',
     }, // 单位
     selected: {
       type: [Boolean, String],

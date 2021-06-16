@@ -107,7 +107,8 @@ export default {
   components: { uniList, uniListItem },
   data() {
     return {
-      userType: 1,//1:非会员 2:普通会员 3:高级会员
+      //1:非会员 2:普通会员 3:高级会员
+      userType: 1,
       isLogin: true,
       mobile: '',
       aty_store: { id: 0 },
@@ -125,7 +126,7 @@ export default {
   onLoad() {
     this.aty_store = user.methods.getAtyStore()
     if (this.aty_store == null) {
-      this.api_299()
+      this.getSettingMess()
     }
   },
   onShow() {
@@ -215,6 +216,7 @@ export default {
           }
         })
     },
+
     /**
      * 定位最近的门店
      */
@@ -223,13 +225,12 @@ export default {
       uni.getLocation({
         //wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
         type: 'wgs84',
-        success: function (res) {
+        success: res => {
           //将小程序定位转换成百度位置的定位
-          let tmp = appG.util.map.qqMapTransBMap(res.longitude, res.latitude)
           //let tmp = appG.util.map.wgs84togcj02(res.longitude, res.latitude)
+          let tmp = appG.util.map.qqMapTransBMap(res.longitude, res.latitude)
 
-          tmp.lng = tmp.lng + 0.005137
-          tmp.lat = tmp.lat - 0.003237
+          tmp.lng = tmp.lng + 0.005137, tmp.lat = tmp.lat - 0.003237
           //查询最近门店
           api.post(api.api_299, api.getSign({ LngLat: tmp.lng + '#' + tmp.lat }), function (app, res) {
             if (res.data.Basis.State != api.state.state_200) {
@@ -240,17 +241,25 @@ export default {
               appG.dialog.showToast({ title: '检查到您当前位置已推荐最近门店' })
             }
           })
+        },
+        fail: e => {
+          console.log("获取授权信息授权失败")
         }
       })
     },
+
     /**
      * 加载赠送的数量
      */
     api_358: function () {
       let that = this
+      let userInfo = user.methods.getUser()
       api.post(api.api_358, api.getSign(),
         function (app, res) {
           if (res.data.Basis.State == api.state.state_200) {
+            userInfo.card_img = res.data.Result.member_card_url.split(',')[0]
+            userInfo.rights_img = res.data.Result.member_card_url.split(',')[1]
+            that.bindUser(userInfo)
             if (res.data.Result.count != undefined) {
               that.acceptCount = res.data.Result.count
             }
@@ -259,6 +268,40 @@ export default {
           }
         })
     },
+
+    /**
+     * 执行查看已授权信息
+     */
+    getSettingMess() {
+      let that = this
+      // 获取已授权类别
+      uni.getSetting({
+        success(res) {
+          //userLocation位置功能已授权
+          if (res.authSetting['scope.userLocation']) {
+            // 如果已授权,直接获取对应参数
+            that.api_299()
+          } else if (!res.authSetting['scope.userLocation']) {
+            // 说明此时要获取的位置功能尚未授权, 则设置进入页面时主动弹出，直接授权
+            uni.authorize({
+              scope: 'scope.userLocation',
+              success(res) {
+                // 成功后获取对应的位置参数
+                that.api_299()
+              },
+              fail: e => {
+                //debugger
+                console.log("位置授权失败")
+              }
+            })
+          }
+        },
+        fail() {
+          console.log("获取授权信息授权失败")
+        }
+      })
+    },
+
     /**
      * 路由跳转
      */

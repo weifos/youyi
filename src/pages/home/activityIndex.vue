@@ -5,7 +5,7 @@
     <view class="align-center">
       <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
         <swiper-item v-for="item in banners" :key="item">
-          <image :src="item.imgurl" />
+          <image :src="item.imgurl" style="width:320px;height:150px;" />
         </swiper-item>
       </swiper>
       <!-- <image v-for="(item, key) in banners" class="img" :key="key" :src="item.imgurl" @click="bannerSelect(item)" /> -->
@@ -156,11 +156,6 @@ export default {
       let index = this.index
       //当前选中项
       let curItem = this.tabList[index]
-
-      //是否加载中
-      let loading = curItem.loading
-      //是否加载完成
-      let loadComplete = curItem.loadComplete
 
       if (!curItem.loading && !curItem.loadComplete) {
         api.post(api.api_205, api.getSign({

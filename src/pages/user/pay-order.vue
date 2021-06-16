@@ -31,7 +31,7 @@
     <view class="section-order-price-bar bg-white">
       <view class="price-item text-size-basic">
         <text>商品原价</text>
-        <text>¥ {{order.total_amount-order.freight}}</text>
+        <text>¥ {{(order.total_amount-order.freight).toFixed(2)}}</text>
       </view>
       <view class="price-item text-size-basic">
         <text>优惠券</text>

@@ -1,9 +1,11 @@
 <template>
   <view class="wrapper-user-card">
-    <vipCard :bgurl="m_bgurl" :title="userInfo.card_name +' '+(userInfo.mbr_dis_count == 10 ? '无折扣':userInfo.mbr_dis_count+'折') " :avatar="userInfo.headimgurl" :phone="userInfo.login_name" :number="'NO.'+userInfo.card_no" :startDate="userInfo.mbr_s_date" :endDate="userInfo.mbr_e_date"></vipCard>
+    <!-- <vipCard :bgurl="m_bgurl" :title="userInfo.card_name +' '+(userInfo.mbr_dis_count == 10 ? '无折扣':userInfo.mbr_dis_count+'折') " :avatar="userInfo.headimgurl" :phone="userInfo.login_name" :number="'NO.'+userInfo.card_no" :startDate="userInfo.mbr_s_date" :endDate="userInfo.mbr_e_date"></vipCard> -->
+    <vipCard :bgurl="m_bgurl" :title="userInfo.card_name" :avatar="userInfo.headimgurl" :phone="userInfo.login_name" :number="'NO.'+userInfo.card_no" :startDate="userInfo.mbr_s_date" :endDate="userInfo.mbr_e_date"></vipCard>
     <!-- <yoyiTitle title="升级会员享受以下会员福利" more="权益详情" url="/pages/user/rights"></yoyiTitle> -->
     <yoyiTitle title="升级会员享受以下会员福利"></yoyiTitle>
-    <view class="wrapper-card-rights" :style="mr_bgurl==''?'':'background-image: url('+mr_bgurl+');background-repeat: no-repeat;background-size: 100%;height: 260px;'"></view>
+    <!-- <view class="wrapper-card-rights" :style="mr_bgurl==''?'':'background-image: url('+mr_bgurl+');background-repeat: no-repeat;background-size: 100%;'"></view> -->
+    <image bindload="loadMbrBg" :src="mr_bgurl" style="width:100%;height:100%;margin-bottom:140rpx;" mode="widthFix" />
     <template v-if="userType == 21">
       <rightsList :type="2"></rightsList>
     </template>
@@ -45,14 +47,33 @@ export default {
   },
   onLoad(options) {
     var that = this
+
+    let is_login = user.methods.isLogin()
+    //如果未登录
+    if (!is_login) {
+      let returl = appG.route.getCurPath()
+      uni.setStorage({ key: 'returl', data: returl, success: function () { } })
+      uni.switchTab({ url: "../home/userIndex" })
+    }
+
     that.userInfo = user.methods.getUser()
     that.m_bgurl = that.userInfo.card_img
     that.mr_bgurl = that.userInfo.rights_img
-
-    if (that.userInfo.card_no == '') {
-      that.userInfo.card_no = '普通会员'
-      that.api_362()
+    if (that.userInfo.card_name == '覔友卡' || that.userInfo.card_name == '注册用户') {
+      that.userInfo.mbr_e_date = '永久'
     }
+
+    // if (that.userInfo.card_no == '覔友卡') {
+    //   that.userInfo.card_no = '永久'
+    //   that.api_362()
+    // }
+  },
+  loadMbrBg(e) {
+    // 获取图片实际宽度
+    var tempWidth = e.detail.width
+    // 获取图片实际高度
+    var tempHeight = e.detail.height
+    //console.log(tempHeight)
   },
   methods: {
     jump() {

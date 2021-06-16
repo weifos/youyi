@@ -37,7 +37,7 @@
       </view>-->
       <view class="price-item text-size-basic">
         <text>商品原价</text>
-        <text>¥ {{productAmount}}</text>
+        <text>¥ {{productAmount.toFixed(2)}}</text>
       </view>
       <view class="price-item text-size-basic">
         <text>优惠券</text>
