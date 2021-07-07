@@ -21,7 +21,7 @@
         <view class="text-size-md bold">商品已发货，请您确认收货</view>
         <view class="text-size-sm mt20">物流单号：{{delivery.tracking_no}}</view>
         <view class="btns align-right mt20">
-          <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20" @click="goLogistics">查看物流</button>
+          <button @click="goLogistics" class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20">查看物流</button>
           <!-- <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">开发票</button> -->
           <!-- <button class="btn btn-size-sm btn-line-yellow btn-round-sm btn-bg-main text-white ml20">确认收货</button> -->
         </view>
@@ -54,7 +54,7 @@
       </view>
       <view class="section-proudct bg-white mt20">
         <view :class="['order-list',orderInfo.type == 3 ? 'order-list-2' : '']">
-          <view class="list-item hidden" v-for="item in order.details" :key="item">
+          <view :key="item" class="list-item hidden" v-for="item in order.details">
             <view class="hidden">
               <view class="img-bar image-size-sm fl">
                 <image :src="item.img_url" />
@@ -71,7 +71,7 @@
               </view>
             </view>
             <view class="operation-bar align-right mt20" v-if="item.refund_count < item.count && order.is_pay">
-              <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" @click="goApplyReturn(item)">申请售后</button>
+              <button @click="goApplyReturn(item)" class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20">申请售后</button>
             </view>
           </view>
         </view>
@@ -121,15 +121,15 @@
     </view>
 
     <!-- <view class="section-btns" @click="openPopupPay" v-if="!order.is_pay"> -->
-    <view class="section-btns" @click="buyNow" v-if="!order.is_pay">
+    <view @click="buyNow" class="section-btns" v-if="!order.is_pay">
       <operationButton :price="(order.actual_amount).toFixed(2)" buttonText="去支付"></operationButton>
     </view>
 
     <!-- 弹出支付框 -->
-    <uniPopup ref="popupPay" type="bottom" class="pop-pay yoyi-pop">
+    <uniPopup class="pop-pay yoyi-pop" ref="popupPay" type="bottom">
       <view class="pop-title text-size-md align-center">支付方式</view>
       <view class="pop-content">
-        <radio-group class="agreement-checkbox" @change="changePay">
+        <radio-group @change="changePay" class="agreement-checkbox">
           <view class="pay-item mt20">
             <view class="text-size-basic">
               <radio :checked="order.pay_method == 31" color="#FFB825" value="31" />
@@ -137,8 +137,8 @@
             </view>
             <view class="text-gray text-size-sm text-desc">钱包余额 ¥{{userInfo.balance}}，尚需 ¥{{(order.actual_amount).toFixed(2)}}</view>
             <view class="btns-bar mt20">
-              <button class="btn btn-round btn-size-full text-size-md btn-bg-main text-white" @click="api_331((order.actual_amount - userInfo.balance).toFixed(2))" v-if="order.actual_amount > userInfo.balance">立即充值 ¥{{(order.actual_amount - userInfo.balance).toFixed(2)}}</button>
-              <button class="btn btn-round btn-size-full btn-line-main text-size-md bg-white text-sub mt20" @click="goRecharge">其他充值优惠</button>
+              <button @click="api_331((order.actual_amount - userInfo.balance).toFixed(2))" class="btn btn-round btn-size-full text-size-md btn-bg-main text-white" v-if="order.actual_amount > userInfo.balance">立即充值 ¥{{(order.actual_amount - userInfo.balance).toFixed(2)}}</button>
+              <button @click="goRecharge" class="btn btn-round btn-size-full btn-line-main text-size-md bg-white text-sub mt20">其他充值优惠</button>
             </view>
           </view>
           <view class="pay-item mt20">
@@ -149,7 +149,7 @@
           </view>
         </radio-group>
       </view>
-      <button class="btn btn-bg-main text-white btn-size-full text-size-lg btn-sure" style="margin-bottom:0px" @click="buyNow">确定购买</button>
+      <button @click="buyNow" class="btn btn-bg-main text-white btn-size-full text-size-lg btn-sure" style="margin-bottom:0px">确定购买</button>
     </uniPopup>
   </view>
 </template>
@@ -368,7 +368,7 @@ export default {
     goApplyReturn(item) {
       //设置退货明细
       user.methods.setRetDetails(item)
-      uni.navigateTo({ url: '/pages/mine/order-apply-return' })
+      uni.navigateTo({ url: 'order-apply-return' })
     }
   }
 }

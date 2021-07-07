@@ -1,8 +1,8 @@
 <template>
   <view class="content page-category-details">
     <view class="product-banner-bar">
-      <swiper class="swiper" indicator-dots="true" autoplay="false">
-        <swiper-item v-for="item in pResult.imgs" :key="item">
+      <swiper autoplay="false" class="swiper" indicator-dots="true">
+        <swiper-item :key="item" v-for="item in pResult.imgs">
           <image :src="item" />
         </swiper-item>
       </swiper>
@@ -18,7 +18,7 @@
         {{pResult.product.field3==null?'':pResult.product.field3}}-->
         <view @tap="api_214" style="display: inline-block;color:#004EA2;float:left;">分享海报</view>
         <!-- <button open-type="contact" session-from style="display: inline-block;margin-right:0px;color:#004EA2;">联系客服</button> -->
-        <button open-type="contact" :send-message-title="pResult.product.no +' '+ pResult.product.name" :send-message-path="curPath" :send-message-img="posterObj.posterImgUrl" show-message-card="true" style="display: inline-block;margin-right:0px;color:#004EA2;">联系客服</button>
+        <button :send-message-img="posterObj.posterImgUrl" :send-message-path="curPath" :send-message-title="pResult.product.no +' '+ pResult.product.name" open-type="contact" show-message-card="true" style="display: inline-block;margin-right:0px;color:#004EA2;">联系客服</button>
         <!-- <view style="display: inline-block;margin-right:0px;color:#004EA2;">联系客服</view> -->
       </view>
     </view>
@@ -45,7 +45,7 @@
     <!-- product-side-bar s -->
     <view class="product-side-bar">
       <view class="icon-bar">
-        <view class="item btn-home" @click="switchTab('/pages/home/index')">
+        <view @click="switchTab('/pages/home/index')" class="item btn-home">
           <view class="icon-home"></view>
           <view class="text text-size-sm">首页</view>
         </view>
@@ -53,19 +53,19 @@
           <view class="icon-collect"></view>
           <view class="text text-size-sm">收藏</view>
         </view>
-        <view class="item btn-cart" @click="navigateTo('/pages/user/shopping-cart')">
+        <view @click="navigateTo('/pages/user/shopping-cart')" class="item btn-cart">
           <view class="icon-cart"></view>
           <view class="text text-size-sm">购物车</view>
         </view>
       </view>
       <view class="btns-bar">
-        <button class="btn bg-sub text-white text-size-basic" @click="popupOpen(false)">立即购买</button>
-        <button class="btn bg-main text-white text-size-basic" @click="popupOpen(true)">加入购物车</button>
+        <button @click="popupOpen(false)" class="btn bg-sub text-white text-size-basic">立即购买</button>
+        <button @click="popupOpen(true)" class="btn bg-main text-white text-size-basic">加入购物车</button>
       </view>
     </view>
     <!-- product-side-bar e -->
     <!-- popup s -->
-    <uniPopup ref="popup" type="bottom" class="pop-product yoyi-pop">
+    <uniPopup class="pop-product yoyi-pop" ref="popup" type="bottom">
       <view class="pop-content">
         <view class="hidden border-bottom">
           <view class="con-img">
@@ -78,22 +78,22 @@
             <view class="con-select-info mt10">{{pResult.product.name}}</view>
           </view>
         </view>
-        <view class="parameter-list mt20 border-bottom" v-for="(item,index) in pResult.specNames" :key="index">
+        <view :key="index" class="parameter-list mt20 border-bottom" v-for="(item,index) in pResult.specNames">
           <view class="parameter-title">{{item.name}}</view>
-          <view :class="['parameter-item',citem.is_enable?'':'disable',citem.checked? 'active' : '']" v-for="(citem,index) in pResult.specValues" v-if="citem.specname_id == item.id" :key="citem" @click="check(citem)">{{pResult.specCustoms,item.id,citem.id,citem.val | getCustomName}}</view>
+          <view :class="['parameter-item',citem.is_enable?'':'disable',citem.checked? 'active' : '']" :key="citem" @click="check(citem)" v-for="(citem,index) in pResult.specValues" v-if="citem.specname_id == item.id">{{pResult.specCustoms,item.id,citem.id,citem.val | getCustomName}}</view>
         </view>
         <view class="con-no mt40">
           <text>数量</text>
           <view>
-            <uni-number-box class="number-box-skin-1" :value="buyCount" :min="1" @change="updateNum"></uni-number-box>
+            <uni-number-box :min="1" :value="buyCount" @change="updateNum" class="number-box-skin-1"></uni-number-box>
           </view>
         </view>
       </view>
       <view class="pop-btns">
-        <button v-if="isAddToCart" class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="submit">加入购物车</button>
-        <button v-else class="btn btn-bg-main text-white btn-size-full text-size-lg" @click="submit">确定购买</button>
+        <button @click="submit" class="btn btn-bg-main text-white btn-size-full text-size-lg" v-if="isAddToCart">加入购物车</button>
+        <button @click="submit" class="btn btn-bg-main text-white btn-size-full text-size-lg" v-else>确定购买</button>
       </view>
-      <view class="btn-close-pop" @click="closePopup">
+      <view @click="closePopup" class="btn-close-pop">
         <view class="icon-close"></view>
       </view>
     </uniPopup>
@@ -101,8 +101,8 @@
     <view class="content">
       <view class="share-pro">
         <view class="share-pro-mask" v-if="deliveryFlag"></view>
-        <view class="share-pro-dialog" :class="deliveryFlag?'open':'close'">
-          <view class="close-btn" @tap="closeShareEvn">
+        <view :class="deliveryFlag?'open':'close'" class="share-pro-dialog">
+          <view @tap="closeShareEvn" class="close-btn">
             <span class="font_family">&#xe81d;</span>
           </view>
           <!-- <view class="share-pro-title">分享</view>
@@ -120,7 +120,7 @@
           </view>-->
         </view>
       </view>
-      <poster ref="poster" @cancel="canvasCancel" :posterImgUrl="pResult.product.img_url" :simpleFlag="simpleFlag" :posterBgFlag="posterBgFlag" :canvasAttr.sync="posterObj" />
+      <poster :canvasAttr.sync="posterObj" :posterBgFlag="posterBgFlag" :posterImgUrl="pResult.product.img_url" :simpleFlag="simpleFlag" @cancel="canvasCancel" ref="poster" />
     </view>
   </view>
 </template>
@@ -135,7 +135,7 @@ import operationButton from '@/components/yoyi-operation-button/'
 import parser from "@/components/jyf-parser/jyf-parser"
 
 export default {
-  data() {
+  data () {
     return {
       imgUrl: '',
       collect_id: 0,
@@ -261,7 +261,7 @@ export default {
       this.isShow = newData
     }
   },
-  onLoad(opt) {
+  onLoad (opt) {
     var that = this
     that.curPath = appG.route.getCurPath()
     //运营品牌对应的线上门店
@@ -277,7 +277,7 @@ export default {
     }
   },
   methods: {
-    loadData(opt) {
+    loadData (opt) {
       let that = this
       //运营品牌
       that.curBrand = appG.getCurBrand()
@@ -327,7 +327,7 @@ export default {
       }
     },
     //收藏商品
-    onClickCollect() {
+    onClickCollect () {
       //如果没有收藏
       if (this.collected) {
         //取消收藏
@@ -338,7 +338,7 @@ export default {
       }
     },
     //购买或加入购物车
-    popupOpen(isAddToCart) {
+    popupOpen (isAddToCart) {
       this.isAddToCart = isAddToCart
       if (this.pResult.skus.length > 0) {
         this.$refs.popup.open()
@@ -346,15 +346,15 @@ export default {
         appG.dialog.showToast({ title: '库存不足', duration: 2000, icon: 'none' })
       }
     },
-    closePopup() {
+    closePopup () {
       this.$refs.popup.close()
     },
     //数量更新
-    updateNum(value) {
+    updateNum (value) {
       this.buyCount = value
     },
     //规格选中事件
-    check(item) {
+    check (item) {
       let that = this
       //是否可用点击
       if (!item.is_enable) return
@@ -391,7 +391,7 @@ export default {
       }
     },
     //绑定每行sku状态
-    bindSKU(spec_name_id, specVal) {
+    bindSKU (spec_name_id, specVal) {
       //SKU集合
       let skus = this.pResult.skus
       let checkedVal = this.pResult.specValues.filter(val => val.checked).map(item => item.specname_id + "_" + item.id).join(',')
@@ -436,7 +436,7 @@ export default {
       })
     },
     //获取选中完成的sku
-    getSelectSkuVal() {
+    getSelectSkuVal () {
       let that = this
       let items = that.pResult.specValues.filter(val => val.checked == true)
       if (items.length < that.pResult.specNames.length) {
@@ -466,7 +466,7 @@ export default {
       return data
     },
     //提交
-    submit() {
+    submit () {
       let that = this
       //初始化是否能够提交
       if (!this.isCanSubmit) return
@@ -499,39 +499,39 @@ export default {
       }
     },
     //关闭当前页
-    close() {
+    close () {
       this.selectSku.specset = ''
       this.selectSku.sale_price = 0
       this.selectSku.product_id = 0
       this.$emit('cancelSKU')
     },
     //加
-    add() {
+    add () {
       if (this.buyCount >= 99) return
       this.buyCount = this.buyCount + 1
       this.checkUpdate()
     },
     //减
-    sub() {
+    sub () {
       if (this.buyCount <= 1) return
       this.buyCount = this.buyCount - 1
       this.checkUpdate()
     },
     //勾选改变更新小计
-    checkUpdate() {
+    checkUpdate () {
       this.unitPrice = this.selectSku.sale_price
       //设置总计
       this.totalPrice = this.selectSku.sale_price * this.buyCount
     },
     //处理输入方式
-    handleInput() {
+    handleInput () {
       let value = this.validateNumber(e.detail.value)
       val.replace(/\D/g, '')
     },
     /**
      * 加载商品详情
      */
-    api_203(id, store_id) {
+    api_203 (id, store_id) {
       let that = this
       let sid = that.storeBrand.id
       if (store_id != undefined) {
@@ -623,7 +623,7 @@ export default {
       }
     },
     //加载运营品牌信息
-    api_219(sid, cb) {
+    api_219 (sid, cb) {
       let that = this
       api.post(api.api_219, api.getSign({
         StoreId: sid
@@ -659,7 +659,7 @@ export default {
     /**
      * 加入购物车
      */
-    api_306(e) {
+    api_306 (e) {
       let that = this
       api.post(api.api_306, api.getSign({
         StoreId: that.storeBrand.id,
@@ -678,7 +678,7 @@ export default {
     /**
      * 是否收藏
      */
-    api_341(id) {
+    api_341 (id) {
       let that = this
       api.post(api.api_341, api.getSign({ StoreId: 0, BizID: id, BizType: 0 }),
         function (vue, res) {
@@ -694,7 +694,7 @@ export default {
     /**
      * 立即收藏
      */
-    api_342() {
+    api_342 () {
       let that = this
       api.post(api.api_342, api.getSign({ StoreId: 0, BizID: that.pResult.product.id, BizType: 0 }),
         function (vue, res) {
@@ -711,7 +711,7 @@ export default {
     /**
      * 取消收藏
      */
-    api_343() {
+    api_343 () {
       let that = this
       api.post(api.api_343, api.getSign({ Ids: that.collect_id }),
         function (vue, res) {
@@ -727,7 +727,7 @@ export default {
     /**
      * 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
      */
-    switchTab(url) {
+    switchTab (url) {
       //重新跳转到用户中心 
       uni.switchTab({
         url: url
@@ -736,7 +736,7 @@ export default {
     /**
      * 保留当前页面，跳转到应用内的某个页面
      */
-    navigateTo(url) {
+    navigateTo (url) {
       uni.navigateTo({
         url
       })
@@ -749,7 +749,7 @@ export default {
     * @return {type} 
     * @author: hch
     */
-    handleShowPoster() {
+    handleShowPoster () {
       let that = this
       if (that.pResult.product.field6 == null) {
         that.api_214()
@@ -765,7 +765,7 @@ export default {
      * @return {type} 
      * @author: hch
      */
-    shareEvn(type) {
+    shareEvn (type) {
       if (type === 'simple') {
         this.simpleFlag = true
         this.posterObj = this.posterSimpleData
@@ -781,7 +781,7 @@ export default {
      * @return {type} 
      * @author: hch
      */
-    closeShareEvn() {
+    closeShareEvn () {
       this.deliveryFlag = false
     },
     /**
@@ -790,7 +790,7 @@ export default {
        * @return {type} 
        * @author: hch
        */
-    canvasCancel(val) {
+    canvasCancel (val) {
       //this.canvasFlag = val
     }
   }
