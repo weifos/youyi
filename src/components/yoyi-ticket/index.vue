@@ -86,7 +86,7 @@ export default {
                 //that.$set(that.ticketInfo, "refund_status", 2)
                 setTimeout(() => {
                   uni.navigateTo({
-                    url: '/pages/user/activity',
+                    url: '/userPackages/activity',
                   })
                 }, 1000)
               }

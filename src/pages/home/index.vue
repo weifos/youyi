@@ -1,12 +1,11 @@
 <template>
-  <!-- 小程序引导关注 -->
   <view class="content page-index">
+    <!-- 小程序引导关注 -->
     <official-account></official-account>
-
-    <selectBrand type="location" :brandName="''" ref="sBrand"></selectBrand>
+    <selectBrand :brandName="''" ref="sBrand" type="location"></selectBrand>
     <view class="section-banner">
-      <swiper class="swiper" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration">
-        <swiper-item v-for="item in banners" :key="item" @click="bannerSelect(item)">
+      <swiper :autoplay="autoplay" :duration="duration" :indicator-dots="indicatorDots" :interval="interval" class="swiper">
+        <swiper-item :key="item" @click="bannerSelect(item)" v-for="item in banners">
           <image :src="item.imgurl" />
         </swiper-item>
       </swiper>
@@ -15,7 +14,7 @@
       <view class="section-title mt10">热门精选</view>
       <view class="section-content mt10">
         <view class="list">
-          <view class="list-item" v-for="item in banners0" :key="item">
+          <view :key="item" class="list-item" v-for="item in banners0">
             <image :src="item.imgurl" @click="bannerSelect(item)" />
           </view>
         </view>
@@ -34,7 +33,7 @@ export default {
   components: {
     selectBrand,
   },
-  data() {
+  data () {
     return {
       title: 'hello world!',
       indicatorDots: true,
@@ -45,9 +44,8 @@ export default {
       banners0: []
     }
   },
-  onLoad() {
+  onLoad () {
     let that = this
-    //that.api_200()
     that.storeBrand = appG.getCurBrandStore()
     if (that.storeBrand == null) {
       that.$refs.sBrand.api_215(() => {
@@ -83,7 +81,7 @@ export default {
         path: appG.route.getCurPath()
       }
     },
-    api_200() {
+    api_200 () {
       let that = this
       api.post(api.api_200, api.getSign({
         StoreId: that.storeBrand.id
@@ -97,7 +95,7 @@ export default {
     /**
      * banner点击事件
      */
-    bannerSelect(item) {
+    bannerSelect (item) {
       let url = ''
       //商品列表
       if (item.content_type == 2) {

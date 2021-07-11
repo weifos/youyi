@@ -1,5 +1,5 @@
 <template>
-  <view class="wrapper-coupon" :class="[`wrapper-coupon-status-${status}`, `wrapper-coupon-type-${type}`]" @click="handleClick('item')">
+  <view :class="[`wrapper-coupon-status-${status}`, `wrapper-coupon-type-${type}`]" @click="handleClick('item')" class="wrapper-coupon">
     <template v-if="type == 1">
       <view class="coupon-shop">{{shopName}}</view>
       <view class="coupon-title">{{title}}</view>
@@ -7,8 +7,8 @@
         <text>{{discount}}</text>
         <text>{{unit}}</text>
       </view>
-      <view class="coupon-deadline">有效期至{{deadline}}</view>
-      <view class="coupon-button" @click.stop="handleClick('button')">{{buttonText}}</view>
+      <view class="coupon-deadline">期限{{deadline}}</view>
+      <view @click.stop="handleClick('button')" class="coupon-button" v-if="showBtn">{{buttonText}}</view>
     </template>
     <template v-if="type == 2">
       <view class="coupon-shop">{{shopName}}</view>
@@ -31,6 +31,10 @@ export default {
   props: {
     type: {
       type: [Number, String],
+      default: 1,
+    }, // 状态 1:带按钮型 2:积分兑换型
+    showBtn: {
+      type: Boolean,
       default: 1,
     }, // 状态 1:带按钮型 2:积分兑换型
     shopName: {
@@ -71,7 +75,7 @@ export default {
     }, // 状态 1:可领取 2:已领取 3：已使用 4：已过期
   },
   computed: {
-    buttonText() {
+    buttonText () {
       let text = ''
       switch (parseInt(this.status)) {
         case 1:
@@ -91,7 +95,7 @@ export default {
     },
   },
   methods: {
-    handleClick(value) {
+    handleClick (value) {
       switch (value) {
         case 'item':
           this.$emit('click')

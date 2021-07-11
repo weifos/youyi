@@ -53,7 +53,7 @@
           <view class="icon-collect"></view>
           <view class="text text-size-sm">收藏</view>
         </view>
-        <view @click="navigateTo('/pages/user/shopping-cart')" class="item btn-cart">
+        <view @click="navigateTo('/userPackages/shopping-cart')" class="item btn-cart">
           <view class="icon-cart"></view>
           <view class="text text-size-sm">购物车</view>
         </view>
@@ -65,7 +65,7 @@
     </view>
     <!-- product-side-bar e -->
     <!-- popup s -->
-    <uniPopup class="pop-product yoyi-pop" ref="popup" type="bottom">
+    <uniPopup class="pop-product yoyi-pop" ref="popup" style="width: 100%;" type="bottom">
       <view class="pop-content">
         <view class="hidden border-bottom">
           <view class="con-img">
@@ -494,7 +494,7 @@ export default {
           user.methods.setBuyNow([tmp])
           //关闭弹框
           that.$refs.popup.close()
-          uni.navigateTo({ url: '/pages/user/confirm-order' })
+          uni.navigateTo({ url: '/userPackages/confirm-order' })
         }
       }
     },

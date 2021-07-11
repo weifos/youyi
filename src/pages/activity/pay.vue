@@ -15,8 +15,8 @@
           <text class="no-ticket" v-if="ticketInfo.length == 0">（暂无可用的优惠券）</text>
         </view>
         <view @click="checkTicket">
-          <text v-if="cid>0&&cname!=''&&tname!=''" style="color:#5B9AFA;margin-right:10px;">{{cname}} {{tname}}</text>
-          <button class="cu-btn round line-black" @click="selectTicket">选择</button>
+          <text style="color:#5B9AFA;margin-right:10px;" v-if="cid>0&&cname!=''&&tname!=''">{{cname}} {{tname}}</text>
+          <button @click="selectTicket" class="cu-btn round line-black">选择</button>
         </view>
       </view>
       <view class="tac mt20 mb20" v-if="ticketInfo.id > 0">
@@ -28,11 +28,11 @@
       <view class="section__content">
         <radio-group class="block">
           <view class="radio__item">
-            <radio name="payType" @click="checkedPay" data-id="0" :checked="payType == 0"></radio>
+            <radio :checked="payType == 0" @click="checkedPay" data-id="0" name="payType"></radio>
             <text class="dib vam">微信支付</text>
           </view>
           <view class="radio__item">
-            <radio name="payType" @click="checkedPay" data-id="1" :checked="payType == 1"></radio>
+            <radio :checked="payType == 1" @click="checkedPay" data-id="1" name="payType"></radio>
             <text class="dib vam">钱包</text>
             <text class="txt-balance dib vam">余额：{{balance}}</text>
           </view>
@@ -45,7 +45,7 @@
           共计￥{{orderInfo.actual_amount}}
           <text class="discounts" v-if="orderInfo.total_amount-orderInfo.actual_amount>0">| 优惠{{(orderInfo.total_amount-orderInfo.actual_amount).toFixed(2)}}元</text>
         </view>
-        <view class="bg-lightYellow submit text-white" @click="goPay">支付</view>
+        <view @click="goPay" class="bg-lightYellow submit text-white">支付</view>
       </view>
     </view>
   </view>
@@ -59,7 +59,7 @@ import appG from '@/modules/appGlobal'
 import { uniPopup, uniNumberBox } from "@dcloudio/uni-ui"
 
 export default {
-  data() {
+  data () {
     return {
       appId: "",
       cid: 0,
@@ -101,7 +101,7 @@ export default {
     uniPopup,
     uniNumberBox
   },
-  onLoad(opt) {
+  onLoad (opt) {
     //优惠券
     if (opt.cid != undefined && opt.cname != undefined && opt.tname != undefined) {
       this.cid = opt.cid
@@ -120,7 +120,7 @@ export default {
     /**
      * 加载订单信息
      */
-    api_327(no) {
+    api_327 (no) {
       let that = this
       api.post(api.api_327,
         api.getSign({
@@ -164,14 +164,14 @@ export default {
     /**
      * 电子钱包支付
      */
-    api_335() {
+    api_335 () {
       let that = this
       api.post(api.api_335,
         api.getSign({ UserCouponId: that.cid, No: that.orderInfo.serial_no }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
             user.methods.login(res.data.Result)
-            uni.navigateTo({ url: '/pages/user/activity' })
+            uni.navigateTo({ url: '/userPackages/activity' })
           } else {
             wx.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
             that.isPayIng = false
@@ -182,13 +182,13 @@ export default {
     /**
      * 课程完成支付
      */
-    api_368() {
+    api_368 () {
       let that = this
       api.post(api.api_368,
         api.getSign({ SerialNo: that.orderInfo.serial_no }),
         function (vue, res) {
           if (res.data.Basis.State == api.state.state_200) {
-            uni.navigateTo({ url: '/pages/user/activity' })
+            uni.navigateTo({ url: '/userPackages/activity' })
           } else {
             wx.showToast({ title: res.data.Basis.Msg, icon: 'none', duration: 3000 })
           }
@@ -198,7 +198,7 @@ export default {
     /**
      * 微信小程序支付课程订单
      */
-    api_338(no) {
+    api_338 (no) {
       let that = this
       api.post(api.api_338,
         api.getSign({
@@ -264,13 +264,13 @@ export default {
       wx.requestSubscribeMessage({
         tmplIds: ['pjXYFSyXlOOsGdCW8ZBl-guWI0YmFz4Bp7z2UNu54wE'],
         //接口调用成功的回调函数
-        success(res) {
+        success (res) {
 
         },//接口调用失败的回调函数
-        fail(res) {
+        fail (res) {
 
         },//接口调用结束的回调函数（调用成功、失败都会执行）
-        complete(res) {
+        complete (res) {
           console.log(res)
           uni.navigateTo({ url: '../user/activity?tid=' + that.orderInfo.type })
         }

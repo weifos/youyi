@@ -1,28 +1,28 @@
 <template>
   <view class="content page-sign-up">
     <view class="sign-up-list" v-for="(item,index) in result">
-      <view v-if="item.type===0" class="list-title">{{item.title+'（单选）'}}</view>
-      <view v-if="item.type===1" class="list-title">{{item.title+'（多选）'}}</view>
-      <view v-if="item.type===2" class="list-title">{{item.title+'（填写）'}}</view>
+      <view class="list-title" v-if="item.type===0">{{item.title+'（单选）'}}</view>
+      <view class="list-title" v-if="item.type===1">{{item.title+'（多选）'}}</view>
+      <view class="list-title" v-if="item.type===2">{{item.title+'（填写）'}}</view>
 
-      <radio-group v-if="item.type===0" class="agreement-checkbox" :data-questId="item.id" @change="checkedChange">
-        <view class="list-item" v-for="(sItem,i) in item.answer_list" :key="i">
-          <radio :checked="sItem.is_checked" :value="sItem.id+'_䨻_'+sItem.answer_val" :id="sItem.id" color="#FFB825" />
+      <radio-group :data-questId="item.id" @change="checkedChange" class="agreement-checkbox" v-if="item.type===0">
+        <view :key="i" class="list-item" v-for="(sItem,i) in item.answer_list">
+          <radio :checked="sItem.is_checked" :id="sItem.id" :value="sItem.id+'_䨻_'+sItem.answer_val" color="#FFB825" />
           <text>{{sItem.answer_val}}</text>
           <!-- <input class="yoyi-input-normal" v-if="i === item.answer_list.length-1" :placeholder="'请补充'" placeholder-class="input-placeholder" /> -->
         </view>
       </radio-group>
-      <checkbox-group v-if="item.type===1" class="agreement-checkbox" :data-questId="item.id" @change="checkedChange">
-        <view class="list-item" v-for="(sItem,i) in item.answer_list" :key="i">
-          <checkbox :checked="sItem.is_checked" :value="sItem.id+'_䨻_'+sItem.answer_val" :id="sItem.id" color="#FFB825" />
+      <checkbox-group :data-questId="item.id" @change="checkedChange" class="agreement-checkbox" v-if="item.type===1">
+        <view :key="i" class="list-item" v-for="(sItem,i) in item.answer_list">
+          <checkbox :checked="sItem.is_checked" :id="sItem.id" :value="sItem.id+'_䨻_'+sItem.answer_val" color="#FFB825" />
           <text>{{sItem.answer_val}}</text>
           <!-- <input class="yoyi-input-normal" v-if="i === item.answer_list.length-1" :placeholder="'请补充'" placeholder-class="input-placeholder" /> -->
         </view>
       </checkbox-group>
 
-      <checkbox-group v-if="item.type===2" class="agreement-checkbox" :data-questId="item.id">
-        <view class="list-item" :key="i">
-          <textarea class="yoyi-area-normal" :placeholder="'请补充'" :data-questId="item.id" placeholder-class="input-placeholder" maxlength="300" @input="inputChange" />
+      <checkbox-group :data-questId="item.id" class="agreement-checkbox" v-if="item.type===2">
+        <view :key="i" class="list-item">
+          <textarea :data-questId="item.id" :placeholder="'请补充'" @input="inputChange" class="yoyi-area-normal" maxlength="300" placeholder-class="input-placeholder" />
         </view>
       </checkbox-group>
     </view>
@@ -41,7 +41,7 @@
     -->
 
     <view class="btns-bar">
-      <operationButton buttonText="确定" @click="api_326"></operationButton>
+      <operationButton @click="api_326" buttonText="确定"></operationButton>
     </view>
   </view>
 </template>
@@ -53,7 +53,7 @@ import appG from '@/modules/appGlobal'
 import user from '@/modules/userInfo'
 import operationButton from '@/components/yoyi-operation-button/'
 export default {
-  data() {
+  data () {
     return {
       id: 0,
       no: '',
@@ -67,7 +67,7 @@ export default {
       questionnaire: []
     }
   },
-  onLoad(opt) {
+  onLoad (opt) {
     user.methods.setOrderCourseAnswer(null)
     this.id = opt.id
     this.no = opt.no
@@ -264,7 +264,7 @@ export default {
           if (that.orderInfo.type == 1) {
             appG.dialog.showToast({ title: '报名成功', icon: 'none', duration: 3000 })
             setTimeout(() => {
-              uni.navigateTo({ url: '/pages/user/activity' })
+              uni.navigateTo({ url: '/userPackages/activity' })
             }, 1000)
             //课程
           } else {

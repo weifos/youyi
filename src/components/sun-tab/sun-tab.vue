@@ -1,23 +1,16 @@
 <template>
   <view :class="{'uni-scroll-tab': scroll === true }" class="uni-tab">
-    <view
-      v-for="(tab,index) in tabList"
-      :key="index"
-      :class="{ 'uni-tab-active': index === value, 'uni-tab-scroll-item': scroll === true, ' uni-tab-scroll-active': index === value && scroll === true }"
-      :style="[{color:index === value ? activeColor : defaultColor,backgroundColor: bgColor}]"
-      @tap="itemClick(index,tab)"
-      class="uni-tab-item"
-    >
-      <span v-if="tab.icon != undefined" class="iconfont mr5" :class="tab.icon"></span>
+    <view :class="{ 'uni-tab-active': index === value, 'uni-tab-scroll-item': scroll === true, ' uni-tab-scroll-active': index === value && scroll === true }" :key="index" :style="[{color:index === value ? activeColor : defaultColor,backgroundColor: bgColor}]" @tap="itemClick(index,tab)" class="uni-tab-item" v-for="(tab,index) in tabList">
+      <span :class="tab.icon" class="iconfont mr5" v-if="tab.icon != undefined"></span>
       <text>{{rangeKey == '' ? tab : tab[rangeKey]}}</text>
     </view>
-    <view v-if="!scroll" :style="[{ right: barRight + '%', left : barLeft + '%', borderColor: activeColor }]" class="uni-tab-bar" :class="back ? 'uni-tab-bar-backward' : 'uni-tab-bar-forward'"></view>
+    <view :class="back ? 'uni-tab-bar-backward' : 'uni-tab-bar-forward'" :style="[{ right: barRight + '%', left : barLeft + '%', borderColor: activeColor }]" class="uni-tab-bar" v-if="!scroll"></view>
   </view>
 </template>
 <script>
 export default {
   name: 'uni-tab',
-  data() {
+  data () {
     return {
       average: 0,
       back: false
@@ -26,62 +19,61 @@ export default {
   props: {
     value: {
       type: Number, //当前选中下标
-      default() {
+      default () {
         return 0;
       }
     },
     tabList: {
       type: Array,
-      default() {
+      default () {
         return [];
       }
     },
     bgColor: { //背景颜色
       type: String,
-      default() {
+      default () {
         return '#FFFFFF';
       }
     },
     defaultColor: { //默认未选中文字颜色
       type: String,
-      default() {
+      default () {
         return '#000000';
       }
     },
     activeColor: { //选中时文字颜色 线条颜色
       type: String,
-      default() {
+      default () {
         return '#1e9fff';
       }
     },
     rangeKey: { // 当tabList为对象时 显示指定下标值
       type: String,
-      default() {
+      default () {
         return '';
       }
     },
     scroll: { //横向滑动
       type: Boolean,
-      default() {
+      default () {
         return false;
       }
     },
   },
   computed: {
-    barLeft() {
+    barLeft () {
       return this.value * this.average;
     },
-    barRight() {
+    barRight () {
       let index = this.tabList.length - this.value - 1;
       return index * this.average;
     },
   },
-  created() {
+  created () {
     this.average = 100 / this.tabList.length;
   },
   methods: {
-    itemClick(index, tab) {
-      console.log('我点击了tab')
+    itemClick (index, tab) {
       if (this.value == index) return false;
       if (this.value > index) {
         this.back = true;
@@ -137,7 +129,7 @@ export default {
       bottom: 0;
       margin-left: -70px;
       background-color: $yoyi-bg-color;
-      content: "";
+      content: '';
     }
   }
   .uni-tab-bar-forward {

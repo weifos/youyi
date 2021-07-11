@@ -14,30 +14,6 @@
             }
         },
         {
-            "path": "pages/mine/after-sale",
-            "style": {
-                "navigationBarTitleText": "售后"
-            }
-        },
-        {
-            "path": "pages/mine/order-details",
-            "style": {
-                "navigationBarTitleText": "订单详情"
-            }
-        },
-        {
-            "path": "pages/mine/order-list",
-            "style": {
-                "navigationBarTitleText": "我的订单"
-            }
-        },
-        {
-            "path": "pages/mine/order-apply-return",
-            "style": {
-                "navigationBarTitleText": "申请退款"
-            }
-        },
-        {
             "path": "pages/home/cardIndex",
             "style": {
                 "navigationBarTitleText": "大客户领取礼品卡"
@@ -72,200 +48,6 @@
             "style": {
                 "navigationBarTextStyle": "white",
                 "navigationBarBackgroundColor": "#80A999"
-            }
-        },
-        {
-            "path": "pages/wallet/index",
-            "style": {
-                "navigationBarTitleText": "我的钱包",
-                "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#80A999"
-            }
-        },
-        {
-            "path": "pages/user/confirm-order",
-            "style": {
-                "navigationBarTitleText": "确认订单"
-            }
-        },
-        {
-            "path": "pages/user/activity",
-            "style": {
-                "navigationBarTitleText": "活动中心"
-            }
-        },
-        {
-            "path": "pages/wallet/coupon",
-            "style": {
-                "navigationBarTitleText": "优惠券"
-            }
-        },
-        {
-            "path": "pages/user/point",
-            "style": {
-                "navigationBarTitleText": "我的积分",
-                "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#80A999"
-            }
-        },
-        {
-            "path": "pages/user/about",
-            "style": {
-                "navigationBarTitleText": "关于书城"
-            }
-        },
-        {
-            "path": "pages/user/point-rule",
-            "style": {
-                "navigationBarTitleText": "积分规则"
-            }
-        },
-        {
-            "path": "pages/user/point-convert",
-            "style": {
-                "navigationBarTitleText": "积分兑换",
-                "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#80A999"
-            }
-        },
-        {
-            "path": "pages/user/point-detail",
-            "style": {
-                "navigationBarTitleText": "积分明细",
-                "navigationBarTextStyle": "white",
-                "navigationBarBackgroundColor": "#80A999"
-            }
-        },
-        {
-            "path": "pages/user/activity-ticket-details",
-            "style": {
-                "navigationBarTitleText": "活动票券"
-            }
-        },
-        {
-            "path": "pages/user/activity-ticket-list",
-            "style": {
-                "navigationBarTitleText": "活动票券"
-            }
-        },
-        {
-            "path": "pages/user/activity-detail",
-            "style": {
-                "navigationBarTitleText": "活动"
-            }
-        },
-        {
-            "path": "pages/user/address/index",
-            "style": {
-                "navigationBarTitleText": "收货地址"
-            }
-        },
-        {
-            "path": "pages/user/address/form",
-            "style": {
-                "navigationBarTitleText": "收货地址"
-            }
-        },
-        {
-            "path": "pages/user/address/manage",
-            "style": {
-                "navigationBarTitleText": "收货地址"
-            }
-        },
-        {
-            "path": "pages/user/personalInfo",
-            "style": {
-                "navigationBarTitleText": "个人资料"
-            }
-        },
-        {
-            "path": "pages/user/collectProduct",
-            "style": {
-                "navigationBarTitleText": "商品收藏"
-            }
-        },
-        {
-            "path": "pages/wallet/gift-buy",
-            "style": {
-                "navigationBarTitleText": "购买礼品卡"
-            }
-        },
-        {
-            "path": "pages/wallet/gift-accept",
-            "style": {
-                "navigationBarTitleText": "领取礼品卡"
-            }
-        },
-        {
-            "path": "pages/wallet/gift-send",
-            "style": {
-                "navigationBarTitleText": "赠送礼品卡"
-            }
-        },
-        {
-            "path": "pages/wallet/recharge",
-            "style": {
-                "navigationBarTitleText": "储值卡充入"
-            }
-        },
-        {
-            "path": "pages/wallet/detail",
-            "style": {
-                "navigationBarTitleText": "零钱明细"
-            }
-        },
-        {
-            "path": "pages/wallet/pay-coupon",
-            "style": {
-                "navigationBarTitleText": "付款码"
-            }
-        },
-        {
-            "path": "pages/wallet/pay",
-            "style": {
-                "navigationBarTitleText": "付款码"
-            }
-        },
-        {
-            "path": "pages/user/check-ticket",
-            "style": {
-                "navigationBarTitleText": "验核课程票据"
-            }
-        },
-        {
-            "path": "pages/user/card-transfer",
-            "style": {
-                "navigationBarTitleText": "会员卡迁移"
-            }
-        },
-        {
-            "path": "pages/user/card-second",
-            "style": {
-                "navigationBarTitleText": "授权副卡"
-            }
-        },
-        {
-            "path": "pages/user/rights",
-            "style": {
-                "navigationBarTitleText": "会员权益"
-            }
-        },
-        {
-            "path": "pages/user/shopping-cart",
-            "style": {
-                "navigationBarTitleText": "购物车"
-            }
-        },
-        {
-            "path": "pages/user/card",
-            "style": {
-                "navigationBarTitleText": "会员俱乐部"
-            }
-        },
-        {
-            "path": "pages/user/open",
-            "style": {
-                "navigationBarTitleText": "会员俱乐部"
             }
         },
         {
@@ -309,12 +91,253 @@
             "style": {
                 "navigationBarTitleText": "活动报名支付"
             }
+        }
+    ],
+    "subPackages": [
+        {
+            "root": "userPackages",
+            "pages": [
+                {
+                    "path": "confirm-order",
+                    "style": {
+                        "navigationBarTitleText": "确认订单"
+                    }
+                },
+                {
+                    "path": "activity",
+                    "style": {
+                        "navigationBarTitleText": "活动中心"
+                    }
+                },
+                {
+                    "path": "point",
+                    "style": {
+                        "navigationBarTitleText": "我的积分",
+                        "navigationBarTextStyle": "white",
+                        "navigationBarBackgroundColor": "#80A999"
+                    }
+                },
+                {
+                    "path": "about",
+                    "style": {
+                        "navigationBarTitleText": "关于书城"
+                    }
+                },
+                {
+                    "path": "point-rule",
+                    "style": {
+                        "navigationBarTitleText": "积分规则"
+                    }
+                },
+                {
+                    "path": "point-convert",
+                    "style": {
+                        "navigationBarTitleText": "积分兑换",
+                        "navigationBarTextStyle": "white",
+                        "navigationBarBackgroundColor": "#80A999"
+                    }
+                },
+                {
+                    "path": "point-detail",
+                    "style": {
+                        "navigationBarTitleText": "积分明细",
+                        "navigationBarTextStyle": "white",
+                        "navigationBarBackgroundColor": "#80A999"
+                    }
+                },
+                {
+                    "path": "activity-ticket-details",
+                    "style": {
+                        "navigationBarTitleText": "活动票券"
+                    }
+                },
+                {
+                    "path": "activity-ticket-list",
+                    "style": {
+                        "navigationBarTitleText": "活动票券"
+                    }
+                },
+                {
+                    "path": "activity-detail",
+                    "style": {
+                        "navigationBarTitleText": "活动"
+                    }
+                },
+                {
+                    "path": "address/index",
+                    "style": {
+                        "navigationBarTitleText": "收货地址"
+                    }
+                },
+                {
+                    "path": "address/form",
+                    "style": {
+                        "navigationBarTitleText": "收货地址"
+                    }
+                },
+                {
+                    "path": "address/manage",
+                    "style": {
+                        "navigationBarTitleText": "收货地址"
+                    }
+                },
+                {
+                    "path": "personalInfo",
+                    "style": {
+                        "navigationBarTitleText": "个人资料"
+                    }
+                },
+                {
+                    "path": "collectProduct",
+                    "style": {
+                        "navigationBarTitleText": "商品收藏"
+                    }
+                },
+                {
+                    "path": "check-ticket",
+                    "style": {
+                        "navigationBarTitleText": "验核课程票据"
+                    }
+                },
+                {
+                    "path": "card-transfer",
+                    "style": {
+                        "navigationBarTitleText": "会员卡迁移"
+                    }
+                },
+                {
+                    "path": "card-second",
+                    "style": {
+                        "navigationBarTitleText": "授权副卡"
+                    }
+                },
+                {
+                    "path": "rights",
+                    "style": {
+                        "navigationBarTitleText": "会员权益"
+                    }
+                },
+                {
+                    "path": "shopping-cart",
+                    "style": {
+                        "navigationBarTitleText": "购物车"
+                    }
+                },
+                {
+                    "path": "card",
+                    "style": {
+                        "navigationBarTitleText": "会员俱乐部"
+                    }
+                },
+                {
+                    "path": "open",
+                    "style": {
+                        "navigationBarTitleText": "会员俱乐部"
+                    }
+                },
+                {
+                    "path": "m-s-agreement",
+                    "style": {
+                        "navigationBarTitleText": "会员服务协议"
+                    }
+                }
+            ]
         },
         {
-            "path": "pages/user/m-s-agreement",
-            "style": {
-                "navigationBarTitleText": "会员服务协议"
-            }
+            "root": "minePackages",
+            "pages": [
+                {
+                    "path": "after-sale",
+                    "style": {
+                        "navigationBarTitleText": "售后"
+                    }
+                },
+                {
+                    "path": "order-details",
+                    "style": {
+                        "navigationBarTitleText": "订单详情"
+                    }
+                },
+                {
+                    "path": "order-list",
+                    "style": {
+                        "navigationBarTitleText": "我的订单"
+                    }
+                },
+                {
+                    "path": "order-apply-return",
+                    "style": {
+                        "navigationBarTitleText": "申请退款"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "walletPackages",
+            "pages": [
+                {
+                    "path": "gift-buy",
+                    "style": {
+                        "navigationBarTitleText": "购买礼品卡"
+                    }
+                },
+                {
+                    "path": "gift-accept",
+                    "style": {
+                        "navigationBarTitleText": "领取礼品卡"
+                    }
+                },
+                {
+                    "path": "gift-send",
+                    "style": {
+                        "navigationBarTitleText": "赠送礼品卡"
+                    }
+                },
+                {
+                    "path": "recharge",
+                    "style": {
+                        "navigationBarTitleText": "储值卡充入"
+                    }
+                },
+                {
+                    "path": "detail",
+                    "style": {
+                        "navigationBarTitleText": "零钱明细"
+                    }
+                },
+                {
+                    "path": "pay-coupon",
+                    "style": {
+                        "navigationBarTitleText": "选择使用优惠券"
+                    }
+                },
+                {
+                    "path": "pay",
+                    "style": {
+                        "navigationBarTitleText": "付款码"
+                    }
+                },
+                {
+                    "path": "coupon",
+                    "style": {
+                        "navigationBarTitleText": "优惠券"
+                    }
+                },
+                {
+                    "path": "coupon-d",
+                    "style": {
+                        "navigationBarTitleText": "使用优惠券"
+                    }
+                },
+                {
+                    "path": "index",
+                    "style": {
+                        "navigationBarTitleText": "我的钱包",
+                        "navigationBarTextStyle": "white",
+                        "navigationBarBackgroundColor": "#80A999"
+                    }
+                }
+            ]
         }
     ],
     "navigateToMiniProgramAppIdList": [

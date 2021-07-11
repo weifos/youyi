@@ -2,24 +2,23 @@
   <view class="wrapper-user-index">
     <view class="user-index-main">
       <view class="user-profile">
-        <image class="user-avatar" :src="userInfo.headimgurl" />
-        <button class="btn-refresh" open-type="getUserInfo" @getuserinfo="getWxUser"></button>
+        <image :src="userInfo.headimgurl" class="user-avatar" />
+        <button @getuserinfo="getWxUser" class="btn-refresh" open-type="getUserInfo"></button>
         <view class="user-other">
           <view class="user-phone">{{userInfo.login_name}}</view>
-          <navigator class="user-vip" hover-class :url="`/pages/user/open?type=${userType}`" v-if="userType == 1">开通会员享好礼</navigator>
-          <navigator class="user-vip" hover-class :url="`/pages/user/card?type=${userType}`" v-if="userType == 2">普通会员</navigator>
-          <navigator class="user-vip" hover-class :url="`/pages/user/card?type=${userType}`" v-if="userType == 3">高级会员</navigator>
+          <navigator :url="`/userPackages/open?type=${userType}`" class="user-vip" hover-class v-if="userType == 1">开通会员享好礼</navigator>
+          <navigator :url="`/userPackages/card?type=${userType}`" class="user-vip" hover-class v-if="userType == 2">普通会员</navigator>
+          <navigator :url="`/userPackages/card?type=${userType}`" class="user-vip" hover-class v-if="userType == 3">高级会员</navigator>
         </view>
       </view>
       <view class="user-info">
-        <!-- <navigator class="info-item" hover-class url="/pages/user/point"> -->
+        <!-- <navigator class="info-item" hover-class url="/userPackages/point"> -->
         <navigator class="info-item" hover-class>
           <view class="item-text1">{{userInfo.point}}</view>
           <view class="item-text2">积分</view>
         </navigator>
-        <navigator class="info-item">
-          <!-- <navigator class="info-item" hover-class url="/pages/wallet/coupon"> -->
-          <view class="item-text1">0</view>
+        <navigator class="info-item" hover-class url="/walletPackages/coupon">
+          <view class="item-text1">{{userInfo.user_coupon_count}}</view>
           <view class="item-text2">优惠券</view>
         </navigator>
         <!-- <navigator class="info-item" hover-class url="/pages/wallet/index"> -->
@@ -29,31 +28,31 @@
         </navigator>
       </view>
     </view>
-    <!-- <navigator class="user-index-card" hover-class :class="[`user-index-card-${userType}`]" :url="`/pages/user/open?type=${userType}`"></navigator> -->
-    <navigator class="user-index-card" hover-class :class="[`user-index-card-${userType}`]" :url="`/pages/user/card`"></navigator>
+    <!-- <navigator class="user-index-card" hover-class :class="[`user-index-card-${userType}`]" :url="`/userPackages/open?type=${userType}`"></navigator> -->
+    <navigator :class="[`user-index-card-${userType}`]" :url="`/userPackages/card`" class="user-index-card" hover-class></navigator>
     <view class="user-index-my">
-      <view class="my-item" @click="goUrl('/pages/user/shopping-cart')">
-        <image class="item-icon" src="/static/images/user/user-cart.png" mode="aspectFit" />
+      <view @click="goUrl('/userPackages/shopping-cart')" class="my-item">
+        <image class="item-icon" mode="aspectFit" src="/static/images/user/user-cart.png" />
         <view class="item-text">购物车</view>
       </view>
       <!-- <view class="my-item" @click="goUrl('/pages/wallet/gift-buy?count='+acceptCount)">
         <image class="item-icon" src="/static/images/user/user-gift.png" mode="aspectFit" />
         <view class="item-text">礼品卡</view>
       </view>-->
-      <view class="my-item" @click="goUrl('/pages/user/collectProduct')">
-        <image class="item-icon" src="/static/images/user/user-favor.png" mode="aspectFit" />
+      <view @click="goUrl('/userPackages/collectProduct')" class="my-item">
+        <image class="item-icon" mode="aspectFit" src="/static/images/user/user-favor.png" />
         <view class="item-text">商品收藏</view>
       </view>
-      <view class="my-item" @click="goUrl('/pages/mine/order-list')">
-        <image class="item-icon" src="/static/images/user/user-order.png" mode="aspectFit" />
+      <view @click="goUrl('/minePackages/order-list')" class="my-item">
+        <image class="item-icon" mode="aspectFit" src="/static/images/user/user-order.png" />
         <view class="item-text">订单</view>
       </view>
     </view>
     <view class="user-index-navigation">
-      <!--/pages/user/card-transfer-->
-      <navigator class="navigation-item" hover-class url="/pages/user/card">
+      <!--/userPackages/card-transfer-->
+      <navigator class="navigation-item" hover-class url="/userPackages/card">
         <view class="item-info">
-          <image class="item-icon" src="/static/images/user/user-vip.png" mode="aspectFit" />
+          <image class="item-icon" mode="aspectFit" src="/static/images/user/user-vip.png" />
           <view class="item-name">我的会员卡</view>
         </view>
         <view class="item-nav">
@@ -61,9 +60,9 @@
           <view class="item-nav2">会员权益</view>
         </view>
       </navigator>
-      <navigator class="navigation-item" hover-class url="/pages/user/activity">
+      <navigator class="navigation-item" hover-class url="/userPackages/activity">
         <view class="item-info">
-          <image class="item-icon" src="/static/images/user/user-act.png" mode="aspectFit" />
+          <image class="item-icon" mode="aspectFit" src="/static/images/user/user-act.png" />
           <view class="item-name">活动中心</view>
         </view>
         <view class="item-nav">
@@ -74,21 +73,21 @@
     </view>
     <view class="user-index-list">
       <uni-list>
-        <uni-list-item title="验核活动券码" v-if="userInfo.verify_ticket" note="验核用户活动报名的券码" @click="goUrl('/pages/user/check-ticket')"></uni-list-item>
-        <uni-list-item title="付款码" note="门店扫码积分或优惠券、电子钱包支付" @click="goUrl('/pages/wallet/pay')"></uni-list-item>
-        <!-- <uni-list-item title="授权副卡" @click="goUrl('/pages/user/card-second')"></uni-list-item> -->
-        <uni-list-item title="收货地址" @click="goUrl('/pages/user/address/manage')"></uni-list-item>
-        <uni-list-item title="个人资料" @click="goUrl('/pages/user/personalInfo')"></uni-list-item>
-        <uni-list-item title="关于书城" @click="goUrl('/pages/user/about')"></uni-list-item>
+        <uni-list-item @click="goUrl('/userPackages/check-ticket')" note="验核用户活动报名的券码" title="验核活动券码" v-if="userInfo.verify_ticket"></uni-list-item>
+        <uni-list-item @click="goUrl('/walletPackages/pay')" note="门店扫码积分或优惠券、电子钱包支付" title="付款码"></uni-list-item>
+        <!-- <uni-list-item title="授权副卡" @click="goUrl('/userPackages/card-second')"></uni-list-item> -->
+        <uni-list-item @click="goUrl('/userPackages/address/manage')" title="收货地址"></uni-list-item>
+        <uni-list-item @click="goUrl('/userPackages/personalInfo')" title="个人资料"></uni-list-item>
+        <uni-list-item @click="goUrl('/userPackages/about')" title="关于书城"></uni-list-item>
       </uni-list>
     </view>
 
-    <view class="toast_div" :class="isLogin ? '':'show_toast'">
+    <view :class="isLogin ? '':'show_toast'" class="toast_div">
       <view class="toast_c">
         <view class="tlt_shuf">当前未登录</view>
         <view class="toast_shuf">点击一键授权快速登录</view>
         <!-- <view class="rules">我已同意借阅规则</view> -->
-        <button class="fast_login" open-type="getPhoneNumber" @getphonenumber="getMobile">立即授权</button>
+        <button @getphonenumber="getMobile" class="fast_login" open-type="getPhoneNumber">立即授权</button>
       </view>
     </view>
   </view>
@@ -105,7 +104,7 @@ import uniListItem from '@/components/uni-list-item/uni-list-item.vue'
 
 export default {
   components: { uniList, uniListItem },
-  data() {
+  data () {
     return {
       //1:非会员 2:普通会员 3:高级会员
       userType: 1,
@@ -116,6 +115,7 @@ export default {
       acceptCount: 0,
       userInfo: {
         id: 0,
+        user_coupon_count: 0,
         verify_ticket: false,
         nick_name: '未设置',
         login_name: '未登录',
@@ -123,13 +123,13 @@ export default {
       }
     }
   },
-  onLoad() {
+  onLoad () {
     this.aty_store = user.methods.getAtyStore()
     if (this.aty_store == null) {
       this.getSettingMess()
     }
   },
-  onShow() {
+  onShow () {
     let that = this
     //检验当前用户的session_key是否有效
     passport.checkSession(function (openid) {
@@ -220,7 +220,7 @@ export default {
     /**
      * 定位最近的门店
      */
-    api_299() {
+    api_299 () {
       let that = this
       uni.getLocation({
         //wgs84 返回 gps 坐标，gcj02 返回可用于 wx.openLocation 的坐标
@@ -272,11 +272,11 @@ export default {
     /**
      * 执行查看已授权信息
      */
-    getSettingMess() {
+    getSettingMess () {
       let that = this
       // 获取已授权类别
       uni.getSetting({
-        success(res) {
+        success (res) {
           //userLocation位置功能已授权
           if (res.authSetting['scope.userLocation']) {
             // 如果已授权,直接获取对应参数
@@ -285,7 +285,7 @@ export default {
             // 说明此时要获取的位置功能尚未授权, 则设置进入页面时主动弹出，直接授权
             uni.authorize({
               scope: 'scope.userLocation',
-              success(res) {
+              success (res) {
                 // 成功后获取对应的位置参数
                 that.api_299()
               },
@@ -296,7 +296,7 @@ export default {
             })
           }
         },
-        fail() {
+        fail () {
           console.log("获取授权信息授权失败")
         }
       })
@@ -305,13 +305,13 @@ export default {
     /**
      * 路由跳转
      */
-    goUrl(url) {
+    goUrl (url) {
       uni.navigateTo({ url })
     },
     /**
      * 检测是否需要重定向
      */
-    checkRedirect() {
+    checkRedirect () {
       let returl = uni.getStorageSync('returl')
       if (returl != "" && returl != '/pages/home/userIndex') {
         uni.removeStorage({ key: 'returl', success: function (res) { } })

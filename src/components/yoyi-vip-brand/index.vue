@@ -1,10 +1,10 @@
 <template>
-  <view class="wrapper-vip-brand" :class="[`wrapper-vip-brand-${type}`]">
+  <view :class="[`wrapper-vip-brand-${type}`]" class="wrapper-vip-brand">
     <view class="vip-brand-content">
       <template v-if="type == 1">
         <view class="card-text-1">会员俱乐部</view>
         <view class="card-text-2">开通书城会员 尊享多重特权</view>
-        <!-- <navigator class="card-text-3" hover-class="" url="/pages/user/rights">会员权益详情&gt;</navigator> -->
+        <!-- <navigator class="card-text-3" hover-class="" url="/userPackages/rights">会员权益详情&gt;</navigator> -->
       </template>
       <template v-if="type == 2">
         <view class="card-text-1">会员俱乐部</view>

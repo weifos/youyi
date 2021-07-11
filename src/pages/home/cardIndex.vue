@@ -8,17 +8,17 @@
     </view>
     <view class="uni-form">
       <view class="uni-form-item">
-        <input class="uni-input" type="text" v-model="userName" placeholder="请输入真实姓名" maxlength="30" />
+        <input class="uni-input" maxlength="30" placeholder="请输入真实姓名" type="text" v-model="userName" />
       </view>
       <view class="uni-form-item">
-        <input class="uni-input" type="text" v-model="mobile" placeholder="请输入手机号" maxlength="11" />
+        <input class="uni-input" maxlength="11" placeholder="请输入手机号" type="text" v-model="mobile" />
       </view>
       <view class="uni-form-item">
-        <input class="uni-input" type="text" placeholder="请输入验证码" />
-        <view class="btn-getcode" @click="api_209">{{timer.text}}</view>
+        <input class="uni-input" placeholder="请输入验证码" type="text" />
+        <view @click="api_209" class="btn-getcode">{{timer.text}}</view>
       </view>
     </view>
-    <operationButton buttonText="领取" @click="api_210"></operationButton>
+    <operationButton @click="api_210" buttonText="领取"></operationButton>
   </view>
 </template>
 
@@ -31,7 +31,7 @@ import operationButton from '@/components/yoyi-operation-button/'
 
 export default {
   components: { yoyiTitle, operationButton },
-  data() {
+  data () {
     return {
       userName: '',
       mobile: '',
@@ -43,12 +43,12 @@ export default {
       }
     }
   },
-  onLoad() {
+  onLoad () {
 
   },
   methods: {
     //获取验证码
-    api_209() {
+    api_209 () {
       let that = this
       if (!appG.verifyStr.isMoblie(that.mobile)) {
         appG.dialog.showToast({ title: '手机号码输入不正确', duration: 2000, icon: "none" })
@@ -74,7 +74,7 @@ export default {
       })
     },
     //立即领卡
-    api_210() {
+    api_210 () {
       let that = this
 
       if (that.userName.length == 0) {

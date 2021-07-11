@@ -1,5 +1,5 @@
 <template>
-  <view class="wrapper-activity-item" @click="handleClick('item')">
+  <view @click="handleClick('item')" class="wrapper-activity-item">
     <view class="hidden">
       <view class="item-img fl">
         <image :src="src" />
@@ -20,9 +20,9 @@
       </view>
     </view>
     <view class="item-btns mt10 align-right">
-      <button class="btn btn-line-yellow text-sub btn-size-sm" style="margin-right:5px;" @click.prevent="openMap">导航</button>
-      <button class="btn btn-line-yellow text-sub btn-size-sm" v-if="isPay || type==1" @click.stop="handleClick('button')">{{buttonText}}</button>
-      <button class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" v-if="!isPay && type==5" @click.stop="handleClick('goPay')">去支付</button>
+      <button @click.prevent="openMap" class="btn btn-line-yellow text-sub btn-size-sm" style="margin-right:5px;">导航</button>
+      <button @click.stop="handleClick('button')" class="btn btn-line-yellow text-sub btn-size-sm" v-if="isPay || type==1">{{buttonText}}</button>
+      <button @click.stop="handleClick('goPay')" class="btn btn-size-sm btn-line-yellow btn-round-sm text-sub ml20" v-if="!isPay && type==5">去支付</button>
     </view>
   </view>
 </template>
@@ -33,7 +33,7 @@ import appG from '@/modules/appGlobal'
 
 export default {
   name: 'activityItem',
-  data() {
+  data () {
     return {
       store: { id: 0 },
     }
@@ -81,7 +81,7 @@ export default {
     }
   },
   computed: {
-    buttonText() {
+    buttonText () {
       let text = ''
       switch (parseInt(this.status)) {
         case 1:
@@ -101,7 +101,7 @@ export default {
     }
   },
   methods: {
-    handleClick(value) {
+    handleClick (value) {
       switch (value) {
         case 'item':
           this.$emit('click')
@@ -114,14 +114,14 @@ export default {
           break;
       }
     },
-    goPay() {
+    goPay () {
       console.log(goPay)
     },
     // 打开map地图
     // 没有在登录的时候获取自己的定位 而是点击事件 调用viewMapLocation()这个方法时获取了自己的定位 
     // 因考虑到用户拒绝获取自己的定位所以当用户再次点击后会唤起设置让用户打开定位 
     // 这里传入的三个参数分别是  要去的  经度 纬度 以及 地址信息
-    openMap() {
+    openMap () {
       let that = this
       //加载门店详情、经纬度
       that.api_371()
@@ -130,7 +130,7 @@ export default {
      * 加载门店详情、经纬度
      * 并且导航
      */
-    api_371() {
+    api_371 () {
       let that = this
       //查询最近门店
       api.post(api.api_371, api.getSign({ StoreId: that.storeId }), function (app, res) {

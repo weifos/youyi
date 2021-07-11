@@ -5,11 +5,11 @@
         <image :src="image" />
       </view>
       <view class="gift-card-item-button">
-        <view v-if="showUseButton && sendStatus == 0" @click="handleClick('send')">赠送</view>
-        <view v-else-if="showUseButton && sendStatus == 1" style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;">赠送中</view>
-        <view v-else-if="sendStatus == 10" style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;">已赠送</view>
-        <view v-if="showUseButton && (sendStatus == 0 || sendStatus == -1)" @click="handleClick('use')">使用</view>
-        <view v-else-if="!showUseButton && (sendStatus == 0 || sendStatus == -1)" style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;">已使用</view>
+        <view @click="handleClick('send')" v-if="showUseButton && sendStatus == 0">赠送</view>
+        <view style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;" v-else-if="showUseButton && sendStatus == 1">赠送中</view>
+        <view style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;" v-else-if="sendStatus == 10">已赠送</view>
+        <view @click="handleClick('use')" v-if="showUseButton && (sendStatus == 0 || sendStatus == -1)">使用</view>
+        <view style="border: 0.267vw solid #D8D8D8;color:#D8D8D8;" v-else-if="!showUseButton && (sendStatus == 0 || sendStatus == -1)">已使用</view>
       </view>
     </view>
     <view class="gift-card-item-content2">
@@ -52,7 +52,7 @@ export default {
     }
   },
   methods: {
-    handleClick(type) {
+    handleClick (type) {
       switch (type) {
         case 'send':
           this.$emit('send')

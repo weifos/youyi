@@ -3,16 +3,16 @@ import user from '@/modules/userInfo'
 import md5 from 'blueimp-md5'
 
 //测试环境配置
-let domain = "https://api66.yoyibook.com:443/"
-let res_domain = "https://res67.yoyibook.com:20185/"
+// let domain = "https://api66.yoyibook.com:443/"
+// let res_domain = "https://res67.yoyibook.com:20185/"
 //正式环境配置
-// let domain = "https://api66.yoyi100.cn:21143/"
-// let res_domain = "https://res67.yoyi100.cn:21144/"
+let domain = "https://api66.yoyi100.cn:21143/"
+let res_domain = "https://res67.yoyi100.cn:21144/"
 //测试环境
-if (process.env.NODE_ENV !== 'production') {
-    domain = "http://yy.api.youyi.com/"
-    res_domain = "http://yy.res.youyi.com/"
-}
+// if (process.env.NODE_ENV !== 'production') {
+//     domain = "http://yy.api.youyi.com/"
+//     res_domain = "http://yy.res.youyi.com/"
+// }
 
 /// <summary>
 /// 全局配置类
@@ -120,6 +120,8 @@ module.exports = {
     api_313: domain + "313",
     //创建咖啡订单
     api_314: domain + "314",
+    //获取用户可用的优惠券
+    api_315: domain + "315",
     //根据ID获取收货地址
     api_316: domain + "316",
     //微信小程序预支付订单
@@ -128,6 +130,8 @@ module.exports = {
     api_318: domain + "318",
     //订单明细
     api_319: domain + "319",
+    //优惠券详情
+    api_326: domain + "324",
     //课程订单生成
     api_326: domain + "326",
     //微信小程序预支付订单 课程订单
